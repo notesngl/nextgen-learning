@@ -85,6 +85,8 @@ footer{border-top:1px solid var(--line);padding:24px 0 30px;color:var(--mut);fon
 #panelView .msg{color:var(--red)}#panelView .ok{color:var(--neon);font-weight:600}
 #panelView .att label{display:inline;margin-right:10px;white-space:nowrap;color:var(--ink)}#panelView .att input{width:auto;margin:0 3px 0 0}
 #panelView .wrap{overflow-x:auto}
+#panelView .cb{margin:0 6px 8px 0;background:var(--surface2);border-color:var(--line)}#panelView .cb.on{background:var(--gold);color:#1f0e00;border-color:var(--gold)}
+.tk{border:1px solid var(--line);border-left:3px solid var(--neon);background:var(--surface2);border-radius:6px;padding:10px 12px;margin-bottom:8px;font-size:15px}.stars{color:var(--gold);letter-spacing:2px}
 </style>
 </head>
 <body>
@@ -181,9 +183,9 @@ const EMP_F=[['name','Name'],['post','Post','opt:Teacher|Director|Coordinator|Of
 const TABS={
  site:{label:'Website edit',run:siteTab},
  staff:{label:'Staff / Login',run:staffTab},
- students:{label:'Students / छात्र',run:()=>crud('students',STU_F,['class','roll','name','father_name','phone'],'class',false,!isAdm(),'student')},
- sa:{label:'Student attendance',run:()=>attendance('students','student_attendance','student_id',true)},
- ta:{label:'Teacher attendance',run:()=>attendance('teachers','teacher_attendance','teacher_id',false)},
+ students:{label:'Students & Tracker',run:studentsTab},
+ sa:{label:'Attendance / हाज़िरी',run:()=>attendance('students','student_attendance','student_id',true)},
+ ta:{label:'Staff attendance',run:()=>attendance('teachers','teacher_attendance','teacher_id',false)},
  teachers:{label:'Teachers & Staff / कर्मचारी',run:()=>crud('teachers',EMP_F,['photo_url','name','post','subject','phone'],'created_at',false,false,'employee')},
  notices:{label:'Notices / सूचना',run:()=>crud('notices',[['title','Title'],['body','Details'],['date','Date','date']],['date','title','body'],'date',true,ME.access==='staff')},
  fees:{label:'Fees / फीस',run:()=>mgmtList('student')},
@@ -222,7 +224,7 @@ function openTab(k){lastTab=k;
 }
 const goFirst=()=>openTab(Object.keys(TABS).filter(allowed)[0]);
 const foldersHTML=(groups)=>groups.map(g=>`<details class="fold" open><summary>${g[0]}</summary><div class="shg">${g[1]}</div></details>`).join('');
-const GROUPS=[['📁 Management',['fees','salary']],['📁 People',['students','teachers','staff']],['📁 Attendance',['sa','ta']],['📁 Website',['site','notices','gallery']]];
+const GROUPS=[['📁 Management',['fees','salary']],['📁 Students',['students','sa']],['📁 Staff',['teachers','staff','ta']],['📁 Website',['site','notices','gallery']]];
 function openSheet(){
  const keys=Object.keys(TABS).filter(allowed);
  const btn=k=>`<button data-k="${k}"><span>${ICON[k]}</span>${TABS[k].label}</button>`;
@@ -380,6 +382,41 @@ async function attendance(list,att,idCol,byClass){
  m.querySelectorAll('select,input').forEach(x=>x.onchange=load);load();
 }
 
+
+/* ---------- Students folder: class-wise list + Study Tracker ---------- */
+let CC='';
+const stars=r=>r?'<span class="stars">'+'★'.repeat(r)+'☆'.repeat(5-r)+'</span>':'-';
+const RLAB={1:'1 - Bahut kamzor',2:'2 - Kamzor',3:'3 - Theek',4:'4 - Achha',5:'5 - Bahut badhiya'};
+async function studentsTab(){
+ const cls=CONFIG.classes;if(!CC||!cls.includes(CC))CC=cls[0];
+ $('pmain').innerHTML=`<div>${cls.map(c=>`<button class="cb ${c===CC?'on':''}" data-c="${esc(c)}">${esc(c)}</button>`).join('')}</div>`+(isAdm()?`<p><button class="g" id="sadd">+ Add student</button></p><div id="sform" hidden><div class="f">${STU_F.map(f=>inp(f,'f_')).join('')}</div><button id="ssave">Save student</button> <span class="msg" id="e"></span></div>`:'')+`<label>Search<input id="sq" placeholder="Naam"></label><p class="mut" id="scnt"></p><div class="wrap" id="slist">Loading...</div>`;
+ document.querySelectorAll('.cb').forEach(b=>b.onclick=()=>{CC=b.dataset.c;studentsTab()});
+ if(isAdm()){
+  $('f_class').value=CC;
+  $('sadd').onclick=()=>{$('sform').hidden=!$('sform').hidden};
+  $('ssave').onclick=async()=>{
+   try{const o={};for(const [k,,t] of STU_F){const val=$('f_'+k).value.trim();if(val)o[k]=t==='number'?+val:val}
+    if(!o.name)throw new Error('Naam daalein');
+    const {error}=await sb.from('students').insert(o);if(error)throw error;
+    CC=o.class||CC;studentsTab();
+   }catch(x){$('e').textContent=x.message}
+  };
+ }
+ const {data:st,error}=await sb.from('students').select('*').eq('class',CC).order('roll',{nullsFirst:false}).order('name');
+ if(error){$('slist').textContent=error.message;return}
+ const ids=(st||[]).map(s=>s.id),L={};
+ if(ids.length){const {data:tr}=await sb.from('student_tracker').select('student_id,date,rating,created_at').in('student_id',ids).order('date',{ascending:false}).order('created_at',{ascending:false});
+  (tr||[]).forEach(t=>{(L[t.student_id]=L[t.student_id]||[]).push(t)})}
+ const draw=()=>{
+  const q=$('sq').value.trim().toLowerCase();
+  const list=(st||[]).filter(s=>!q||String(s.name).toLowerCase().includes(q));
+  $('scnt').textContent='Class '+CC+': '+(st||[]).length+' students';
+  $('slist').innerHTML=list.length?`<table><tr><th>Roll</th><th>Name</th><th>Padhai</th><th>Last update</th><th></th></tr>${list.map(s=>{const t=(L[s.id]||[]).slice(0,3).filter(x=>x.rating);const av=t.length?Math.round(t.reduce((a,x)=>a+x.rating,0)/t.length):0;const last=(L[s.id]||[])[0];return `<tr><td>${esc(s.roll)}</td><td>${esc(s.name)}<br><small class="mut">${esc(s.father_name)}</small></td><td>${stars(av)}</td><td>${last?fmt(last.date):'-'}</td><td><button class="g" data-p="${s.id}">Open</button></td></tr>`}).join('')}</table>`:'<p class="mut">Is class me abhi koi student nahi hai.</p>';
+ };
+ $('sq').oninput=draw;draw();
+ $('slist').onclick=e=>{const id=e.target.dataset.p;if(id)profile('student',id)};
+}
+
 /* ---------- Management: fees & salary ---------- */
 const money=n=>'₹ '+Number(n||0).toLocaleString('en-IN');
 const fmt=d=>d?String(d).slice(0,10).split('-').reverse().join('-'):'';
@@ -418,6 +455,8 @@ async function profile(type,id){
   const [a,l]=await Promise.all([sb.from('accounts').select('*').eq('person_type',type).eq('person_id',id).maybeSingle(),sb.from('ledger').select('*').eq('person_type',type).eq('person_id',id).order('month',{ascending:true,nullsFirst:true}).order('created_at')]);
   acc=a.data;led=l.data||[];
  }
+ let trk=[],pv=null;
+ if(stu){const [a,b]=await Promise.all([sb.from('student_tracker').select('*').eq('student_id',id).order('date',{ascending:false}).order('created_at',{ascending:false}),isAdm()?sb.from('student_private').select('*').eq('student_id',id).maybeSingle():Promise.resolve({data:null})]);trk=a.data||[];pv=b.data}
  const sum=k=>led.filter(x=>x.kind===k).reduce((s,x)=>s+ +x.amount,0);
  const due=sum('charge')-sum('payment')-sum('discount');
  let pool=sum('payment')+sum('discount');const pending=[];
@@ -428,6 +467,11 @@ async function profile(type,id){
  const details=FL.filter(f=>f[2]!=='photo').map(([k,l])=>`<tr><th>${esc(l.split(' (')[0].split(' /')[0])}</th><td>${esc(p[k])}</td></tr>`).join('');
  let h=`<button id="pbk">← Back</button>`;
  h+=`<div style="${card}">${p.photo_url?`<img src="${esc(p.photo_url)}" alt="" style="height:90px;border-radius:8px;margin-bottom:8px"><br>`:''}<table>${details}</table>${isAdm()?`<p><button class="g" id="ped">Edit details</button></p><div id="pedit" hidden>${FL.map(f=>inp(f,'p_')).join('')}<button id="psv">Save details</button> <span id="pem" class="msg"></span></div>`:''}</div>`;
+ if(stu){
+  if(isAdm())h+=`<div style="${card}"><b>Private record (sirf Owner/Admin)</b><div class="f"><label>Aadhar number<input id="pv_a" inputmode="numeric" maxlength="12" value="${esc(pv&&pv.aadhar)}"></label></div><label>Note<textarea id="pv_n" rows="3">${esc(pv&&pv.note)}</textarea></label><button id="pvs">Save</button> <span id="pvm" class="msg"></span></div>`;
+  const rr=trk.filter(x=>x.rating).slice(0,3),avg=rr.length?Math.round(rr.reduce((a,x)=>a+x.rating,0)/rr.length):0;
+  h+=`<div style="${card}"><b>Study Tracker</b> <span style="float:right">${stars(avg)}</span><div class="f"><label>Date<input id="tk_d" type="date" value="${today()}"></label><label>Subject (optional)<input id="tk_s"></label><label>Padhai kaisi hai?<select id="tk_r">${[5,4,3,2,1].map(n=>`<option value="${n}" ${n===3?'selected':''}>${RLAB[n]}</option>`).join('')}</select></label></div><label>Kya achha hai<textarea id="tk_g" rows="2"></textarea></label><label>Kya kami hai<textarea id="tk_w" rows="2"></textarea></label><label>Aage kya karna hai<textarea id="tk_p" rows="2"></textarea></label><button id="tka">Add tracker entry</button> <span id="tkm" class="msg"></span><div id="ptr" style="margin-top:12px">${trk.length?trk.map(t=>`<div class="tk"><b>${fmt(t.date)}</b>${t.subject?' · '+esc(t.subject):''} ${stars(t.rating)}${t.good?`<br>✅ ${esc(t.good)}`:''}${t.weak?`<br>⚠️ ${esc(t.weak)}`:''}${t.plan?`<br>➡️ ${esc(t.plan)}`:''}<br><button class="r" data-td="${t.id}">Delete</button></div>`).join(''):'<p class="mut">Abhi koi entry nahi hai.</p>'}</div></div>`;
+ }
  if(see){
   h+=`<div style="${card}"><small class="mut">${stu?'Baki fees':'Baki salary'}</small><div style="font:800 32px var(--f);color:${due>0?'var(--red)':'var(--neon)'}">${money(due)}</div><small class="mut">Total: ${money(sum('charge'))} · ${stu?'Mile':'Diye'}: ${money(sum('payment'))}${sum('discount')?' · '+(stu?'Discount':'Deduction')+': '+money(sum('discount')):''}</small>`;
   if(pending.length)h+=`<p style="margin:10px 0 0"><b>Pending:</b></p><table>${pending.map(r=>`<tr><td>${esc(r.label)}</td><td>${money(r.amt)}</td></tr>`).join('')}</table>`;
@@ -452,6 +496,21 @@ async function profile(type,id){
    }catch(x){$('pem').textContent=x.message}
   };
  }
+  if(stu){
+  if($('pvs'))$('pvs').onclick=async()=>{
+   const a=$('pv_a').value.replace(/\s/g,'');
+   if(a&&!/^\d{12}$/.test(a)){$('pvm').textContent='Aadhar 12 ank ka hona chahiye';return}
+   const {error}=await sb.from('student_private').upsert({student_id:id,aadhar:a||null,note:$('pv_n').value.trim()||null,updated_at:new Date().toISOString()},{onConflict:'student_id'});
+   $('pvm').className=error?'msg':'ok';$('pvm').textContent=error?error.message:'Saved ✓';
+  };
+  $('tka').onclick=async()=>{
+   const o={student_id:id,date:$('tk_d').value||today(),subject:$('tk_s').value.trim()||null,rating:+$('tk_r').value,good:$('tk_g').value.trim()||null,weak:$('tk_w').value.trim()||null,plan:$('tk_p').value.trim()||null};
+   const {error}=await sb.from('student_tracker').insert(o);
+   if(error)$('tkm').textContent=error.message;else profile(type,id);
+  };
+  $('ptr').onclick=async e=>{const d=e.target.dataset.td;if(d&&confirm('Ye entry hata dein?')){const {error}=await sb.from('student_tracker').delete().eq('id',d);if(error)alert(error.message);else profile(type,id)}};
+  if(isAdm()&&$('ped'))$('ped').insertAdjacentHTML('afterend',' <button class="r" id="pdel">Delete student</button>'),$('pdel').onclick=async()=>{if(confirm('Ye student aur uska pura record hamesha ke liye hat jayega. Pakka?')){const {error}=await sb.from('students').delete().eq('id',id);if(error)alert(error.message);else openTab('students')}};
+  }
  document.querySelectorAll('[data-sl]').forEach(b=>b.onclick=async()=>{try{await slipAct(b.dataset.sl,type,p,pending,due)}catch(x){alert(x.message)}});
  if(see&&ed){
   $('acs').onclick=async()=>{
