@@ -19,7 +19,15 @@ address:"Koilabazar, Rajmahal, Jharkhand",
 phone:"+91 00000 00000",
 email:"",
 hours_hi:"सोमवार से शनिवार (समय बैच के अनुसार)",
-hours_en:"Monday to Saturday (timing depends on batch)"};
+hours_en:"Monday to Saturday (timing depends on batch)",
+about_hg:"NextGen Learning, Koilabazar, Rajmahal (Jharkhand) me bachchon ke liye coaching hai. Yaha har bachche par dhyan dekar padhai karai jati hai.",
+fac_hg:"",
+h1_hg:"Aaj ki sahi padhai, kal ki badi safalta.",
+sub_hg:"Class 1 se 8 tak coaching. Koilabazar, Rajmahal.",
+adm_p_hg:"Naye batch ke liye admission khule hain. Kripya ye cheezein lekar coaching aayein:",
+docs_hg:"Bachche ki 2 photo\nPichli class ka report card\nParent ka phone number\nPate ka praman",
+fee_note_hg:"Sahi fees ke liye coaching office se sampark karein.",
+hours_hg:"Somvar se Shanivar (samay batch ke anusar)"};
 window.SITE_FIELDS=[
 ["about_hi","About coaching (Hindi)","area"],["about_en","About coaching (English)","area"],
 ["fac_hi","Facilities, Hindi (har line ek facility; khali chhodein to section chhup jayega)","area"],["fac_en","Facilities, English (har line ek facility; khali chhodein to section chhup jayega)","area"],
@@ -31,4 +39,5 @@ window.SITE_FIELDS=[
 ["fees","Fees table (har line: Class | Admission fee | Monthly fee)","area"],
 ["fee_note_hi","Fees note (Hindi)"],["fee_note_en","Fees note (English)"],
 ["address","Address"],["phone","Phone number"],["email","Email (optional)"],
-["hours_hi","Class timing (Hindi)"],["hours_en","Class timing (English)"]];
+["hours_hi","Class timing (Hindi)"],["hours_en","Class timing (English)"],
+["about_hg","About coaching (Hinglish)","area"],["fac_hg","Facilities, Hinglish (har line ek facility)","area"],["h1_hg","Main heading (Hinglish)"],["sub_hg","Sub text (Hinglish)","area"],["adm_p_hg","Admission intro (Hinglish)","area"],["docs_hg","Documents list, Hinglish (har line ek document)","area"],["fee_note_hg","Fees note (Hinglish)"],["hours_hg","Class timing (Hinglish)"]];

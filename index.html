@@ -86,50 +86,58 @@ footer{border-top:1px solid var(--line);padding:24px 0 30px;color:var(--mut);fon
 #panelView .att label{display:inline;margin-right:10px;white-space:nowrap;color:var(--ink)}#panelView .att input{width:auto;margin:0 3px 0 0}
 #panelView .wrap{overflow-x:auto}
 #panelView .cb{margin:0 6px 8px 0;background:var(--surface2);border-color:var(--line)}#panelView .cb.on{background:var(--gold);color:#1f0e00;border-color:var(--gold)}
-.tk{border:1px solid var(--line);border-left:3px solid var(--neon);background:var(--surface2);border-radius:6px;padding:10px 12px;margin-bottom:8px;font-size:15px}.card2{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;margin:0 0 14px}.stars{color:var(--gold);letter-spacing:2px}
+.tk{border:1px solid var(--line);border-left:3px solid var(--neon);background:var(--surface2);border-radius:6px;padding:10px 12px;margin-bottom:8px;font-size:15px}#bar{overflow-x:auto;scrollbar-width:none}#bar::-webkit-scrollbar{display:none}#bar button{flex:1 0 auto;min-width:76px;padding-left:10px;padding-right:10px}
+.waf{position:fixed;right:14px;bottom:calc(86px + env(safe-area-inset-bottom,0px));z-index:20;width:52px;height:52px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;font-size:26px;text-decoration:none;box-shadow:0 4px 14px rgba(0,0,0,.45)}.waf[hidden],.waf.nop{display:none}.wabtn{background:#25D366!important;color:#06210f!important}
+#pv{position:fixed;inset:0;z-index:60;background:#fff;color:#000;overflow:auto}#pv[hidden]{display:none}#pv button{background:#1B2B63;color:#fff;border:0;padding:8px 12px;border-radius:6px;font:600 14px sans-serif;cursor:pointer}
+@media print{body>*:not(#pv){display:none!important}#pv{position:static;overflow:visible}.noprint{display:none!important}body{padding:0;background:#fff}}
+.card2{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;margin:0 0 14px}.stars{color:var(--gold);letter-spacing:2px}
 </style>
 </head>
 <body>
 <header><div class="w">
 <a class="logo" href="#top"><img src="logo.png" alt=""><span data-n></span></a>
-<nav class="top"><a href="#about" data-i="nav_about"></a><a href="#admission" data-i="nav_adm"></a><a href="#fees" data-i="nav_fee"></a><a href="#teachers" data-i="nav_tch"></a><a href="#gallery" data-i="nav_gal"></a><a href="#notices" data-i="nav_not"></a><a href="#contact" data-i="nav_con"></a></nav>
+<nav class="top"><a href="#about" data-i="nav_about"></a><a href="#admission" data-adm data-i="nav_adm"></a><a href="#fees" data-adm data-i="nav_fee"></a><a href="#teachers" data-i="nav_tch"></a><a href="#gallery" data-i="nav_gal"></a><a href="#notices" data-i="nav_not"></a><a href="#contact" data-i="nav_con"></a></nav>
 <button id="lang">English</button>
 </div></header>
 <div id="site"><main id="top">
 <div class="hero"><div class="w">
 <img class="herologo" src="logo.png" alt="NextGen Learning">
 <div>
-<h1 data-s="h1"></h1><p data-s="sub"></p><a class="btn" href="#admission" data-i="apply"></a>
-<div class="hud"><div><b data-i="h1v"></b><span data-i="hud1"></span></div><div><b data-i="h2v"></b><span data-i="hud2"></span></div><div><b>Rajmahal</b><span data-i="hud3"></span></div></div>
+<h1 data-s="h1"></h1><p data-s="sub"></p><a class="btn" href="#admission" data-adm data-i="apply"></a>
+<div class="hud"><div><b data-i="h1v"></b><span data-i="hud1"></span></div><div><b data-i="h2v"></b><span data-i="hud2"></span></div><div><b data-i="h3v"></b><span data-i="hud3"></span></div></div>
 </div>
 </div></div>
 <section id="about"><div class="w"><h2 data-i="nav_about"></h2><p data-s="about" style="white-space:pre-line;max-width:60ch"></p></div></section>
 <section id="facSec" class="alt"><div class="w"><h2 id="facilities" data-i="nav_fac"></h2><ul class="chips" id="fac"></ul></div></section>
-<section id="admission"><div class="w"><h2 data-i="nav_adm"></h2>
-<p data-s="adm_p" class="mut"></p><ul class="chips" id="docs"></ul></div></section>
-<section id="fees" class="alt"><div class="w"><h2 data-i="nav_fee"></h2>
-<table><tr><th data-i="cls"></th><th data-i="adm_fee"></th><th data-i="mon_fee"></th></tr><tbody id="feerows"></tbody></table>
-<p class="mut" data-s="fee_note"></p></div></section>
+
 <section id="teachers"><div class="w"><h2 data-i="nav_tch"></h2><div class="grid" id="tch"></div></div></section>
 <section id="gallery" class="alt"><div class="w"><h2 data-i="nav_gal"></h2><div class="gal" id="gal"></div></div></section>
 <section id="notices"><div class="w"><h2 data-i="nav_not"></h2><div id="not"></div></div></section>
 <section id="contact" class="alt"><div class="w"><h2 data-i="nav_con"></h2>
 <p><b data-i="addr_l"></b><br><span id="addr"></span></p>
 <p><b data-i="ph_l"></b><br><a id="ph"></a></p>
-<p><a id="wa" class="btn" target="_blank" rel="noopener">WhatsApp</a></p>
+<p><a id="wa" class="btn wabtn" target="_blank" rel="noopener"></a></p>
 <p id="emp" hidden><b>Email</b><br><a id="em"></a></p>
 <p><b data-i="tm_l"></b><br><span data-s="hours"></span></p></div></section>
 </main>
-<footer><div class="w">© 2026 <span data-n></span> · <a class="adm" href="#" id="fl">Staff login</a></div></footer></div>
+<footer><div class="w">© 2026 <span data-n></span> · <a class="adm" href="#" id="fl" data-i="stf"></a></div></footer></div>
+<div id="admView" hidden><section id="admission"><div class="w"><h2 data-i="nav_adm"></h2>
+<p data-s="adm_p" class="mut"></p><ul class="chips" id="docs"></ul></div></section>
+<section id="fees" class="alt"><div class="w"><h2 data-i="nav_fee"></h2>
+<table><tr><th data-i="cls"></th><th data-i="adm_fee"></th><th data-i="mon_fee"></th></tr><tbody id="feerows"></tbody></table>
+<p class="mut" data-s="fee_note"></p></div></section>
+<section><div class="w"><a id="wa2" class="btn wabtn" target="_blank" rel="noopener"></a></div></section></div>
 <div id="panelView" hidden><div class="w"><h2 id="ptitle"></h2><p class="mut" id="pwho" style="margin:0 0 14px"></p><div id="pmain"></div></div></div>
-<nav id="bar"><button id="bHome" class="on"><span>🏠</span><i style="font-style:normal" data-i="nav_home"></i></button><button id="bExp"><span>🧭</span><i style="font-style:normal" data-i="nav_exp"></i></button><button id="bMenu"><span>🔐</span>Staff login</button></nav>
+<nav id="bar"></nav>
+<a id="waf" class="waf" target="_blank" rel="noopener" aria-label="WhatsApp">💬</a>
 <div id="sheet" hidden><div class="sh" id="shBody"></div></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="config.js"></script>
 <script src="defaults.js"></script>
 <script>
-const T={hi:{nav_home:"होम",nav_exp:"मेन्यू",nav_about:"हमारे बारे में",nav_fac:"सुविधाएँ",h1v:"कक्षा 1–8",h2v:"हिंदी + English",hud1:"कक्षाएँ",hud2:"माध्यम",hud3:"स्थान",f_school:"कोचिंग",f_students:"छात्र व अभिभावक",f_media:"मीडिया",f_contact:"संपर्क",nav_adm:"एडमिशन",nav_fee:"शुल्क",nav_tch:"शिक्षक",nav_gal:"गैलरी",nav_not:"सूचना",nav_con:"संपर्क",apply:"अभी जुड़ें",cls:"कक्षा",adm_fee:"प्रवेश शुल्क",mon_fee:"मासिक शुल्क",addr_l:"पता",ph_l:"फोन",tm_l:"क्लास का समय",none:"अभी कुछ नहीं है।",lng:"English"},
-en:{nav_home:"Home",nav_exp:"Menu",nav_about:"About",nav_fac:"Facilities",h1v:"Class 1–8",h2v:"Hindi + English",hud1:"Classes",hud2:"Medium",hud3:"Location",f_school:"Coaching",f_students:"Students & Parents",f_media:"Media",f_contact:"Contact",nav_adm:"Admission",nav_fee:"Fees",nav_tch:"Teachers",nav_gal:"Gallery",nav_not:"Notices",nav_con:"Contact",apply:"Join now",cls:"Class",adm_fee:"Admission fee",mon_fee:"Monthly fee",addr_l:"Address",ph_l:"Phone",tm_l:"Class timing",none:"Nothing here yet.",lng:"हिन्दी"}};
+const T={hi:{nav_home:"होम",nav_exp:"मेन्यू",nav_about:"हमारे बारे में",nav_fac:"सुविधाएँ",h1v:"कक्षा 1–8",h2v:"हिंदी + अंग्रेज़ी",hud1:"कक्षाएँ",hud2:"माध्यम",hud3:"स्थान",f_school:"कोचिंग",f_students:"छात्र व अभिभावक",f_media:"मीडिया",f_contact:"संपर्क",nav_adm:"एडमिशन",nav_fee:"शुल्क",nav_tch:"शिक्षक",nav_gal:"गैलरी",nav_not:"सूचना",nav_con:"संपर्क",apply:"अभी जुड़ें",cls:"कक्षा",adm_fee:"प्रवेश शुल्क",mon_fee:"मासिक शुल्क",addr_l:"पता",ph_l:"फोन",tm_l:"क्लास का समय",none:"अभी कुछ नहीं है।",lng:"English",h3v:"राजमहल",nav_att:"हाज़िरी",nav_mgt:"प्रबंधन",nav_exm:"परीक्षा",nav_pnl:"पैनल",stf:"स्टाफ लॉगिन",wa_t:"व्हाट्सऐप पर बात करें",wa_msg:"नमस्ते, मुझे NextGen Learning के बारे में जानकारी चाहिए।"},
+en:{nav_home:"Home",nav_exp:"Menu",nav_about:"About",nav_fac:"Facilities",h1v:"Class 1–8",h2v:"Hindi + English",hud1:"Classes",hud2:"Medium",hud3:"Location",f_school:"Coaching",f_students:"Students & Parents",f_media:"Media",f_contact:"Contact",nav_adm:"Admission",nav_fee:"Fees",nav_tch:"Teachers",nav_gal:"Gallery",nav_not:"Notices",nav_con:"Contact",apply:"Join now",cls:"Class",adm_fee:"Admission fee",mon_fee:"Monthly fee",addr_l:"Address",ph_l:"Phone",tm_l:"Class timing",none:"Nothing here yet.",lng:"Hinglish",h3v:"Rajmahal",nav_att:"Attendance",nav_mgt:"Management",nav_exm:"Exam",nav_pnl:"Panel",stf:"Staff login",wa_t:"Chat on WhatsApp",wa_msg:"Hello, I would like to know about NextGen Learning."},
+hg:{nav_home:"Home",nav_exp:"Menu",nav_about:"Hamare Bare Me",nav_fac:"Suvidhayein",h1v:"Class 1–8",h2v:"Hindi + English",h3v:"Rajmahal",hud1:"Classes",hud2:"Medium",hud3:"Location",f_school:"Coaching",f_students:"Students & Parents",f_media:"Media",f_contact:"Sampark",nav_adm:"Admission",nav_fee:"Fees",nav_tch:"Teachers",nav_gal:"Gallery",nav_not:"Notices",nav_con:"Sampark",apply:"Abhi Judein",cls:"Class",adm_fee:"Admission fee",mon_fee:"Monthly fee",addr_l:"Pata",ph_l:"Phone",tm_l:"Class ka samay",none:"Abhi kuch nahi hai.",lng:"हिन्दी",nav_att:"Hazri",nav_mgt:"Prabandhan",nav_exm:"Exam",nav_pnl:"Panel",stf:"Staff Login",wa_t:"WhatsApp par baat karein",wa_msg:"Namaste, mujhe NextGen Learning ke bare me jankari chahiye."}};
 let L=localStorage.getItem('lang')||'hi',S={},D={},ME=null;
 const sb=CONFIG.url.includes('YOUR-')?null:supabase.createClient(CONFIG.url,CONFIG.key);
 const $=id=>document.getElementById(id);
@@ -139,17 +147,17 @@ const v=k=>(S[k]!=null&&S[k]!=='')?S[k]:DEF[k];
 const lv=k=>v(k+'_'+L);
 const lines=s=>String(s||'').split('\n').filter(x=>x.trim());
 function paint(){
- document.documentElement.lang=L;
+ document.documentElement.lang=L==="hi"?"hi":"en";
  document.querySelectorAll('[data-i]').forEach(e=>e.textContent=T[L][e.dataset.i]);
  document.querySelectorAll('[data-s]').forEach(e=>e.textContent=lv(e.dataset.s));
  document.querySelectorAll('[data-n]').forEach(e=>e.textContent=v('school_name'));
  document.title=v('school_name');
- $('lang').textContent=T[L].lng;
+ $('lang').textContent=T[L].lng;renderBar();
  $('docs').innerHTML=lines(lv('docs')).map(x=>`<li>${esc(x)}</li>`).join('');
  $('feerows').innerHTML=lines(v('fees')).map(r=>{const c=r.split('|').map(s=>s.trim());return `<tr><td>${esc(c[0])}</td><td>${esc(c[1])}</td><td>${esc(c[2])}</td></tr>`}).join('');
  $('addr').textContent=v('address');
  const fcl=lines(lv('fac'));$('fac').innerHTML=fcl.map(x=>`<li>${esc(x)}</li>`).join('');$('facSec').hidden=!fcl.length;
- const p=v('phone');{const d=p.replace(/\D/g,'');$('wa').hidden=d.length<10;$('wa').href='https://wa.me/'+(d.length===10?'91'+d:d)}
+ const p=v('phone');{const d=p.replace(/\D/g,''),ok=d.length>=10&&/[1-9]/.test(d.replace(/^91/,'')),wl='https://wa.me/'+(d.length===10?'91'+d:d)+'?text='+encodeURIComponent(T[L].wa_msg);['wa','wa2','waf'].forEach(i=>{$(i).hidden=!ok;$(i).href=wl});$('wa').textContent=$('wa2').textContent=T[L].wa_t}
 $('ph').textContent=p;$('ph').href='tel:'+p.replace(/[^+\d]/g,'');
  const e=v('email');$('emp').hidden=!e;$('em').textContent=e;$('em').href='mailto:'+e;
  const none=`<p class="mut">${T[L].none}</p>`;
@@ -157,7 +165,7 @@ $('ph').textContent=p;$('ph').href='tel:'+p.replace(/[^+\d]/g,'');
  $('gal').innerHTML=(D.g||[]).map(x=>`<img src="${esc(x.url)}" alt="${esc(x.caption)}">`).join('')||none;
  $('not').innerHTML=(D.n||[]).map(x=>`<div class="n"><time>${esc(x.date)}</time><b>${esc(x.title)}</b><span class="mut">${esc(x.body)}</span></div>`).join('')||none;
 }
-$('lang').onclick=()=>{L=L==='hi'?'en':'hi';localStorage.setItem('lang',L);paint()};
+$('lang').onclick=()=>{L=L==='hi'?'en':L==='en'?'hg':'hi';localStorage.setItem('lang',L);paint()};
 async function load(){
  if(!sb)return;
  const [t,g,n,s]=await Promise.all([sb.from('teachers_public').select('*').order('created_at'),sb.from('gallery').select('*').order('created_at',{ascending:false}),sb.from('notices').select('*').order('date',{ascending:false}).limit(10),sb.from('site_settings').select('*')]);
@@ -190,16 +198,18 @@ const TABS={
  notices:{label:'Notices / सूचना',run:()=>crud('notices',[['title','Title'],['body','Details'],['date','Date','date']],['date','title','body'],'date',true,ME.access==='staff')},
  fees:{label:'Fees / फीस',run:()=>mgmtList('student')},
  reminder:{label:'Fee Reminder',run:reminderTab},
- exam:{label:'Exam / परीक्षा',run:()=>{$('pmain').innerHTML='<p class="mut">Exam section taiyaar hai. Isme kya-kya add karna hai, wo batayein.</p>'}},
+ exam:{label:'Exam / परीक्षा',run:examTab},
  salary:{label:'Salary / वेतन',run:()=>mgmtList('employee')},
  gallery:{label:'Gallery',run:()=>crud('gallery',[['url','Photos (ek saath kai chun sakte hain)','photos'],['caption','Caption (optional)']],['url','caption'],'created_at',true)}
 };
 
-const ICON={fees:'💰',salary:'💼',site:'✏️',staff:'👥',students:'🎓',sa:'✅',ta:'🧑‍🏫',teachers:'👩‍🏫',notices:'📢',gallery:'🖼️',reminder:'🔔',exam:'📝'};
-const setBar=a=>{$('bHome').classList.toggle('on',a==='home');$('bMenu').classList.toggle('on',a==='panel')};
-function showSite(){$('site').hidden=false;$('panelView').hidden=true;$('sheet').hidden=true;setBar('home');window.scrollTo(0,0)}
-function showPanel(){$('site').hidden=true;$('panelView').hidden=false;$('sheet').hidden=true;setBar('panel');window.scrollTo(0,0)}
-const barLabel=()=>{$('bMenu').innerHTML=ME?'<span>🎮</span>Panel':'<span>🔐</span>Staff login'};
+const ICON={fees:'💰',salary:'💼',site:'✏️',staff:'👥',students:'🎓',sa:'✅',ta:'🧑‍🏫',teachers:'👩‍🏫',notices:'📢',gallery:'🖼️',reminder:'🔔',exam:'📋'};
+let BAR='home';
+const setBar=a=>{BAR=a;renderBar();$('waf').classList.toggle('nop',a==='panel')};
+function showSite(){$('site').hidden=false;$('admView').hidden=true;$('panelView').hidden=true;$('sheet').hidden=true;setBar('home');window.scrollTo(0,0)}
+function showAdm(){$('site').hidden=true;$('admView').hidden=false;$('panelView').hidden=true;$('sheet').hidden=true;setBar('adm');window.scrollTo(0,0)}
+function showPanel(){$('site').hidden=true;$('admView').hidden=true;$('panelView').hidden=false;$('sheet').hidden=true;setBar('panel');window.scrollTo(0,0)}
+const barLabel=()=>renderBar();
 async function loadMe(){
  if(!sb)return false;
  const {data:{session}}=await sb.auth.getSession();
@@ -226,7 +236,28 @@ function openTab(k){lastTab=k;
 }
 const goFirst=()=>openTab(Object.keys(TABS).filter(allowed)[0]);
 const foldersHTML=(groups)=>groups.map(g=>`<details class="fold" open><summary>${g[0]}</summary><div class="shg">${g[1]}</div></details>`).join('');
-const GROUPS=[['📁 Management',['fees','reminder','salary']],['📁 Students',['students','sa']],['📁 Staff',['teachers','staff','ta']],['📁 Exam',['exam']],['📁 Website',['site','notices','gallery']]];
+const GROUPS=[['📁 Management',['fees','reminder','salary']],['📁 Students',['students']],['📁 Staff',['teachers','staff']],['📁 Attendance',['sa','ta']],['📁 Exam',['exam']],['📁 Website',['site','notices','gallery']]];
+const FOLD=[['Attendance','nav_att','✅'],['Management','nav_mgt','💼'],['Exam','nav_exm','📋']];
+function folderKeys(n){const ks=Object.keys(TABS).filter(allowed),g=GROUPS.find(g=>g[0].includes(n));return g?g[1].filter(k=>ks.includes(k)):[]}
+function renderBar(){
+ const t=T[L],it=[['home','🏠',t.nav_home],['adm','📝',t.nav_adm]];
+ if(ME)FOLD.forEach(([n,k,ic])=>{if(folderKeys(n).length)it.push(['f:'+n,ic,t[k]])});
+ it.push(['exp','🧭',t.nav_exp],['panel',ME?'🎮':'🔐',ME?t.nav_pnl:t.stf]);
+ $('bar').innerHTML=it.map(([id,ic,l])=>`<button data-b="${id}" class="${id===BAR?'on':''}"><span>${ic}</span>${esc(l)}</button>`).join('');
+}
+function openFolder(n){
+ const g=GROUPS.find(g=>g[0].includes(n));
+ $('shBody').innerHTML=foldersHTML([[g[0],folderKeys(n).map(k=>`<button data-k="${k}"><span>${ICON[k]}</span>${TABS[k].label}</button>`).join('')]]);
+ $('sheet').hidden=false;
+}
+function barGo(id){
+ if(id==='home')return showSite();
+ if(id==='adm')return showAdm();
+ if(id==='exp')return openExplore();
+ if(!ME)return showLogin();
+ if(id==='panel')return $('sheet').hidden?openSheet():($('sheet').hidden=true);
+ if(id.startsWith('f:'))openFolder(id.slice(2));
+}
 function openSheet(){
  const keys=Object.keys(TABS).filter(allowed);
  const btn=k=>`<button data-k="${k}"><span>${ICON[k]}</span>${TABS[k].label}</button>`;
@@ -242,15 +273,15 @@ function openExplore(){
   ['📁 '+t.f_school,b('about','🏫',t.nav_about)+fac+b('teachers','👩‍🏫',t.nav_tch)],
   ['📁 '+t.f_students,b('admission','📝',t.nav_adm)+b('fees','💰',t.nav_fee)+b('notices','📢',t.nav_not)],
   ['📁 '+t.f_media,b('gallery','🖼️',t.nav_gal)],
-  ['📁 '+t.f_contact,b('contact','📞',t.nav_con)+'<button data-act="staff"><span>🔐</span>Staff login</button>']
+  ['📁 '+t.f_contact,b('contact','📞',t.nav_con)+'<button data-act="staff"><span>🔐</span>${t.stf}</button>']
  ]);
  $('sheet').hidden=false;
 }
 $('sheet').onclick=async e=>{
  if(e.target.id==='sheet'){$('sheet').hidden=true;return}
  const b=e.target.closest('button');if(!b)return;
- if(b.dataset.go){$('sheet').hidden=true;showSite();const el=$(b.dataset.go);if(el)setTimeout(()=>el.scrollIntoView({behavior:'smooth'}),40)}
- else if(b.dataset.act==='staff'){$('sheet').hidden=true;$('bMenu').click()}
+ if(b.dataset.go){$('sheet').hidden=true;['admission','fees'].includes(b.dataset.go)?showAdm():showSite();const el=$(b.dataset.go);if(el)setTimeout(()=>el.scrollIntoView({behavior:'smooth'}),40)}
+ else if(b.dataset.act==='staff'){$('sheet').hidden=true;barGo('panel')}
  else if(b.dataset.k)openTab(b.dataset.k);
  else if(b.dataset.act==='out'){await sb.auth.signOut();location.reload()}
  else if(b.dataset.act==='pw'){
@@ -260,11 +291,11 @@ $('sheet').onclick=async e=>{
   const {error}=await sb.auth.updateUser({password:p});alert(error?error.message:'Password badal gaya');
  }
 };
-$('bHome').onclick=showSite;
-$('bExp').onclick=openExplore;
-$('bMenu').onclick=()=>{if(!ME)return showLogin();$('sheet').hidden?openSheet():($('sheet').hidden=true)};
-$('fl').onclick=e=>{e.preventDefault();$('bMenu').click()};
-document.querySelector('header nav').addEventListener('click',()=>{if(!$('panelView').hidden)showSite()});
+$('bar').onclick=e=>{const b=e.target.closest('button');if(b)barGo(b.dataset.b)};
+$('fl').onclick=e=>{e.preventDefault();barGo('panel')};
+document.addEventListener('click',e=>{const a=e.target.closest('[data-adm]');if(a){e.preventDefault();showAdm();const el=$((a.getAttribute('href')||'').slice(1));if(el)setTimeout(()=>el.scrollIntoView({behavior:'smooth'}),40)}});
+document.querySelector('header nav').addEventListener('click',e=>{if(e.target.closest('[data-adm]'))return;if(!$('panelView').hidden||!$('admView').hidden)showSite()});
+document.querySelector('.logo').addEventListener('click',()=>showSite());
 
 async function siteTab(){
  const {data}=await sb.from('site_settings').select('*');
@@ -430,6 +461,56 @@ async function studentsTab(){
  $('slist').onclick=e=>{const id=e.target.dataset.p;if(id)profile('student',id)};
 }
 
+
+
+/* ---------- Exam: AI MCQ paper ---------- */
+const PL={
+ hi:{n:'नाम',r:'रोल नं.',c:'कक्षा',s:'विषय',d:'दिनांक',t:'समय',m:'पूर्णांक',min:'मिनट',ins:'निर्देश: सभी प्रश्न अनिवार्य हैं। सही विकल्प चुनें।',key:'उत्तर कुंजी',ex:'परीक्षा'},
+ en:{n:'Name',r:'Roll No.',c:'Class',s:'Subject',d:'Date',t:'Time',m:'Max marks',min:'min',ins:'Instructions: All questions are compulsory. Choose the correct option.',key:'Answer Key',ex:'Exam'},
+ hg:{n:'Naam',r:'Roll No.',c:'Class',s:'Subject',d:'Date',t:'Samay',m:'Poornank',min:'minute',ins:'Nirdesh: Sabhi prashn anivarya hain. Sahi option chunein.',key:'Answer Key',ex:'Exam'}};
+function paperHTML(x){
+ const P=PL[x.lang]||PL.hg,mk=x.items.length*(+x.marks||1);
+ return `<div style="max-width:760px;margin:0 auto;padding:18px;font:16px/1.6 'Noto Sans Devanagari',sans-serif"><h2 style="text-align:center;margin:0">${esc(v('school_name'))}</h2><p style="text-align:center;margin:2px 0 10px"><b>${esc(x.title||P.ex)}</b></p><div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 16px"><span>${P.c}: ${esc(cn(x.class))}</span><span>${P.s}: ${esc(x.subject)}</span><span>${P.d}: ${esc(x.exam_date)}</span><span>${P.t}: ${esc(x.minutes)} ${P.min}</span><span>${P.m}: ${mk}</span></div><p style="margin:10px 0">${P.n}: ______________________ &nbsp; ${P.r}: ______</p><p style="border-top:1px solid #000;border-bottom:1px solid #000;padding:6px 0"><small>${P.ins}</small></p><ol style="padding-left:22px">${x.items.map(q=>`<li style="margin-bottom:12px"><div>${esc(q.q)}</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:2px 14px;margin-top:4px">${q.o.map((o,i)=>`<span>(${'ABCD'[i]}) ${esc(o)}</span>`).join('')}</div></li>`).join('')}</ol><div id="akey" hidden style="page-break-before:always"><h3>${P.key}</h3><p>${x.items.map((q,i)=>`${i+1}-${'ABCD'[q.a]}`).join(' &nbsp; ')}</p></div></div>`;
+}
+function showPaper(x){
+ let pv=$('pv');if(!pv){pv=document.createElement('div');pv.id='pv';document.body.appendChild(pv)}
+ pv.innerHTML='<div class="noprint" style="position:sticky;top:0;background:#eee;padding:8px;display:flex;gap:8px;flex-wrap:wrap"><button id="pv_p">🖨️ Print / PDF</button><button id="pv_k">Answer key</button><button id="pv_c">Band karein</button></div>'+paperHTML(x);
+ pv.hidden=false;
+ $('pv_p').onclick=()=>window.print();
+ $('pv_k').onclick=()=>{$('akey').hidden=!$('akey').hidden};
+ $('pv_c').onclick=()=>{pv.hidden=true};
+}
+async function examTab(){
+ $('pmain').innerHTML='<p class="mut">Loading...</p>';
+ const {data,error}=await sb.from('exams').select('*').order('created_at',{ascending:false}).limit(30);
+ if(error){$('pmain').innerHTML='<p class="msg">'+esc(error.message)+'</p>';return}
+ const ex=data||[];
+ $('pmain').innerHTML=`<div id="xw"><p><button id="xn">+ Exam lena hai</button></p><div id="xf"></div><p><b>Purane exams</b></p>${ex.length?`<table>${ex.map(x=>`<tr><td>${esc(cn(x.class))} · ${esc(x.subject)}<br><small class="mut">${esc(x.title||'')} ${fmt(x.exam_date)} · ${x.items.length} MCQ</small></td><td><button class="g" data-o="${x.id}">Open</button> <button class="r" data-d="${x.id}">Delete</button></td></tr>`).join('')}</table>`:'<p class="mut">Abhi koi exam nahi.</p>'}</div>`;
+ $('xw').onclick=async e=>{
+  const o=e.target.dataset.o,d=e.target.dataset.d;
+  if(o)showPaper(ex.find(x=>x.id===o));
+  if(d&&confirm('Ye exam hata dein?')){const {error}=await sb.from('exams').delete().eq('id',d);if(error)alert(error.message);else examTab()}
+ };
+ $('xn').onclick=()=>{
+  $('xf').innerHTML=`<div class="card2"><div class="f"><label>Class<select id="x_c">${CONFIG.classes.map(c=>`<option value="${esc(c)}">${esc(cn(c))}</option>`).join('')}</select></label><label>Subject<input id="x_s" placeholder="Jaise: Maths"></label><label>Exam ka naam<input id="x_t" placeholder="Unit Test 1"></label><label>Date<input id="x_d" type="date" value="${today()}"></label><label>Time (minute)<input id="x_m" type="number" value="30"></label><label>Har question ke number<input id="x_k" type="number" value="1"></label><label>Paper ki bhasha<select id="x_l"><option value="hi">Hindi</option><option value="en">English</option><option value="hg">Hinglish</option></select></label></div><button id="x_go">Aage badhein</button> <span id="x_e" class="msg"></span></div>`;
+  $('x_go').onclick=()=>{
+   const x={class:$('x_c').value,subject:$('x_s').value.trim(),title:$('x_t').value.trim(),exam_date:$('x_d').value||today(),minutes:+$('x_m').value||30,marks:+$('x_k').value||1,lang:$('x_l').value};
+   if(!x.subject){$('x_e').textContent='Subject likhein';return}
+   $('xf').innerHTML=`<div class="card2"><p>🤖 <b>${esc(cn(x.class))} · ${esc(x.subject)}</b> ka exam. Ab apne questions bhejein: har question nayi line me likhein. Answer pata ho to saath likh dein. Main inhe MCQ me badal dunga.</p><label>Questions<textarea id="x_q" rows="10"></textarea></label><label>Kul MCQ (khali chhodein = jitne aapne bheje)<input id="x_n" type="number"></label><button id="x_ai">AI se MCQ banayein</button> <span id="x_e2" class="msg"></span><div id="x_r"></div></div>`;
+   $('x_ai').onclick=async()=>{
+    const q=$('x_q').value.trim();if(!q){$('x_e2').textContent='Pehle questions likhein';return}
+    $('x_e2').className='ok';$('x_e2').textContent='AI MCQ bana raha hai...';
+    const {data:r,error}=await sb.functions.invoke('exam-ai',{body:{class:cn(x.class),subject:x.subject,language:x.lang,questions:q,count:+$('x_n').value||0}});
+    const err=error?error.message:r&&r.error;
+    if(err){$('x_e2').className='msg';$('x_e2').textContent=err;return}
+    x.items=r.items;$('x_e2').textContent='';
+    $('x_r').innerHTML=`<p class="ok">✅ ${x.items.length} MCQ taiyaar hain.</p><button id="x_v">Paper dekhein / Print</button> <button id="x_sv">Save exam</button> <span id="x_e3" class="msg"></span>`;
+    $('x_v').onclick=()=>showPaper(x);
+    $('x_sv').onclick=async()=>{const {error}=await sb.from('exams').insert(x);if(error)$('x_e3').textContent=error.message;else examTab()};
+   };
+  };
+ };
+}
 
 /* ---------- Fee Reminder ---------- */
 async function reminderTab(){
