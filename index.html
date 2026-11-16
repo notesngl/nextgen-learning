@@ -86,7 +86,7 @@ footer{border-top:1px solid var(--line);padding:24px 0 30px;color:var(--mut);fon
 #panelView .att label{display:inline;margin-right:10px;white-space:nowrap;color:var(--ink)}#panelView .att input{width:auto;margin:0 3px 0 0}
 #panelView .wrap{overflow-x:auto}
 #panelView .cb{margin:0 6px 8px 0;background:var(--surface2);border-color:var(--line)}#panelView .cb.on{background:var(--gold);color:#1f0e00;border-color:var(--gold)}
-.tk{border:1px solid var(--line);border-left:3px solid var(--neon);background:var(--surface2);border-radius:6px;padding:10px 12px;margin-bottom:8px;font-size:15px}.stars{color:var(--gold);letter-spacing:2px}
+.tk{border:1px solid var(--line);border-left:3px solid var(--neon);background:var(--surface2);border-radius:6px;padding:10px 12px;margin-bottom:8px;font-size:15px}.card2{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;margin:0 0 14px}.stars{color:var(--gold);letter-spacing:2px}
 </style>
 </head>
 <body>
@@ -171,7 +171,7 @@ const POSTS=["Director","Teacher","Coordinator","Office Staff","Other"];
 const ACC={admin:"Full control (Admin)",teacher:"Teacher (students, attendance, notices)",staff:"Basic (sirf notices dekhna)"};
 const isAdm=()=>ME&&(ME.access==='owner'||ME.access==='admin');
 const lvl=t=>ME.access==='owner'?'edit':((t==='student'?ME.fees_access:ME.salary_access)||'none');
-const allowed=k=>{if(k==='fees')return lvl('student')!=='none';if(k==='salary')return lvl('employee')!=='none';return isAdm()||(ME.access==='teacher'?['students','sa','notices'].includes(k):k==='notices')};
+const allowed=k=>{if(k==='fees'||k==='reminder')return lvl('student')!=='none';if(k==='salary')return lvl('employee')!=='none';return isAdm()||(ME.access==='teacher'?['students','sa','notices'].includes(k):k==='notices')};
 async function fn(body){
  const {data,error}=await sb.functions.invoke('staff-admin',{body});
  if(error)throw new Error(error.message);
@@ -189,11 +189,13 @@ const TABS={
  teachers:{label:'Teachers & Staff / कर्मचारी',run:()=>crud('teachers',EMP_F,['photo_url','name','post','subject','phone'],'created_at',false,false,'employee')},
  notices:{label:'Notices / सूचना',run:()=>crud('notices',[['title','Title'],['body','Details'],['date','Date','date']],['date','title','body'],'date',true,ME.access==='staff')},
  fees:{label:'Fees / फीस',run:()=>mgmtList('student')},
+ reminder:{label:'Fee Reminder',run:reminderTab},
+ exam:{label:'Exam / परीक्षा',run:()=>{$('pmain').innerHTML='<p class="mut">Exam section taiyaar hai. Isme kya-kya add karna hai, wo batayein.</p>'}},
  salary:{label:'Salary / वेतन',run:()=>mgmtList('employee')},
  gallery:{label:'Gallery',run:()=>crud('gallery',[['url','Photos (ek saath kai chun sakte hain)','photos'],['caption','Caption (optional)']],['url','caption'],'created_at',true)}
 };
 
-const ICON={fees:'💰',salary:'💼',site:'✏️',staff:'👥',students:'🎓',sa:'✅',ta:'🧑‍🏫',teachers:'👩‍🏫',notices:'📢',gallery:'🖼️'};
+const ICON={fees:'💰',salary:'💼',site:'✏️',staff:'👥',students:'🎓',sa:'✅',ta:'🧑‍🏫',teachers:'👩‍🏫',notices:'📢',gallery:'🖼️',reminder:'🔔',exam:'📝'};
 const setBar=a=>{$('bHome').classList.toggle('on',a==='home');$('bMenu').classList.toggle('on',a==='panel')};
 function showSite(){$('site').hidden=false;$('panelView').hidden=true;$('sheet').hidden=true;setBar('home');window.scrollTo(0,0)}
 function showPanel(){$('site').hidden=true;$('panelView').hidden=false;$('sheet').hidden=true;setBar('panel');window.scrollTo(0,0)}
@@ -224,7 +226,7 @@ function openTab(k){lastTab=k;
 }
 const goFirst=()=>openTab(Object.keys(TABS).filter(allowed)[0]);
 const foldersHTML=(groups)=>groups.map(g=>`<details class="fold" open><summary>${g[0]}</summary><div class="shg">${g[1]}</div></details>`).join('');
-const GROUPS=[['📁 Management',['fees','salary']],['📁 Students',['students','sa']],['📁 Staff',['teachers','staff','ta']],['📁 Website',['site','notices','gallery']]];
+const GROUPS=[['📁 Management',['fees','reminder','salary']],['📁 Students',['students','sa']],['📁 Staff',['teachers','staff','ta']],['📁 Exam',['exam']],['📁 Website',['site','notices','gallery']]];
 function openSheet(){
  const keys=Object.keys(TABS).filter(allowed);
  const btn=k=>`<button data-k="${k}"><span>${ICON[k]}</span>${TABS[k].label}</button>`;
@@ -426,6 +428,34 @@ async function studentsTab(){
  };
  $('sq').oninput=draw;draw();
  $('slist').onclick=e=>{const id=e.target.dataset.p;if(id)profile('student',id)};
+}
+
+
+/* ---------- Fee Reminder ---------- */
+async function reminderTab(){
+ const m=$('pmain');m.innerHTML='<p class="mut">Loading...</p>';
+ await sb.rpc('run_accrual');
+ const [st,bl,lg,cf]=await Promise.all([sb.from('students').select('id,name,phone,class').order('class').order('name'),sb.rpc('balances',{t:'student'}),sb.from('reminder_log').select('*').order('created_at',{ascending:false}).limit(30),isAdm()?sb.from('reminder_cfg').select('*').eq('id',1).maybeSingle():Promise.resolve({data:null})]);
+ const due={},nm={};(bl.data||[]).forEach(b=>{due[b.pid]=+b.charged-+b.paid-+b.discounted});
+ (st.data||[]).forEach(s=>{nm[s.id]=s.name});
+ const rows=(st.data||[]).filter(s=>due[s.id]>0);
+ const msg=s=>`नमस्ते! ${s.name} की ₹${Math.round(due[s.id])} फीस बाकी है। कृपया जल्द से जल्द जमा करें। धन्यवाद, ${v('school_name')}`;
+ const wa=s=>{const d=String(s.phone||'').replace(/\D/g,'');return d.length>=10?'https://wa.me/'+(d.length===10?'91'+d:d)+'?text='+encodeURIComponent(msg(s)):''};
+ const c=cf.data||{enabled:false,day:2,voice:true};
+ m.innerHTML=(isAdm()?`<div class="card2"><b>Automatic reminder</b><div class="f"><label>Auto reminder<select id="rc_e"><option value="true">Chalu</option><option value="false">Band</option></select></label><label>Mahine ki tarikh<input id="rc_d" type="number" min="1" max="28" value="${c.day}"></label><label>AI Voice bhi?<select id="rc_v"><option value="true">Haan</option><option value="false">Nahi</option></select></label></div><button id="rc_s">Save</button> <span id="rc_m" class="msg"></span><p class="mut"><small>Auto bhejne ke liye WhatsApp API setup zaroori hai. Abhi test ke liye neeche ka button ya manual list use karein.</small></p><button class="g" id="rc_now">Abhi sabko bhejein (auto)</button> <span id="rc_r" class="msg"></span></div>`:'')
+ +`<p><b>Baaki fees: ${rows.length} bachhe</b></p><div class="wrap">${rows.length?`<table><tr><th>Name</th><th>Baaki</th><th></th></tr>${rows.map(s=>`<tr><td>${esc(s.name)}<br><small class="mut">${esc(cn(s.class))}</small></td><td>₹${Math.round(due[s.id])}</td><td>${wa(s)?`<a class="btn" target="_blank" rel="noopener" href="${wa(s)}">WhatsApp</a>`:'<small class="mut">Phone nahi</small>'}</td></tr>`).join('')}</table>`:'<p class="mut">Kisi ki fees baaki nahi hai 🎉</p>'}</div>`
+ +`<p style="margin-top:16px"><b>Bheje gaye reminders</b></p><div class="wrap">${(lg.data||[]).length?`<table>${lg.data.map(l=>`<tr><td>${fmt(l.created_at)}</td><td>${esc(nm[l.student_id]||'')}</td><td>${l.kind==='voice'?'🔊':'💬'} ${l.status==='sent'?'✅':'❌'}<br><small class="mut">${esc(l.detail)}</small></td></tr>`).join('')}</table>`:'<p class="mut">Abhi koi nahi.</p>'}</div>`;
+ if(isAdm()){
+  $('rc_e').value=String(c.enabled);$('rc_v').value=String(c.voice);
+  $('rc_s').onclick=async()=>{const {error}=await sb.from('reminder_cfg').upsert({id:1,enabled:$('rc_e').value==='true',day:Math.min(28,Math.max(1,+$('rc_d').value||2)),voice:$('rc_v').value==='true'});$('rc_m').className=error?'msg':'ok';$('rc_m').textContent=error?error.message:'Saved ✓'};
+  $('rc_now').onclick=async()=>{
+   if(!confirm('Baaki fees wale sabhi bachhon ko abhi WhatsApp reminder bhej dein?'))return;
+   $('rc_r').className='ok';$('rc_r').textContent='Bhej rahe hain...';
+   const {data,error}=await sb.functions.invoke('fee-reminder',{body:{action:'run'}});
+   const e=error?error.message:data&&data.error;
+   $('rc_r').className=e?'msg':'ok';$('rc_r').textContent=e||`${data.sent} bheje, ${data.failed} fail, ${data.skipped} skip`;
+  };
+ }
 }
 
 /* ---------- Management: fees & salary ---------- */
