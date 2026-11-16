@@ -455,11 +455,11 @@ const SKN=c=>(CURR[c]||[]).reduce((a,g)=>a+g[1].length,0);
 const stars=r=>r?'<span class="stars">'+'★'.repeat(r)+'☆'.repeat(5-r)+'</span>':'-';
 const RLAB={1:'1 - Bahut kamzor',2:'2 - Kamzor',3:'3 - Theek',4:'4 - Achha',5:'5 - Bahut badhiya'};
 async function studentsTab(){
- const cls=CONFIG.classes;if(!CC||!cls.includes(CC))CC=cls[0];
- $('pmain').innerHTML=`<div>${cls.map(c=>`<button class="cb ${c===CC?'on':''}" data-c="${esc(c)}">${esc(cn(c))}</button>`).join('')}</div>`+(isAdm()?`<p><button class="g" id="sadd">+ Add student</button></p><div id="sform" hidden><div class="f">${STU_F.map(f=>inp(f,'f_')).join('')}<label>Aadhar number<input id="f_aadhar" inputmode="numeric" maxlength="12"></label></div><button id="ssave">Save student</button> <span class="msg" id="e"></span></div>`:'')+`<label>Search<input id="sq" placeholder="Naam"></label><p class="mut" id="scnt"></p><div class="wrap" id="slist">Loading...</div>`;
+ const cls=CONFIG.classes;if(!CC||(CC!=='ALL'&&!cls.includes(CC)))CC=cls[0];
+ $('pmain').innerHTML=`<div><button class="cb ${CC==='ALL'?'on':''}" data-c="ALL">All students</button>${cls.map(c=>`<button class="cb ${c===CC?'on':''}" data-c="${esc(c)}">${esc(cn(c))}</button>`).join('')}</div>`+(isAdm()?`<p><button class="g" id="sadd">+ Add student</button></p><div id="sform" hidden><div class="f">${STU_F.map(f=>inp(f,'f_')).join('')}<label>Aadhar number<input id="f_aadhar" inputmode="numeric" maxlength="12"></label></div><button id="ssave">Save student</button> <span class="msg" id="e"></span></div>`:'')+`<label>Search<input id="sq" placeholder="Naam"></label><p class="mut" id="scnt"></p><div class="wrap" id="slist">Loading...</div>`;
  document.querySelectorAll('.cb').forEach(b=>b.onclick=()=>{CC=b.dataset.c;studentsTab()});
  if(isAdm()){
-  $('f_class').value=CC;
+  if(CC!=='ALL')$('f_class').value=CC;
   sb.from('students').select('roll').not('roll','is',null).order('roll',{ascending:false}).limit(1).then(({data:mx})=>{$('f_roll').value=((mx&&mx[0]&&mx[0].roll)||0)+1});
   $('sadd').onclick=()=>{$('sform').hidden=!$('sform').hidden};
   $('ssave').onclick=async()=>{
@@ -468,11 +468,12 @@ async function studentsTab(){
     const ad=$('f_aadhar').value.replace(/\s/g,'');if(ad&&!/^\d{12}$/.test(ad))throw new Error('Aadhar 12 ank ka hona chahiye');
     const {data:ns,error}=await sb.from('students').insert(o).select('id').single();if(error)throw error;
     if(ad){const r=await sb.from('student_private').upsert({student_id:ns.id,aadhar:ad},{onConflict:'student_id'});if(r.error)throw r.error}
-    CC=o.class||CC;studentsTab();
+    CC=CC==='ALL'?'ALL':(o.class||CC);studentsTab();
    }catch(x){$('e').textContent=x.code==='23505'?'Ye Roll no. kisi aur bachhe ka hai. Doosra Roll no. daalein.':x.message}
   };
  }
- const {data:st,error}=await sb.from('students').select('*').eq('class',CC).order('roll',{nullsFirst:false}).order('name');
+ let sq=sb.from('students').select('*');if(CC!=='ALL')sq=sq.eq('class',CC);else sq=sq.order('class');
+ const {data:st,error}=await sq.order('roll',{nullsFirst:false}).order('name');
  if(error){$('slist').textContent=error.message;return}
  const ids=(st||[]).map(s=>s.id),L={},DN={};
  if(ids.length){const {data:tr}=await sb.from('student_tracker').select('student_id,date,rating,created_at').in('student_id',ids).order('date',{ascending:false}).order('created_at',{ascending:false});
@@ -481,8 +482,8 @@ async function studentsTab(){
  const draw=()=>{
   const q=$('sq').value.trim().toLowerCase();
   const list=(st||[]).filter(s=>!q||String(s.name).toLowerCase().includes(q));
-  $('scnt').textContent=cn(CC)+': '+(st||[]).length+' students';
-  $('slist').innerHTML=list.length?`<table><tr><th>Roll</th><th>Name</th><th>Skills</th><th>Padhai</th><th>Last update</th><th></th></tr>${list.map(s=>{const t=(L[s.id]||[]).slice(0,3).filter(x=>x.rating);const av=t.length?Math.round(t.reduce((a,x)=>a+x.rating,0)/t.length):0;const last=(L[s.id]||[])[0];return `<tr><td>${esc(s.roll)}</td><td>${esc(s.name)}<br><small class="mut">${esc(s.father_name)}</small></td><td>${SKN(CC)?(DN[s.id]||0)+'/'+SKN(CC):'-'}</td><td>${stars(av)}</td><td>${last?fmt(last.date):'-'}</td><td><button class="g" data-p="${s.id}">Open</button></td></tr>`}).join('')}</table>`:'<p class="mut">Is class me abhi koi student nahi hai.</p>';
+  $('scnt').textContent=(CC==='ALL'?'All students':cn(CC))+': '+(st||[]).length+' students';
+  $('slist').innerHTML=list.length?`<table><tr><th>Roll</th><th>Name</th><th>Skills</th><th>Padhai</th><th>Last update</th><th></th></tr>${list.map(s=>{const t=(L[s.id]||[]).slice(0,3).filter(x=>x.rating);const av=t.length?Math.round(t.reduce((a,x)=>a+x.rating,0)/t.length):0;const last=(L[s.id]||[])[0];return `<tr><td>${esc(s.roll)}</td><td>${esc(s.name)}<br><small class="mut">${esc(s.father_name)}${CC==='ALL'?' · '+esc(cn(s.class)):''}</small></td><td>${SKN(s.class)?(DN[s.id]||0)+'/'+SKN(s.class):'-'}</td><td>${stars(av)}</td><td>${last?fmt(last.date):'-'}</td><td><button class="g" data-p="${s.id}">Open</button></td></tr>`}).join('')}</table>`:'<p class="mut">Is class me abhi koi student nahi hai.</p>';
  };
  $('sq').oninput=draw;draw();
  $('slist').onclick=e=>{const id=e.target.dataset.p;if(id)profile('student',id)};
