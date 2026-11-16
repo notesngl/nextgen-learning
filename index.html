@@ -178,7 +178,7 @@ async function fn(body){
  if(data&&data.error)throw new Error(data.error);
  return data;
 }
-const STU_F=[['name','Name / नाम'],['class','Class / कक्षा','sel'],['roll','Roll no','number'],['father_name',"Father's name"],['mother_name',"Mother's name"],['phone','Phone'],['address','Address'],['dob','Date of birth','date']];
+const STU_F=[['name','Name / नाम'],['class','Class / कक्षा','sel'],['father_name',"Parent's name / अभिभावक"],['phone','Mobile'],['address','Address'],['dob','Date of birth','date']];
 const EMP_F=[['name','Name'],['post','Post','opt:Teacher|Director|Coordinator|Office Staff|Other'],['subject','Subject (teacher ke liye)'],['qualification','Qualification'],['phone','Phone'],['address','Address'],['joining_date','Joining date','date'],['show_public','Website par dikhayein?','opt:true=Haan|false=Nahi'],['photo_url','Photo (upload karein)','photo']];
 const TABS={
  site:{label:'Website edit',run:siteTab},
@@ -374,7 +374,7 @@ async function attendance(list,att,idCol,byClass){
   let q=sb.from(list).select('*').order(byClass?'roll':'name');if(byClass)q=q.eq('class',$('cl').value);
   const [{data:people},{data:rec}]=await Promise.all([q,sb.from(att).select('*').eq('date',$('dt').value)]);
   const cur={};(rec||[]).forEach(r=>cur[r[idCol]]=r.status);
-  $('lst').innerHTML=`<table>${(people||[]).map(p=>`<tr><td>${byClass?esc(p.roll)+'. ':''}${esc(p.name)}</td><td class="att">${['P','A','L'].map(s=>`<label><input type="radio" name="r_${p.id}" value="${s}" ${(cur[p.id]||'P')===s?'checked':''}>${s==='P'?'Present':s==='A'?'Absent':'Leave'}</label>`).join('')}</td></tr>`).join('')}</table>`;
+  $('lst').innerHTML=`<table>${(people||[]).map(p=>`<tr><td>${byClass&&p.roll?esc(p.roll)+'. ':''}${esc(p.name)}</td><td class="att">${['P','A','L'].map(s=>`<label><input type="radio" name="r_${p.id}" value="${s}" ${(cur[p.id]||'P')===s?'checked':''}>${s==='P'?'Present':s==='A'?'Absent':'Leave'}</label>`).join('')}</td></tr>`).join('')}</table>`;
   $('sv').hidden=!(people||[]).length;$('sv').onclick=async()=>{
    const rows=(people||[]).map(p=>({[idCol]:p.id,date:$('dt').value,status:document.querySelector(`input[name="r_${p.id}"]:checked`).value}));
    const {error}=await sb.from(att).upsert(rows,{onConflict:idCol+',date'});$('e').textContent=error?error.message:'Saved ✓';};
@@ -385,11 +385,19 @@ async function attendance(list,att,idCol,byClass){
 
 /* ---------- Students folder: class-wise list + Study Tracker ---------- */
 let CC='';
+
+const cn=c=>/^\d/.test(c)?'Class '+c:c;
+const CURR={
+'Class A':[['Hindi',[['a_hi_w','Varnmala likhna'],['a_hi_r','Varnmala padhna / pahchanna']]],['English',[['a_en_sw','Small letters likhna'],['a_en_sr','Small letters pahchanna'],['a_en_cw','Capital letters likhna'],['a_en_cr','Capital letters pahchanna']]],['Maths',[['a_ma_w','1 se 100 tak likhna'],['a_ma_c','1 se 100 tak ginna']]]],
+'Class B':[['Hindi',[['b_hi_w','Hindi writing'],['b_hi_bp','Baal Pothi: shabd padhna'],['b_hi_bv','Baal Pothi: vakya padhna'],['b_hi_bd','Baal Pothi khatam']]],['English',[['b_en_w','English writing'],['b_en_g','Good English book padhna (Baal Pothi ke baad)'],['b_en_gd','Good English book khatam']]],['Maths (daily class)',[['b_ma_add','Jod (+)'],['b_ma_sub','Ghatav (−)'],['b_ma_mul','Guna (×)'],['b_ma_div','Bhag (÷)']]]],
+'Class C':[['Hindi',[['c_hi_r','Story reading'],['c_hi_w','Story writing'],['c_hi_h','Daily 1 page writing homework']]],['English',[['c_en_r','Story reading'],['c_en_h','Daily 1 page writing homework'],['c_en_t','Translation']]],['Maths',[['c_ma','Class 6 ke liye aage ka syllabus']]],['GK',[['c_gk','GK objective questions']]]]
+};
+const SKN=c=>(CURR[c]||[]).reduce((a,g)=>a+g[1].length,0);
 const stars=r=>r?'<span class="stars">'+'★'.repeat(r)+'☆'.repeat(5-r)+'</span>':'-';
 const RLAB={1:'1 - Bahut kamzor',2:'2 - Kamzor',3:'3 - Theek',4:'4 - Achha',5:'5 - Bahut badhiya'};
 async function studentsTab(){
  const cls=CONFIG.classes;if(!CC||!cls.includes(CC))CC=cls[0];
- $('pmain').innerHTML=`<div>${cls.map(c=>`<button class="cb ${c===CC?'on':''}" data-c="${esc(c)}">${esc(c)}</button>`).join('')}</div>`+(isAdm()?`<p><button class="g" id="sadd">+ Add student</button></p><div id="sform" hidden><div class="f">${STU_F.map(f=>inp(f,'f_')).join('')}</div><button id="ssave">Save student</button> <span class="msg" id="e"></span></div>`:'')+`<label>Search<input id="sq" placeholder="Naam"></label><p class="mut" id="scnt"></p><div class="wrap" id="slist">Loading...</div>`;
+ $('pmain').innerHTML=`<div>${cls.map(c=>`<button class="cb ${c===CC?'on':''}" data-c="${esc(c)}">${esc(cn(c))}</button>`).join('')}</div>`+(isAdm()?`<p><button class="g" id="sadd">+ Add student</button></p><div id="sform" hidden><div class="f">${STU_F.map(f=>inp(f,'f_')).join('')}<label>Aadhar number<input id="f_aadhar" inputmode="numeric" maxlength="12"></label></div><button id="ssave">Save student</button> <span class="msg" id="e"></span></div>`:'')+`<label>Search<input id="sq" placeholder="Naam"></label><p class="mut" id="scnt"></p><div class="wrap" id="slist">Loading...</div>`;
  document.querySelectorAll('.cb').forEach(b=>b.onclick=()=>{CC=b.dataset.c;studentsTab()});
  if(isAdm()){
   $('f_class').value=CC;
@@ -397,21 +405,24 @@ async function studentsTab(){
   $('ssave').onclick=async()=>{
    try{const o={};for(const [k,,t] of STU_F){const val=$('f_'+k).value.trim();if(val)o[k]=t==='number'?+val:val}
     if(!o.name)throw new Error('Naam daalein');
-    const {error}=await sb.from('students').insert(o);if(error)throw error;
+    const ad=$('f_aadhar').value.replace(/\s/g,'');if(ad&&!/^\d{12}$/.test(ad))throw new Error('Aadhar 12 ank ka hona chahiye');
+    const {data:ns,error}=await sb.from('students').insert(o).select('id').single();if(error)throw error;
+    if(ad){const r=await sb.from('student_private').upsert({student_id:ns.id,aadhar:ad},{onConflict:'student_id'});if(r.error)throw r.error}
     CC=o.class||CC;studentsTab();
    }catch(x){$('e').textContent=x.message}
   };
  }
- const {data:st,error}=await sb.from('students').select('*').eq('class',CC).order('roll',{nullsFirst:false}).order('name');
+ const {data:st,error}=await sb.from('students').select('*').eq('class',CC).order('name');
  if(error){$('slist').textContent=error.message;return}
- const ids=(st||[]).map(s=>s.id),L={};
+ const ids=(st||[]).map(s=>s.id),L={},DN={};
  if(ids.length){const {data:tr}=await sb.from('student_tracker').select('student_id,date,rating,created_at').in('student_id',ids).order('date',{ascending:false}).order('created_at',{ascending:false});
-  (tr||[]).forEach(t=>{(L[t.student_id]=L[t.student_id]||[]).push(t)})}
+  (tr||[]).forEach(t=>{(L[t.student_id]=L[t.student_id]||[]).push(t)});
+  const {data:sk}=await sb.from('student_skills').select('student_id').eq('status','done').in('student_id',ids);(sk||[]).forEach(x=>{DN[x.student_id]=(DN[x.student_id]||0)+1})}
  const draw=()=>{
   const q=$('sq').value.trim().toLowerCase();
   const list=(st||[]).filter(s=>!q||String(s.name).toLowerCase().includes(q));
-  $('scnt').textContent='Class '+CC+': '+(st||[]).length+' students';
-  $('slist').innerHTML=list.length?`<table><tr><th>Roll</th><th>Name</th><th>Padhai</th><th>Last update</th><th></th></tr>${list.map(s=>{const t=(L[s.id]||[]).slice(0,3).filter(x=>x.rating);const av=t.length?Math.round(t.reduce((a,x)=>a+x.rating,0)/t.length):0;const last=(L[s.id]||[])[0];return `<tr><td>${esc(s.roll)}</td><td>${esc(s.name)}<br><small class="mut">${esc(s.father_name)}</small></td><td>${stars(av)}</td><td>${last?fmt(last.date):'-'}</td><td><button class="g" data-p="${s.id}">Open</button></td></tr>`}).join('')}</table>`:'<p class="mut">Is class me abhi koi student nahi hai.</p>';
+  $('scnt').textContent=cn(CC)+': '+(st||[]).length+' students';
+  $('slist').innerHTML=list.length?`<table><tr><th>Name</th><th>Skills</th><th>Padhai</th><th>Last update</th><th></th></tr>${list.map(s=>{const t=(L[s.id]||[]).slice(0,3).filter(x=>x.rating);const av=t.length?Math.round(t.reduce((a,x)=>a+x.rating,0)/t.length):0;const last=(L[s.id]||[])[0];return `<tr><td>${esc(s.name)}<br><small class="mut">${esc(s.father_name)}</small></td><td>${SKN(CC)?(DN[s.id]||0)+'/'+SKN(CC):'-'}</td><td>${stars(av)}</td><td>${last?fmt(last.date):'-'}</td><td><button class="g" data-p="${s.id}">Open</button></td></tr>`}).join('')}</table>`:'<p class="mut">Is class me abhi koi student nahi hai.</p>';
  };
  $('sq').oninput=draw;draw();
  $('slist').onclick=e=>{const id=e.target.dataset.p;if(id)profile('student',id)};
@@ -457,6 +468,7 @@ async function profile(type,id){
  }
  let trk=[],pv=null;
  if(stu){const [a,b]=await Promise.all([sb.from('student_tracker').select('*').eq('student_id',id).order('date',{ascending:false}).order('created_at',{ascending:false}),isAdm()?sb.from('student_private').select('*').eq('student_id',id).maybeSingle():Promise.resolve({data:null})]);trk=a.data||[];pv=b.data}
+ let skm={};if(stu){const {data:sk}=await sb.from('student_skills').select('skill,status').eq('student_id',id);(sk||[]).forEach(x=>{skm[x.skill]=x.status})}
  const sum=k=>led.filter(x=>x.kind===k).reduce((s,x)=>s+ +x.amount,0);
  const due=sum('charge')-sum('payment')-sum('discount');
  let pool=sum('payment')+sum('discount');const pending=[];
@@ -464,13 +476,15 @@ async function profile(type,id){
  const LB=stu?{payment:'Fee received',charge:'Extra charge',discount:'Discount / waiver'}:{payment:'Salary paid / advance',charge:'Salary due / bonus',discount:'Deduction'};
  const mode=acc?acc.mode:'auto',amt=acc?acc.monthly_amount:0,smv=(acc&&acc.start_month?acc.start_month:monthStart()).slice(0,7);
  const card='background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;margin:12px 0';
- const details=FL.filter(f=>f[2]!=='photo').map(([k,l])=>`<tr><th>${esc(l.split(' (')[0].split(' /')[0])}</th><td>${esc(p[k])}</td></tr>`).join('');
+ let details=FL.filter(f=>f[2]!=='photo').map(([k,l])=>`<tr><th>${esc(l.split(' (')[0].split(' /')[0])}</th><td>${esc(p[k])}</td></tr>`).join('');
+ if(stu&&isAdm())details+=`<tr><th>Aadhar</th><td>${esc(pv&&pv.aadhar)}</td></tr>`;
  let h=`<button id="pbk">← Back</button>`;
  h+=`<div style="${card}">${p.photo_url?`<img src="${esc(p.photo_url)}" alt="" style="height:90px;border-radius:8px;margin-bottom:8px"><br>`:''}<table>${details}</table>${isAdm()?`<p><button class="g" id="ped">Edit details</button></p><div id="pedit" hidden>${FL.map(f=>inp(f,'p_')).join('')}<button id="psv">Save details</button> <span id="pem" class="msg"></span></div>`:''}</div>`;
  if(stu){
-  if(isAdm())h+=`<div style="${card}"><b>Private record (sirf Owner/Admin)</b><div class="f"><label>Aadhar number<input id="pv_a" inputmode="numeric" maxlength="12" value="${esc(pv&&pv.aadhar)}"></label></div><label>Note<textarea id="pv_n" rows="3">${esc(pv&&pv.note)}</textarea></label><button id="pvs">Save</button> <span id="pvm" class="msg"></span></div>`;
+  if(CURR[p.class])h+=`<div style="${card}"><b>Seekhne ki list: ${esc(cn(p.class))}</b><div id="sk" style="margin-top:8px"></div></div>`;
+  if(isAdm())h+=`<div style="${card}"><b>Aadhar &amp; Note (sirf Owner/Admin)</b><div class="f"><label>Aadhar number<input id="pv_a" inputmode="numeric" maxlength="12" value="${esc(pv&&pv.aadhar)}"></label></div><label>Note<textarea id="pv_n" rows="3">${esc(pv&&pv.note)}</textarea></label><button id="pvs">Save</button> <span id="pvm" class="msg"></span></div>`;
   const rr=trk.filter(x=>x.rating).slice(0,3),avg=rr.length?Math.round(rr.reduce((a,x)=>a+x.rating,0)/rr.length):0;
-  h+=`<div style="${card}"><b>Study Tracker</b> <span style="float:right">${stars(avg)}</span><div class="f"><label>Date<input id="tk_d" type="date" value="${today()}"></label><label>Subject (optional)<input id="tk_s"></label><label>Padhai kaisi hai?<select id="tk_r">${[5,4,3,2,1].map(n=>`<option value="${n}" ${n===3?'selected':''}>${RLAB[n]}</option>`).join('')}</select></label></div><label>Kya achha hai<textarea id="tk_g" rows="2"></textarea></label><label>Kya kami hai<textarea id="tk_w" rows="2"></textarea></label><label>Aage kya karna hai<textarea id="tk_p" rows="2"></textarea></label><button id="tka">Add tracker entry</button> <span id="tkm" class="msg"></span><div id="ptr" style="margin-top:12px">${trk.length?trk.map(t=>`<div class="tk"><b>${fmt(t.date)}</b>${t.subject?' · '+esc(t.subject):''} ${stars(t.rating)}${t.good?`<br>✅ ${esc(t.good)}`:''}${t.weak?`<br>⚠️ ${esc(t.weak)}`:''}${t.plan?`<br>➡️ ${esc(t.plan)}`:''}<br><button class="r" data-td="${t.id}">Delete</button></div>`).join(''):'<p class="mut">Abhi koi entry nahi hai.</p>'}</div></div>`;
+  h+=`<div style="${card}"><b>Padhai ka record (Remarks)</b> <span style="float:right">${stars(avg)}</span><div class="f"><label>Date<input id="tk_d" type="date" value="${today()}"></label><label>Subject (optional)<input id="tk_s"></label><label>Padhai kaisi hai?<select id="tk_r">${[5,4,3,2,1].map(n=>`<option value="${n}" ${n===3?'selected':''}>${RLAB[n]}</option>`).join('')}</select></label></div><label>Kya achha hai<textarea id="tk_g" rows="2"></textarea></label><label>Kya kami hai<textarea id="tk_w" rows="2"></textarea></label><label>Aage kya karna hai<textarea id="tk_p" rows="2"></textarea></label><button id="tka">Add tracker entry</button> <span id="tkm" class="msg"></span><div id="ptr" style="margin-top:12px">${trk.length?trk.map(t=>`<div class="tk"><b>${fmt(t.date)}</b>${t.subject?' · '+esc(t.subject):''} ${stars(t.rating)}${t.good?`<br>✅ ${esc(t.good)}`:''}${t.weak?`<br>⚠️ ${esc(t.weak)}`:''}${t.plan?`<br>➡️ ${esc(t.plan)}`:''}<br><button class="r" data-td="${t.id}">Delete</button></div>`).join(''):'<p class="mut">Abhi koi entry nahi hai.</p>'}</div></div>`;
  }
  if(see){
   h+=`<div style="${card}"><small class="mut">${stu?'Baki fees':'Baki salary'}</small><div style="font:800 32px var(--f);color:${due>0?'var(--red)':'var(--neon)'}">${money(due)}</div><small class="mut">Total: ${money(sum('charge'))} · ${stu?'Mile':'Diye'}: ${money(sum('payment'))}${sum('discount')?' · '+(stu?'Discount':'Deduction')+': '+money(sum('discount')):''}</small>`;
@@ -497,6 +511,29 @@ async function profile(type,id){
   };
  }
   if(stu){
+  if(stu&&CURR[p.class]&&$('sk')){
+   const G=CURR[p.class],all=G.flatMap(g=>g[1]),IC={doing:'🟡 Chal raha',done:'✅ Ho gaya'},NX=CONFIG.classes[CONFIG.classes.indexOf(p.class)+1];
+   const drawSk=()=>{
+    const dn=all.filter(x=>skm[x[0]]==='done').length,tot=all.length,full=dn===tot;
+    $('sk').innerHTML=`<p><b>${dn}/${tot}</b> complete (${Math.round(dn*100/tot)}%)</p><div style="background:var(--line);height:8px;border-radius:4px;margin-bottom:10px"><div style="background:var(--neon);height:8px;border-radius:4px;width:${dn*100/tot}%"></div></div>`
+    +G.map(([g,it])=>`<p style="margin:12px 0 4px"><b>${esc(g)}</b></p>`+it.map(([k,l])=>`<div style="display:flex;justify-content:space-between;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid var(--line)"><span>${esc(l)}</span><button class="g" data-sk="${k}">${IC[skm[k]]||'⬜ Baaki'}</button></div>`).join('')).join('')
+    +(NX?`<p style="margin-top:12px">${p.class==='Class C'?'<small class="mut">Bachha jab school ke Class 6 me jaye tabhi aage bhejein.</small><br>':full?'✅ Sab complete! '+esc(cn(NX))+' me bhejne layak hai.<br>':''}${isAdm()?`<button id="prom">${esc(cn(NX))} me bhejein</button>`:(full&&p.class!=='Class C'?'<small class="mut">Admin se class badalwayein.</small>':'')}</p>`:'');
+   };
+   drawSk();
+   $('sk').onclick=async e=>{
+    const k=e.target.dataset.sk;
+    if(k){const cur=skm[k],nx=!cur?'doing':cur==='doing'?'done':null;
+     const r=nx?await sb.from('student_skills').upsert({student_id:id,skill:k,status:nx,updated_at:new Date().toISOString()},{onConflict:'student_id,skill'}):await sb.from('student_skills').delete().eq('student_id',id).eq('skill',k);
+     if(r.error){alert(r.error.message);return}
+     if(nx)skm[k]=nx;else delete skm[k];drawSk();return}
+    if(e.target.id==='prom'){
+     const dn=all.filter(x=>skm[x[0]]==='done').length;
+     if(!confirm((dn<all.length&&p.class!=='Class C'?'Abhi sab skills complete nahi hain. ':'')+p.name+' ko '+cn(NX)+' me bhej dein?'))return;
+     const {error}=await sb.from('students').update({class:NX}).eq('id',id);
+     if(error)alert(error.message);else{CC=NX;profile(type,id)}
+    }
+   };
+  }
   if($('pvs'))$('pvs').onclick=async()=>{
    const a=$('pv_a').value.replace(/\s/g,'');
    if(a&&!/^\d{12}$/.test(a)){$('pvm').textContent='Aadhar 12 ank ka hona chahiye';return}
