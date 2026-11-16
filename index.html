@@ -53,8 +53,11 @@ ul.chips{list-style:none;margin:0;padding:0;display:grid;gap:10px;grid-template-
 table{border-collapse:collapse;width:100%;max-width:640px;background:var(--surface)}
 td,th{padding:10px 12px;border:1px solid var(--line);text-align:left;font-size:15px;vertical-align:top}
 th{background:var(--surface2);color:var(--gold);font:700 15px var(--f);text-transform:uppercase;letter-spacing:.08em}
-.gal{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
-.gal img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:4px;border:1px solid var(--line)}
+.gal{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding-bottom:6px}
+.gal img{flex:0 0 78%;max-width:380px;aspect-ratio:4/3;object-fit:cover;border-radius:8px;border:1px solid var(--line);scroll-snap-align:center;cursor:zoom-in}
+#lb{position:fixed;inset:0;z-index:80;background:rgba(0,0,0,.96)}#lb[hidden]{display:none}#lbs{display:flex;height:100%;overflow-x:auto;scroll-snap-type:x mandatory}.lbi{flex:0 0 100%;scroll-snap-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:56px 8px}.lbi img{max-width:100%;max-height:78vh;object-fit:contain}.lbi p{color:#fff;margin:8px 0 0}#lb button{position:absolute;background:rgba(255,255,255,.15);color:#fff;border:0;border-radius:50%;width:44px;height:44px;font-size:22px;cursor:pointer}#lbx{top:12px;right:12px}#lbp{top:50%;left:8px}#lbn{top:50%;right:8px}#lbc{position:absolute;top:20px;left:16px;color:#fff;font:600 15px sans-serif}
+.ptabs{display:flex;gap:6px;margin:12px 0;overflow-x:auto}#panelView .ptabs button{flex:1 0 auto;background:var(--surface2);border:1px solid var(--line);color:var(--ink)}#panelView .ptabs button.on{background:var(--gold);color:#1f0e00;border-color:var(--gold)}.pane[hidden]{display:none}
+.rg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}.rc{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px}.rc small{display:block;color:var(--mut)}.rc b{font:800 22px var(--f)}
 .n{padding:12px 14px;margin-bottom:8px;background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--gold);max-width:720px}
 .n time{color:var(--gold);font:700 14px var(--f);letter-spacing:.1em}.n b{display:block}
 footer{border-top:1px solid var(--line);padding:24px 0 30px;color:var(--mut);font-size:14px;background:#070A16}a.adm{color:var(--gold)}
@@ -162,9 +165,20 @@ $('ph').textContent=p;$('ph').href='tel:'+p.replace(/[^+\d]/g,'');
  const e=v('email');$('emp').hidden=!e;$('em').textContent=e;$('em').href='mailto:'+e;
  const none=`<p class="mut">${T[L].none}</p>`;
  $('tch').innerHTML=(D.t||[]).map(x=>`<div class="card">${x.photo_url?`<img src="${esc(x.photo_url)}" alt="">`:''}<h3>${esc(x.name)}</h3><small>${esc(x.subject)}${x.qualification?' · '+esc(x.qualification):''}</small></div>`).join('')||none;
- $('gal').innerHTML=(D.g||[]).map(x=>`<img src="${esc(x.url)}" alt="${esc(x.caption)}">`).join('')||none;
+ $('gal').innerHTML=(D.g||[]).map((x,i)=>`<img src="${esc(x.url)}" alt="${esc(x.caption)}" loading="lazy" data-gi="${i}">`).join('')||none;$('gal').onclick=e=>{const i=e.target.dataset.gi;if(i!=null)openLB(+i)};
  $('not').innerHTML=(D.n||[]).map(x=>`<div class="n"><time>${esc(x.date)}</time><b>${esc(x.title)}</b><span class="mut">${esc(x.body)}</span></div>`).join('')||none;
 }
+function openLB(i){
+ const g=D.g||[];if(!g.length)return;
+ let lb=$('lb');if(!lb){lb=document.createElement('div');lb.id='lb';document.body.appendChild(lb)}
+ lb.innerHTML=`<div id="lbs">${g.map(x=>`<div class="lbi"><img src="${esc(x.url)}" alt="${esc(x.caption)}">${x.caption?`<p>${esc(x.caption)}</p>`:''}</div>`).join('')}</div><button id="lbx">✕</button><button id="lbp">‹</button><button id="lbn">›</button><span id="lbc"></span>`;
+ lb.hidden=false;document.body.style.overflow='hidden';
+ const sc=$('lbs'),upd=()=>{$('lbc').textContent=(Math.round(sc.scrollLeft/sc.clientWidth)+1)+' / '+g.length};
+ sc.style.scrollBehavior='auto';sc.scrollLeft=i*sc.clientWidth;upd();sc.style.scrollBehavior='smooth';sc.onscroll=upd;
+ $('lbx').onclick=()=>{lb.hidden=true;document.body.style.overflow=''};
+ $('lbp').onclick=()=>sc.scrollBy({left:-sc.clientWidth});$('lbn').onclick=()=>sc.scrollBy({left:sc.clientWidth});
+}
+addEventListener('keydown',e=>{const lb=$('lb');if(!lb||lb.hidden)return;if(e.key==='Escape')$('lbx').click();if(e.key==='ArrowRight')$('lbn').click();if(e.key==='ArrowLeft')$('lbp').click()});
 $('lang').onclick=()=>{L=L==='hi'?'en':L==='en'?'hg':'hi';localStorage.setItem('lang',L);paint()};
 async function load(){
  if(!sb)return;
@@ -179,14 +193,14 @@ const POSTS=["Director","Teacher","Coordinator","Office Staff","Other"];
 const ACC={admin:"Full control (Admin)",teacher:"Teacher (students, attendance, notices)",staff:"Basic (sirf notices dekhna)"};
 const isAdm=()=>ME&&(ME.access==='owner'||ME.access==='admin');
 const lvl=t=>ME.access==='owner'?'edit':((t==='student'?ME.fees_access:ME.salary_access)||'none');
-const allowed=k=>{if(k==='fees'||k==='reminder')return lvl('student')!=='none';if(k==='salary')return lvl('employee')!=='none';return isAdm()||(ME.access==='teacher'?['students','sa','notices'].includes(k):k==='notices')};
+const allowed=k=>{if(k==='fees'||k==='reminder'||k==='report')return lvl('student')!=='none';if(k==='salary')return lvl('employee')!=='none';return isAdm()||(ME.access==='teacher'?['students','sa','notices'].includes(k):k==='notices')};
 async function fn(body){
  const {data,error}=await sb.functions.invoke('staff-admin',{body});
  if(error)throw new Error(error.message);
  if(data&&data.error)throw new Error(data.error);
  return data;
 }
-const STU_F=[['name','Name / नाम'],['class','Class / कक्षा','sel'],['father_name',"Parent's name / अभिभावक"],['phone','Mobile'],['address','Address'],['dob','Date of birth','date']];
+const STU_F=[['name','Name / नाम'],['class','Class / कक्षा','sel'],['roll','Roll no (har bachhe ka alag)','number'],['father_name',"Parent's name / अभिभावक"],['phone','Mobile'],['address','Address'],['dob','Date of birth','date']];
 const EMP_F=[['name','Name'],['post','Post','opt:Teacher|Director|Coordinator|Office Staff|Other'],['subject','Subject (teacher ke liye)'],['qualification','Qualification'],['phone','Phone'],['address','Address'],['joining_date','Joining date','date'],['show_public','Website par dikhayein?','opt:true=Haan|false=Nahi'],['photo_url','Photo (upload karein)','photo']];
 const TABS={
  site:{label:'Website edit',run:siteTab},
@@ -198,12 +212,13 @@ const TABS={
  notices:{label:'Notices / सूचना',run:()=>crud('notices',[['title','Title'],['body','Details'],['date','Date','date']],['date','title','body'],'date',true,ME.access==='staff')},
  fees:{label:'Fees / फीस',run:()=>mgmtList('student')},
  reminder:{label:'Fee Reminder',run:reminderTab},
+ report:{label:'Fee Report',run:reportTab},
  exam:{label:'Exam / परीक्षा',run:examTab},
  salary:{label:'Salary / वेतन',run:()=>mgmtList('employee')},
  gallery:{label:'Gallery',run:()=>crud('gallery',[['url','Photos (ek saath kai chun sakte hain)','photos'],['caption','Caption (optional)']],['url','caption'],'created_at',true)}
 };
 
-const ICON={fees:'💰',salary:'💼',site:'✏️',staff:'👥',students:'🎓',sa:'✅',ta:'🧑‍🏫',teachers:'👩‍🏫',notices:'📢',gallery:'🖼️',reminder:'🔔',exam:'📋'};
+const ICON={fees:'💰',salary:'💼',site:'✏️',staff:'👥',students:'🎓',sa:'✅',ta:'🧑‍🏫',teachers:'👩‍🏫',notices:'📢',gallery:'🖼️',reminder:'🔔',report:'📊',exam:'📋'};
 let BAR='home';
 const setBar=a=>{BAR=a;renderBar();$('waf').classList.toggle('nop',a==='panel')};
 function showSite(){$('site').hidden=false;$('admView').hidden=true;$('panelView').hidden=true;$('sheet').hidden=true;setBar('home');window.scrollTo(0,0)}
@@ -229,14 +244,14 @@ function showLogin(){
  };
 }
 let lastTab='';
-function openTab(k){lastTab=k;
+function openTab(k){lastTab=k;PTAB='det';
  showPanel();$('ptitle').textContent=TABS[k].label;
  $('pwho').textContent=(ME.name||ME.email)+' · '+(ME.post||ME.access)+(ME.access==='owner'?' (Owner)':'');
  TABS[k].run();
 }
 const goFirst=()=>openTab(Object.keys(TABS).filter(allowed)[0]);
 const foldersHTML=(groups)=>groups.map(g=>`<details class="fold" open><summary>${g[0]}</summary><div class="shg">${g[1]}</div></details>`).join('');
-const GROUPS=[['📁 Management',['fees','reminder','salary']],['📁 Students',['students']],['📁 Staff',['teachers','staff']],['📁 Attendance',['sa','ta']],['📁 Exam',['exam']],['📁 Website',['site','notices','gallery']]];
+const GROUPS=[['📁 Management',['fees','reminder','report','salary']],['📁 Students',['students']],['📁 Staff',['teachers','staff']],['📁 Attendance',['sa','ta']],['📁 Exam',['exam']],['📁 Website',['site','notices','gallery']]];
 const FOLD=[['Attendance','nav_att','✅'],['Management','nav_mgt','💼'],['Exam','nav_exm','📋']];
 function folderKeys(n){const ks=Object.keys(TABS).filter(allowed),g=GROUPS.find(g=>g[0].includes(n));return g?g[1].filter(k=>ks.includes(k)):[]}
 function renderBar(){
@@ -402,22 +417,33 @@ async function crud(table,fields,cols,order,desc,ro,prof){
 }
 async function attendance(list,att,idCol,byClass){
  const m=$('pmain');
- m.innerHTML=`<div class="f">${byClass?`<label>Class<select id="cl">${CONFIG.classes.map(c=>`<option>${c}</option>`).join('')}</select></label>`:''}<label>Date<input id="dt" type="date" value="${today()}"></label></div><div class="wrap" id="lst"></div><button id="sv" hidden>Save attendance</button> <span id="e"></span>`;
+ m.innerHTML=`<div class="f">${byClass?`<label>Class<select id="cl">${CONFIG.classes.map(c=>`<option value="${esc(c)}">${esc(cn(c))}</option>`).join('')}</select></label>`:''}<label>Date<input id="dt" type="date" value="${today()}"></label></div><div id="ab"></div><div class="wrap" id="lst"></div><button id="sv" hidden>Save attendance</button> <span id="e"></span><h3>Pichli attendance</h3><div class="wrap" id="hist"></div>`;
  const load=async()=>{
-  let q=sb.from(list).select('*').order(byClass?'roll':'name');if(byClass)q=q.eq('class',$('cl').value);
-  const [{data:people},{data:rec}]=await Promise.all([q,sb.from(att).select('*').eq('date',$('dt').value)]);
-  const cur={};(rec||[]).forEach(r=>cur[r[idCol]]=r.status);
-  $('lst').innerHTML=`<table>${(people||[]).map(p=>`<tr><td>${byClass&&p.roll?esc(p.roll)+'. ':''}${esc(p.name)}</td><td class="att">${['P','A','L'].map(s=>`<label><input type="radio" name="r_${p.id}" value="${s}" ${(cur[p.id]||'P')===s?'checked':''}>${s==='P'?'Present':s==='A'?'Absent':'Leave'}</label>`).join('')}</td></tr>`).join('')}</table>`;
+  const dt=$('dt').value;
+  let q=sb.from(list).select('*');q=byClass?q.eq('class',$('cl').value).order('roll',{nullsFirst:false}).order('name'):q.order('name');
+  const [{data:people},{data:rec}]=await Promise.all([q,sb.from(att).select('*').eq('date',dt)]);
+  const ids=(people||[]).map(p=>p.id),cur={};(rec||[]).forEach(r=>cur[r[idCol]]=r.status);
+  const from=new Date(new Date(dt+'T00:00:00').getTime()-45*864e5).toLocaleDateString('sv');
+  let H=[];
+  if(ids.length)for(let o=0;o<5000;o+=1000){const {data}=await sb.from(att).select(idCol+',date,status').in(idCol,ids).gte('date',from).lt('date',dt).order('date',{ascending:false}).range(o,o+999);H=H.concat(data||[]);if(!data||data.length<1000)break}
+  const days=[...new Set(H.map(r=>r.date))].sort().reverse(),mp={},byD={};
+  H.forEach(r=>{(mp[r[idCol]]=mp[r[idCol]]||{})[r.date]=r.status;const o=byD[r.date]=byD[r.date]||{P:0,A:0,L:0};o[r.status]=(o[r.status]||0)+1});
+  const streak={};ids.forEach(id=>{let n=0;for(const d of days){if((mp[id]||{})[d]==='A')n++;else break}streak[id]=n});
+  const last=days[0],ab=(people||[]).filter(p=>last&&(mp[p.id]||{})[last]==='A');
+  $('ab').innerHTML=last?`<div class="card2"><b>Pichli attendance (${fmt(last)}):</b> ${ab.length?`<span style="color:var(--red)">${ab.length} absent</span><table>${ab.map(p=>`<tr><td>${esc(p.name)}</td><td>🔴 ${streak[p.id]} din se absent</td></tr>`).join('')}</table>`:'<span class="ok">sab aaye ✅</span>'}</div>`:'<p class="mut">Pichli attendance ka record abhi nahi hai.</p>';
+  $('lst').innerHTML=`<table>${(people||[]).map(p=>`<tr><td>${byClass&&p.roll?esc(p.roll)+'. ':''}${esc(p.name)}${streak[p.id]?`<br><small style="color:var(--red)">🔴 ${streak[p.id]} din se absent</small>`:''}</td><td class="att">${['P','A','L'].map(s=>`<label><input type="radio" name="r_${p.id}" value="${s}" ${(cur[p.id]||'P')===s?'checked':''}>${s==='P'?'Present':s==='A'?'Absent':'Leave'}</label>`).join('')}</td></tr>`).join('')}</table>`;
+  $('hist').innerHTML=days.length?`<table><tr><th>Date</th><th>Present</th><th>Absent</th><th>Leave</th></tr>${days.slice(0,15).map(d=>`<tr data-d="${d}" style="cursor:pointer"><td>${fmt(d)}</td><td>${byD[d].P}</td><td>${byD[d].A}</td><td>${byD[d].L}</td></tr>`).join('')}</table><small class="mut">Kisi date par tap karke us din ki attendance dekhein.</small>`:'<p class="mut">Abhi koi purana record nahi.</p>';
+  $('hist').onclick=e=>{const tr=e.target.closest('tr[data-d]');if(tr){$('dt').value=tr.dataset.d;load()}};
   $('sv').hidden=!(people||[]).length;$('sv').onclick=async()=>{
    const rows=(people||[]).map(p=>({[idCol]:p.id,date:$('dt').value,status:document.querySelector(`input[name="r_${p.id}"]:checked`).value}));
-   const {error}=await sb.from(att).upsert(rows,{onConflict:idCol+',date'});$('e').textContent=error?error.message:'Saved ✓';};
+   const {error}=await sb.from(att).upsert(rows,{onConflict:idCol+',date'});$('e').textContent=error?error.message:'Saved ✓';if(!error)load();};
  };
  m.querySelectorAll('select,input').forEach(x=>x.onchange=load);load();
 }
 
 
 /* ---------- Students folder: class-wise list + Study Tracker ---------- */
-let CC='';
+let CC='',PTAB='det';
 
 const cn=c=>/^\d/.test(c)?'Class '+c:c;
 const CURR={
@@ -434,6 +460,7 @@ async function studentsTab(){
  document.querySelectorAll('.cb').forEach(b=>b.onclick=()=>{CC=b.dataset.c;studentsTab()});
  if(isAdm()){
   $('f_class').value=CC;
+  sb.from('students').select('roll').not('roll','is',null).order('roll',{ascending:false}).limit(1).then(({data:mx})=>{$('f_roll').value=((mx&&mx[0]&&mx[0].roll)||0)+1});
   $('sadd').onclick=()=>{$('sform').hidden=!$('sform').hidden};
   $('ssave').onclick=async()=>{
    try{const o={};for(const [k,,t] of STU_F){const val=$('f_'+k).value.trim();if(val)o[k]=t==='number'?+val:val}
@@ -442,10 +469,10 @@ async function studentsTab(){
     const {data:ns,error}=await sb.from('students').insert(o).select('id').single();if(error)throw error;
     if(ad){const r=await sb.from('student_private').upsert({student_id:ns.id,aadhar:ad},{onConflict:'student_id'});if(r.error)throw r.error}
     CC=o.class||CC;studentsTab();
-   }catch(x){$('e').textContent=x.message}
+   }catch(x){$('e').textContent=x.code==='23505'?'Ye Roll no. kisi aur bachhe ka hai. Doosra Roll no. daalein.':x.message}
   };
  }
- const {data:st,error}=await sb.from('students').select('*').eq('class',CC).order('name');
+ const {data:st,error}=await sb.from('students').select('*').eq('class',CC).order('roll',{nullsFirst:false}).order('name');
  if(error){$('slist').textContent=error.message;return}
  const ids=(st||[]).map(s=>s.id),L={},DN={};
  if(ids.length){const {data:tr}=await sb.from('student_tracker').select('student_id,date,rating,created_at').in('student_id',ids).order('date',{ascending:false}).order('created_at',{ascending:false});
@@ -455,7 +482,7 @@ async function studentsTab(){
   const q=$('sq').value.trim().toLowerCase();
   const list=(st||[]).filter(s=>!q||String(s.name).toLowerCase().includes(q));
   $('scnt').textContent=cn(CC)+': '+(st||[]).length+' students';
-  $('slist').innerHTML=list.length?`<table><tr><th>Name</th><th>Skills</th><th>Padhai</th><th>Last update</th><th></th></tr>${list.map(s=>{const t=(L[s.id]||[]).slice(0,3).filter(x=>x.rating);const av=t.length?Math.round(t.reduce((a,x)=>a+x.rating,0)/t.length):0;const last=(L[s.id]||[])[0];return `<tr><td>${esc(s.name)}<br><small class="mut">${esc(s.father_name)}</small></td><td>${SKN(CC)?(DN[s.id]||0)+'/'+SKN(CC):'-'}</td><td>${stars(av)}</td><td>${last?fmt(last.date):'-'}</td><td><button class="g" data-p="${s.id}">Open</button></td></tr>`}).join('')}</table>`:'<p class="mut">Is class me abhi koi student nahi hai.</p>';
+  $('slist').innerHTML=list.length?`<table><tr><th>Roll</th><th>Name</th><th>Skills</th><th>Padhai</th><th>Last update</th><th></th></tr>${list.map(s=>{const t=(L[s.id]||[]).slice(0,3).filter(x=>x.rating);const av=t.length?Math.round(t.reduce((a,x)=>a+x.rating,0)/t.length):0;const last=(L[s.id]||[])[0];return `<tr><td>${esc(s.roll)}</td><td>${esc(s.name)}<br><small class="mut">${esc(s.father_name)}</small></td><td>${SKN(CC)?(DN[s.id]||0)+'/'+SKN(CC):'-'}</td><td>${stars(av)}</td><td>${last?fmt(last.date):'-'}</td><td><button class="g" data-p="${s.id}">Open</button></td></tr>`}).join('')}</table>`:'<p class="mut">Is class me abhi koi student nahi hai.</p>';
  };
  $('sq').oninput=draw;draw();
  $('slist').onclick=e=>{const id=e.target.dataset.p;if(id)profile('student',id)};
@@ -510,6 +537,35 @@ async function examTab(){
    };
   };
  };
+}
+
+/* ---------- Fee Report ---------- */
+async function reportTab(){
+ const OPT=[['cm','Is mahina (1 tarikh se aaj tak)'],['w1','Pichla 1 hafta'],...Array.from({length:12},(_,i)=>['m'+(i+1),'Pichle '+(i+1)+' mahine']),['cu','Custom (date se date tak)']];
+ $('pmain').innerHTML=`<div class="f"><label>Report kitne samay ki<select id="rp">${OPT.map(o=>`<option value="${o[0]}">${o[1]}</option>`).join('')}</select></label><label id="rf1" hidden>Se<input id="rfr" type="date" value="${monthStart()}"></label><label id="rf2" hidden>Tak<input id="rto" type="date" value="${today()}"></label></div><div id="rout"><p class="mut">Loading...</p></div>`;
+ await sb.rpc('run_accrual');
+ let led=[];
+ for(let o=0;o<30000;o+=1000){const {data,error}=await sb.from('ledger').select('person_id,kind,amount,month,auto,paid_on,created_at').eq('person_type','student').order('created_at').order('id').range(o,o+999);if(error){$('rout').innerHTML='<p class="msg">'+esc(error.message)+'</p>';return}led=led.concat(data||[]);if(!data||data.length<1000)break}
+ const {data:st}=await sb.from('students').select('id,name,class,roll');
+ const ymd=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+ led.forEach(x=>{x.d=x.auto?ymd(new Date(+String(x.month).slice(0,4),+String(x.month).slice(5,7),0)):String(x.paid_on||x.created_at).slice(0,10)});
+ const range=()=>{const v=$('rp').value,t=today(),sub=(n,u)=>{const d=new Date(t+'T00:00:00');if(u==='d')d.setDate(d.getDate()-n);else d.setMonth(d.getMonth()-n);d.setDate(d.getDate()+1);return ymd(d)};
+  if(v==='cm')return [monthStart(),t];if(v==='w1')return [sub(7,'d'),t];if(v==='cu')return [$('rfr').value||'2000-01-01',$('rto').value||t];return [sub(+v.slice(1),'m'),t]};
+ const draw=()=>{
+  $('rf1').hidden=$('rf2').hidden=$('rp').value!=='cu';
+  const [f,t]=range(),R={};
+  (st||[]).forEach(s=>{R[s.id]={s,mile:0,hue:0,disc:0,due:0}});
+  led.forEach(x=>{const r=R[x.person_id];if(!r)return;const a=+x.amount,inr=x.d>=f&&x.d<=t;
+   if(x.kind==='charge'){r.due+=a;if(inr)r.hue+=a}else if(x.kind==='payment'){r.due-=a;if(inr)r.mile+=a}else{r.due-=a;if(inr)r.disc+=a}});
+  const rows=Object.values(R),T={mile:0,hue:0,disc:0,due:0,n:0},C={};
+  rows.forEach(r=>{const b=Math.max(r.due,0);T.mile+=r.mile;T.hue+=r.hue;T.disc+=r.disc;T.due+=b;if(b>0)T.n++;
+   const c=C[r.s.class||'-']=C[r.s.class||'-']||{n:0,hue:0,mile:0,due:0};c.n++;c.hue+=r.hue;c.mile+=r.mile;c.due+=b});
+  const list=rows.filter(r=>r.mile>0||r.due>0).sort((a,b)=>b.due-a.due);
+  $('rout').innerHTML=`<p class="mut">${fmt(f)} se ${fmt(t)} tak</p><div class="rg"><div class="rc"><small>Fee mili</small><b style="color:var(--neon)">${money(T.mile)}</b></div><div class="rc"><small>Total hue (charge)</small><b>${money(T.hue)}</b></div><div class="rc"><small>Discount</small><b>${money(T.disc)}</b></div><div class="rc"><small>Abhi tak ka baki (${T.n} bachhe)</small><b style="color:var(--red)">${money(T.due)}</b></div></div>`
+  +`<h3>Class ke hisaab se</h3><div class="wrap"><table><tr><th>Class</th><th>Bachhe</th><th>Hue</th><th>Mile</th><th>Baki</th></tr>${Object.entries(C).sort().map(([k,c])=>`<tr><td>${esc(cn(k))}</td><td>${c.n}</td><td>${money(c.hue)}</td><td>${money(c.mile)}</td><td>${money(c.due)}</td></tr>`).join('')}</table></div>`
+  +`<h3>Bachhe (baki / jinhone fee di)</h3><div class="wrap">${list.length?`<table><tr><th>Name</th><th>Mile</th><th>Baki</th></tr>${list.map(r=>`<tr><td>${esc(r.s.name)}<br><small class="mut">${esc(cn(r.s.class))}</small></td><td>${money(r.mile)}</td><td style="color:${r.due>0?'var(--red)':'inherit'}">${money(Math.max(r.due,0))}</td></tr>`).join('')}</table>`:'<p class="mut">Koi record nahi.</p>'}</div>`;
+ };
+ ['rp','rfr','rto'].forEach(i=>$(i).onchange=draw);draw();
 }
 
 /* ---------- Fee Reminder ---------- */
@@ -589,26 +645,30 @@ async function profile(type,id){
  const card='background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;margin:12px 0';
  let details=FL.filter(f=>f[2]!=='photo').map(([k,l])=>`<tr><th>${esc(l.split(' (')[0].split(' /')[0])}</th><td>${esc(p[k])}</td></tr>`).join('');
  if(stu&&isAdm())details+=`<tr><th>Aadhar</th><td>${esc(pv&&pv.aadhar)}</td></tr>`;
- let h=`<button id="pbk">← Back</button>`;
- h+=`<div style="${card}">${p.photo_url?`<img src="${esc(p.photo_url)}" alt="" style="height:90px;border-radius:8px;margin-bottom:8px"><br>`:''}<table>${details}</table>${isAdm()?`<p><button class="g" id="ped">Edit details</button></p><div id="pedit" hidden>${FL.map(f=>inp(f,'p_')).join('')}<button id="psv">Save details</button> <span id="pem" class="msg"></span></div>`:''}</div>`;
+ const P={det:'',trk:'',fee:''};let h=`<button id="pbk">← Back</button>`;
+ P.det+=`<div style="${card}">${p.photo_url?`<img src="${esc(p.photo_url)}" alt="" style="height:90px;border-radius:8px;margin-bottom:8px"><br>`:''}<table>${details}</table>${isAdm()?`<p><button class="g" id="ped">Edit details</button></p><div id="pedit" hidden>${FL.map(f=>inp(f,'p_')).join('')}<button id="psv">Save details</button> <span id="pem" class="msg"></span></div>`:''}</div>`;
  if(stu){
-  if(CURR[p.class])h+=`<div style="${card}"><b>Seekhne ki list: ${esc(cn(p.class))}</b><div id="sk" style="margin-top:8px"></div></div>`;
-  if(isAdm())h+=`<div style="${card}"><b>Aadhar &amp; Note (sirf Owner/Admin)</b><div class="f"><label>Aadhar number<input id="pv_a" inputmode="numeric" maxlength="12" value="${esc(pv&&pv.aadhar)}"></label></div><label>Note<textarea id="pv_n" rows="3">${esc(pv&&pv.note)}</textarea></label><button id="pvs">Save</button> <span id="pvm" class="msg"></span></div>`;
+  if(CURR[p.class])P.trk+=`<div style="${card}"><b>Seekhne ki list: ${esc(cn(p.class))}</b><div id="sk" style="margin-top:8px"></div></div>`;
+  if(isAdm())P.det+=`<div style="${card}"><b>Aadhar &amp; Note (sirf Owner/Admin)</b><div class="f"><label>Aadhar number<input id="pv_a" inputmode="numeric" maxlength="12" value="${esc(pv&&pv.aadhar)}"></label></div><label>Note<textarea id="pv_n" rows="3">${esc(pv&&pv.note)}</textarea></label><button id="pvs">Save</button> <span id="pvm" class="msg"></span></div>`;
   const rr=trk.filter(x=>x.rating).slice(0,3),avg=rr.length?Math.round(rr.reduce((a,x)=>a+x.rating,0)/rr.length):0;
-  h+=`<div style="${card}"><b>Padhai ka record (Remarks)</b> <span style="float:right">${stars(avg)}</span><div class="f"><label>Date<input id="tk_d" type="date" value="${today()}"></label><label>Subject (optional)<input id="tk_s"></label><label>Padhai kaisi hai?<select id="tk_r">${[5,4,3,2,1].map(n=>`<option value="${n}" ${n===3?'selected':''}>${RLAB[n]}</option>`).join('')}</select></label></div><label>Kya achha hai<textarea id="tk_g" rows="2"></textarea></label><label>Kya kami hai<textarea id="tk_w" rows="2"></textarea></label><label>Aage kya karna hai<textarea id="tk_p" rows="2"></textarea></label><button id="tka">Add tracker entry</button> <span id="tkm" class="msg"></span><div id="ptr" style="margin-top:12px">${trk.length?trk.map(t=>`<div class="tk"><b>${fmt(t.date)}</b>${t.subject?' · '+esc(t.subject):''} ${stars(t.rating)}${t.good?`<br>✅ ${esc(t.good)}`:''}${t.weak?`<br>⚠️ ${esc(t.weak)}`:''}${t.plan?`<br>➡️ ${esc(t.plan)}`:''}<br><button class="r" data-td="${t.id}">Delete</button></div>`).join(''):'<p class="mut">Abhi koi entry nahi hai.</p>'}</div></div>`;
+  P.trk+=`<div style="${card}"><b>Padhai ka record (Remarks)</b> <span style="float:right">${stars(avg)}</span><div class="f"><label>Date<input id="tk_d" type="date" value="${today()}"></label><label>Subject (optional)<input id="tk_s"></label><label>Padhai kaisi hai?<select id="tk_r">${[5,4,3,2,1].map(n=>`<option value="${n}" ${n===3?'selected':''}>${RLAB[n]}</option>`).join('')}</select></label></div><label>Kya achha hai<textarea id="tk_g" rows="2"></textarea></label><label>Kya kami hai<textarea id="tk_w" rows="2"></textarea></label><label>Aage kya karna hai<textarea id="tk_p" rows="2"></textarea></label><button id="tka">Add tracker entry</button> <span id="tkm" class="msg"></span><div id="ptr" style="margin-top:12px">${trk.length?trk.map(t=>`<div class="tk"><b>${fmt(t.date)}</b>${t.subject?' · '+esc(t.subject):''} ${stars(t.rating)}${t.good?`<br>✅ ${esc(t.good)}`:''}${t.weak?`<br>⚠️ ${esc(t.weak)}`:''}${t.plan?`<br>➡️ ${esc(t.plan)}`:''}<br><button class="r" data-td="${t.id}">Delete</button></div>`).join(''):'<p class="mut">Abhi koi entry nahi hai.</p>'}</div></div>`;
  }
  if(see){
-  h+=`<div style="${card}"><small class="mut">${stu?'Baki fees':'Baki salary'}</small><div style="font:800 32px var(--f);color:${due>0?'var(--red)':'var(--neon)'}">${money(due)}</div><small class="mut">Total: ${money(sum('charge'))} · ${stu?'Mile':'Diye'}: ${money(sum('payment'))}${sum('discount')?' · '+(stu?'Discount':'Deduction')+': '+money(sum('discount')):''}</small>`;
-  if(pending.length)h+=`<p style="margin:10px 0 0"><b>Pending:</b></p><table>${pending.map(r=>`<tr><td>${esc(r.label)}</td><td>${money(r.amt)}</td></tr>`).join('')}</table>`;
-  h+=`<p style="margin:12px 0 0"><button data-sl="png">${stu?'Fee slip (PNG)':'Salary slip (PNG)'}</button> <button data-sl="pdf">PDF</button> <button class="g" data-sl="share">Share</button></p></div>`;
-  h+=`<div style="${card}"><b>${stu?'Fee':'Salary'} setting</b><div class="f"><label>Mode<select id="acm" ${ed?'':'disabled'}><option value="auto" ${mode==='auto'?'selected':''}>Auto (mahine ki aakhri tarikh ko apne aap)</option><option value="manual" ${mode==='manual'?'selected':''}>Manual (khud entry karein)</option></select></label><label>Monthly ${stu?'fee':'salary'} (₹)<input id="aca" type="number" min="0" value="${amt}" ${ed?'':'disabled'}></label><label>Shuru ka mahina<input id="acv" type="month" value="${smv}" ${ed?'':'disabled'}></label></div>`;
-  if(ed)h+=`<button id="acs">Save setting</button><p class="mut"><small>Auto mode mein shuru ke mahine se har mahine ki aakhri tarikh ko ₹ judta hai. Purana mahina chunenge to wo bhi judega. Agla auto charge: ${lastDayText()}.</small></p>`;
-  h+=`</div>`;
-  if(ed)h+=`<div style="${card}"><b>Nayi entry</b><div class="f"><label>Type<select id="lk"><option value="payment">${LB.payment}</option><option value="charge">${LB.charge}</option><option value="discount">${LB.discount}</option></select></label><label>Amount (₹)<input id="la" type="number" min="1"></label><label>Date<input id="ld" type="date" value="${today()}"></label><label>Note<input id="ln"></label></div><button id="lad">Add entry</button></div>`;
-  h+=`<h3>Hisaab (ledger)</h3><div class="wrap" id="pled"><table><tr><th>Date</th><th>Type</th><th>Amount</th><th>Note</th>${ed?'<th></th>':''}</tr>${[...led].reverse().map(r=>`<tr><td>${r.auto?mlabel(r.month):fmt(r.paid_on||r.created_at)}</td><td>${LB[r.kind]}</td><td>${r.kind==='payment'?'−':(r.kind==='discount'?'−':'+')} ${money(r.amount)}</td><td>${esc(r.note||'')}${r.auto?' <small class="mut">(auto)</small>':''}</td>${ed?`<td>${r.auto?'':`<button class="r" data-del="${r.id}">Delete</button>`}</td>`:''}</tr>`).join('')}</table></div>`;
+  P.fee+=`<div style="${card}"><small class="mut">${stu?'Baki fees':'Baki salary'}</small><div style="font:800 32px var(--f);color:${due>0?'var(--red)':'var(--neon)'}">${money(due)}</div><small class="mut">Total: ${money(sum('charge'))} · ${stu?'Mile':'Diye'}: ${money(sum('payment'))}${sum('discount')?' · '+(stu?'Discount':'Deduction')+': '+money(sum('discount')):''}</small>`;
+  if(pending.length)P.fee+=`<p style="margin:10px 0 0"><b>Pending:</b></p><table>${pending.map(r=>`<tr><td>${esc(r.label)}</td><td>${money(r.amt)}</td></tr>`).join('')}</table>`;
+  P.fee+=`<p style="margin:12px 0 0"><button data-sl="png">${stu?'Fee slip (PNG)':'Salary slip (PNG)'}</button> <button data-sl="pdf">PDF</button> <button class="g" data-sl="share">Share</button></p></div>`;
+  P.fee+=`<div style="${card}"><b>${stu?'Fee':'Salary'} setting</b><div class="f"><label>Mode<select id="acm" ${ed?'':'disabled'}><option value="auto" ${mode==='auto'?'selected':''}>Auto (mahine ki aakhri tarikh ko apne aap)</option><option value="manual" ${mode==='manual'?'selected':''}>Manual (khud entry karein)</option></select></label><label>Monthly ${stu?'fee':'salary'} (₹)<input id="aca" type="number" min="0" value="${amt}" ${ed?'':'disabled'}></label><label>Shuru ka mahina<input id="acv" type="month" value="${smv}" ${ed?'':'disabled'}></label></div>`;
+  if(ed)P.fee+=`<button id="acs">Save setting</button><p class="mut"><small>Auto mode mein shuru ke mahine se har mahine ki aakhri tarikh ko ₹ judta hai. Purana mahina chunenge to wo bhi judega. Agla auto charge: ${lastDayText()}.</small></p>`;
+  P.fee+=`</div>`;
+  if(ed)P.fee+=`<div style="${card}"><b>Nayi entry</b><div class="f"><label>Type<select id="lk"><option value="payment">${LB.payment}</option><option value="charge">${LB.charge}</option><option value="discount">${LB.discount}</option></select></label><label>Amount (₹)<input id="la" type="number" min="1"></label><label>Date<input id="ld" type="date" value="${today()}"></label><label>Note<input id="ln"></label></div><button id="lad">Add entry</button></div>`;
+  P.fee+=`<h3>Hisaab (ledger)</h3><div class="wrap" id="pled"><table><tr><th>Date</th><th>Type</th><th>Amount</th><th>Note</th>${ed?'<th></th>':''}</tr>${[...led].reverse().map(r=>`<tr><td>${r.auto?mlabel(r.month):fmt(r.paid_on||r.created_at)}</td><td>${LB[r.kind]}</td><td>${r.kind==='payment'?'−':(r.kind==='discount'?'−':'+')} ${money(r.amount)}</td><td>${esc(r.note||'')}${r.auto?' <small class="mut">(auto)</small>':''}</td>${ed?`<td>${r.auto?'':`<button class="r" data-del="${r.id}">Delete</button>`}</td>`:''}</tr>`).join('')}</table></div>`;
  }
+ const PT=[['det','Details'],...(stu?[['trk','Tracker']]:[]),...(see?[['fee',stu?'Fees':'Salary']]:[])];
+ if(!PT.some(x=>x[0]===PTAB))PTAB='det';
+ h+=`<div class="ptabs">${PT.map(([k,l])=>`<button data-pt="${k}" class="${k===PTAB?'on':''}">${l}</button>`).join('')}</div>`+PT.map(([k])=>`<div class="pane" data-pane="${k}" ${k===PTAB?'':'hidden'}>${P[k]}</div>`).join('');
  $('pmain').innerHTML=h;
- $('pbk').onclick=()=>openTab(lastTab);
+ document.querySelectorAll('[data-pt]').forEach(b=>b.onclick=()=>{PTAB=b.dataset.pt;document.querySelectorAll('.pane').forEach(x=>{x.hidden=x.dataset.pane!==PTAB});document.querySelectorAll('[data-pt]').forEach(x=>x.classList.toggle('on',x.dataset.pt===PTAB))});
+ $('pbk').onclick=()=>{PTAB='det';openTab(lastTab)};
  if(isAdm()){
   FL.forEach(([k,,t])=>{const el=$('p_'+k);if(el&&t!=='photo')el.value=p[k]==null?'':String(p[k])});
   $('ped').onclick=()=>{$('pedit').hidden=!$('pedit').hidden};
@@ -618,7 +678,7 @@ async function profile(type,id){
     for(const [k,,t] of FL){const el=$('p_'+k);if(t==='photo'){const f=el.files[0];if(f)o[k]=await upPhoto(f,'teachers');continue}const val=el.value.trim();o[k]=val===''?null:(t==='number'?+val:val)}
     const {error}=await sb.from(stu?'students':'teachers').update(o).eq('id',id);
     if(error)throw error;profile(type,id);
-   }catch(x){$('pem').textContent=x.message}
+   }catch(x){$('pem').textContent=x.code==='23505'?'Ye Roll no. kisi aur bachhe ka hai. Doosra Roll no. daalein.':x.message}
   };
  }
   if(stu){
