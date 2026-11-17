@@ -24,16 +24,18 @@ async function handle(b: any) {
     const p: string = m.button?.payload || m.interactive?.button_reply?.id || "";
     if (!p.startsWith("VOICE|")) continue;
     const sid = p.split("|")[1];
-    const { data: s } = await db.from("students").select("id,name").eq("id", sid).maybeSingle();
+    const { data: s } = await db.from("students").select("id,name,family_id").eq("id", sid).maybeSingle();
     if (!s) continue;
-    const { data: led } = await db.from("ledger").select("kind,amount").eq("person_type", "student").eq("person_id", sid);
+    const { data: mem } = s.family_id ? await db.from("students").select("id,name").eq("family_id", s.family_id) : { data: [s] };
+    const ids = (mem || [s]).map((x: any) => x.id), names = (mem || [s]).map((x: any) => x.name).join(" और ");
+    const { data: led } = await db.from("ledger").select("kind,amount").eq("person_type", "student").in("person_id", ids);
     const due = Math.round((led || []).reduce((a, l) => a + (l.kind === "charge" ? 1 : -1) * +l.amount, 0));
     const month = new Date(Date.now() + 5.5 * 3600e3).toISOString().slice(0, 7) + "-01";
     let status = "sent", detail: string | null = null;
     try {
       let text = due > 0
-        ? `नमस्ते! ${s.name} की ${due} रुपये फीस बाकी है। कृपया जल्द से जल्द जमा करें। धन्यवाद, नेक्स्टजेन लर्निंग।`
-        : `नमस्ते! ${s.name} की कोई फीस बाकी नहीं है। धन्यवाद, नेक्स्टजेन लर्निंग।`;
+        ? `नमस्ते! ${names} की ${due} रुपये फीस बाकी है। कृपया जल्द से जल्द जमा करें। धन्यवाद, नेक्स्टजेन लर्निंग।`
+        : `नमस्ते! ${names} की कोई फीस बाकी नहीं है। धन्यवाद, नेक्स्टजेन लर्निंग।`;
       if (due > 0 && E("ANTHROPIC_API_KEY")) {
         const a = await fetch("https://api.anthropic.com/v1/messages", {
           method: "POST",
@@ -41,7 +43,7 @@ async function handle(b: any) {
           body: JSON.stringify({
             model: "claude-haiku-5-5", max_tokens: 250,
             system: "Tum NextGen Learning coaching (Koilabazar, Rajmahal) ki taraf se parents ko fee reminder ka voice message likhte ho. Saral, vinamra Hindi (Devanagari) me, sirf 3 chhote vakya. Sirf bolne wala text do, aur kuch nahi.",
-            messages: [{ role: "user", content: `Bachhe ka naam: ${s.name}. Baaki fees: ${due} rupaye.` }],
+            messages: [{ role: "user", content: `Bachhon ke naam: ${names}. Baaki fees: ${due} rupaye.` }],
           }),
         });
         const aj = await a.json();

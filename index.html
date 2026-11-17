@@ -96,6 +96,8 @@ footer{border-top:1px solid var(--line);padding:24px 0 30px;color:var(--mut);fon
 .waf{position:fixed;right:14px;bottom:calc(86px + env(safe-area-inset-bottom,0px));z-index:20;width:52px;height:52px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;font-size:26px;text-decoration:none;box-shadow:0 4px 14px rgba(0,0,0,.45)}.waf[hidden],.waf.nop{display:none}.wabtn{background:#25D366!important;color:#06210f!important}
 #pv{position:fixed;inset:0;z-index:60;background:#fff;color:#000;overflow:auto}#pv[hidden]{display:none}#pv button{background:#1E40AF;color:#fff;border:0;padding:8px 12px;border-radius:6px;font:600 14px sans-serif;cursor:pointer}
 @media print{body>*:not(#pv){display:none!important}#pv{position:static;overflow:visible}.noprint{display:none!important}body{padding:0;background:#fff}}
+.av{width:34px;height:34px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:8px;border:1px solid var(--line)}
+#bdl{display:flex;gap:12px;overflow-x:auto;padding-bottom:6px}.bd{flex:0 0 auto;min-width:160px;background:var(--surface);border:1px solid var(--gold);border-radius:12px;padding:14px;text-align:center;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px}.bd img{width:88px;height:88px;border-radius:50%;object-fit:cover;border:3px solid var(--gold)}.bd>span{font-size:52px;line-height:88px}.bd em{color:var(--gold);font-style:normal;font-weight:700}
 .card2{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;margin:0 0 14px}.stars{color:var(--gold);letter-spacing:2px}
 </style>
 </head>
@@ -113,6 +115,7 @@ footer{border-top:1px solid var(--line);padding:24px 0 30px;color:var(--mut);fon
 <div class="hud"><div><b data-i="h1v"></b><span data-i="hud1"></span></div><div><b data-i="h2v"></b><span data-i="hud2"></span></div><div><b data-i="h3v"></b><span data-i="hud3"></span></div></div>
 </div>
 </div></div>
+<section id="bday" hidden><div class="w"><h2>🎂 Aaj ka Birthday</h2><div id="bdl"></div><p class="mut"><small>Ye sirf Owner ko dikhta hai.</small></p></div></section>
 <section id="about"><div class="w"><h2 data-i="nav_about"></h2><p data-s="about" style="white-space:pre-line;max-width:60ch"></p></div></section>
 <section id="facSec" class="alt"><div class="w"><h2 id="facilities" data-i="nav_fac"></h2><ul class="chips" id="fac"></ul></div></section>
 
@@ -208,7 +211,7 @@ async function fn(body){
  if(data&&data.error)throw new Error(data.error);
  return data;
 }
-const STU_F=[['name','Name / नाम'],['class','Class / कक्षा','sel'],['roll','Roll no (har bachhe ka alag)','number'],['father_name',"Parent's name / अभिभावक"],['phone','Mobile'],['address','Address'],['dob','Date of birth','date']];
+const STU_F=[['name','Name / नाम'],['class','Class / कक्षा','sel'],['roll','Roll no (har bachhe ka alag)','number'],['father_name',"Parent's name / अभिभावक"],['phone','Mobile'],['address','Address'],['dob','Date of birth','date'],['photo_url','Photo (upload karein)','photo']];
 const EMP_F=[['name','Name'],['post','Post','opt:Teacher|Director|Coordinator|Office Staff|Other'],['subject','Subject (teacher ke liye)'],['qualification','Qualification'],['phone','Phone'],['address','Address'],['joining_date','Joining date','date'],['show_public','Website par dikhayein?','opt:true=Haan|false=Nahi'],['photo_url','Photo (upload karein)','photo']];
 const TABS={
  site:{label:'Website edit',run:siteTab},
@@ -233,7 +236,18 @@ const setBar=a=>{BAR=a;renderBar();$('waf').classList.toggle('nop',a==='panel')}
 function showSite(){$('site').hidden=false;$('admView').hidden=true;$('panelView').hidden=true;$('sheet').hidden=true;setBar('home');window.scrollTo(0,0)}
 function showAdm(){$('site').hidden=true;$('admView').hidden=false;$('panelView').hidden=true;$('sheet').hidden=true;setBar('adm');window.scrollTo(0,0)}
 function showPanel(){$('site').hidden=true;$('admView').hidden=true;$('panelView').hidden=false;$('sheet').hidden=true;setBar('panel');window.scrollTo(0,0)}
-const barLabel=()=>renderBar();
+const barLabel=()=>{renderBar();renderBday()};
+async function renderBday(){
+ const el=$('bday');
+ if(!ME||ME.access!=='owner'||!sb){el.hidden=true;return}
+ const md=today().slice(5),y=+today().slice(0,4);
+ const {data}=await sb.from('students').select('id,name,class,dob,photo_url').not('dob','is',null);
+ const list=(data||[]).filter(s=>String(s.dob).slice(5)===md);
+ if(!list.length||!ME||ME.access!=='owner'){el.hidden=true;return}
+ $('bdl').innerHTML=list.map(s=>`<div class="bd" data-bd="${s.id}">${s.photo_url?`<img src="${esc(s.photo_url)}" alt="">`:'<span>🎂</span>'}<b>${esc(s.name)}</b><small>${esc(cn(s.class))} · ${y-+String(s.dob).slice(0,4)} saal</small><em>🎉 Happy Birthday!</em></div>`).join('');
+ $('bdl').onclick=e=>{const c=e.target.closest('[data-bd]');if(c){showPanel();lastTab='students';profile('student',c.dataset.bd)}};
+ el.hidden=false;
+}
 async function loadMe(){
  if(!sb)return false;
  const {data:{session}}=await sb.auth.getSession();
@@ -473,7 +487,7 @@ async function studentsTab(){
   sb.from('students').select('roll').not('roll','is',null).order('roll',{ascending:false}).limit(1).then(({data:mx})=>{$('f_roll').value=((mx&&mx[0]&&mx[0].roll)||0)+1});
   $('sadd').onclick=()=>{$('sform').hidden=!$('sform').hidden};
   $('ssave').onclick=async()=>{
-   try{const o={};for(const [k,,t] of STU_F){const val=$('f_'+k).value.trim();if(val)o[k]=t==='number'?+val:val}
+   try{const o={};for(const [k,,t] of STU_F){if(t==='photo'){const f=$('f_'+k).files[0];if(f){$('e').className='ok';$('e').textContent='Photo upload ho rahi hai...';o[k]=await upPhoto(f,'students')}continue}const val=$('f_'+k).value.trim();if(val)o[k]=t==='number'?+val:val}
     if(!o.name)throw new Error('Naam daalein');
     const ad=$('f_aadhar').value.replace(/\s/g,'');if(ad&&!/^\d{12}$/.test(ad))throw new Error('Aadhar 12 ank ka hona chahiye');
     const {data:ns,error}=await sb.from('students').insert(o).select('id').single();if(error)throw error;
@@ -495,7 +509,7 @@ async function studentsTab(){
   const q=$('sq').value.trim().toLowerCase();
   const list=(st||[]).filter(s=>!q||String(s.name).toLowerCase().includes(q));
   $('scnt').textContent=(CC==='ALL'?'All students':cn(CC))+': '+(st||[]).length+' students';
-  $('slist').innerHTML=list.length?`<table><tr><th>Roll</th><th>Name</th><th>Skills</th>${sf?'<th>Fee</th>':''}<th>Padhai</th><th>Last update</th><th></th></tr>${list.map(s=>{const t=(L[s.id]||[]).slice(0,3).filter(x=>x.rating);const av=t.length?Math.round(t.reduce((a,x)=>a+x.rating,0)/t.length):0;const last=(L[s.id]||[])[0];return `<tr><td>${esc(s.roll)}</td><td>${esc(s.name)}<br><small class="mut">${esc(s.father_name)}${CC==='ALL'?' · '+esc(cn(s.class)):''}</small></td><td>${SKN(s.class)?(DN[s.id]||0)+'/'+SKN(s.class):'-'}</td>${sf?`<td>${FEE[s.id]!=null?money(FEE[s.id]):'-'}</td>`:''}<td>${stars(av)}</td><td>${last?fmt(last.date):'-'}</td><td><button class="g" data-p="${s.id}">Open</button></td></tr>`}).join('')}</table>`:'<p class="mut">Is class me abhi koi student nahi hai.</p>';
+  $('slist').innerHTML=list.length?`<table><tr><th>Roll</th><th>Name</th><th>Skills</th>${sf?'<th>Fee</th>':''}<th>Padhai</th><th>Last update</th><th></th></tr>${list.map(s=>{const t=(L[s.id]||[]).slice(0,3).filter(x=>x.rating);const av=t.length?Math.round(t.reduce((a,x)=>a+x.rating,0)/t.length):0;const last=(L[s.id]||[])[0];return `<tr><td>${esc(s.roll)}</td><td>${s.photo_url?`<img class="av" src="${esc(s.photo_url)}" alt="">`:''}${s.family_id?'👨‍👩‍👧 ':''}${esc(s.name)}<br><small class="mut">${esc(s.father_name)}${CC==='ALL'?' · '+esc(cn(s.class)):''}</small></td><td>${SKN(s.class)?(DN[s.id]||0)+'/'+SKN(s.class):'-'}</td>${sf?`<td>${FEE[s.id]!=null?money(FEE[s.id]):'-'}</td>`:''}<td>${stars(av)}</td><td>${last?fmt(last.date):'-'}</td><td><button class="g" data-p="${s.id}">Open</button></td></tr>`}).join('')}</table>`:'<p class="mut">Is class me abhi koi student nahi hai.</p>';
  };
  $('sq').oninput=draw;draw();
  $('slist').onclick=e=>{const id=e.target.dataset.p;if(id)profile('student',id)};
@@ -559,9 +573,9 @@ function ssearchTab(){
   SSQ=$('ssq').value;const q=SSQ.trim().replace(/[,()%*\\]/g,' ').trim();
   if(!q){$('ssr').innerHTML='<p class="mut">Naam likhna shuru karein.</p>';return}
   let f=`name.ilike.%${q}%,father_name.ilike.%${q}%,phone.ilike.%${q}%`;if(/^\d+$/.test(q))f+=`,roll.eq.${q}`;
-  const {data,error}=await sb.from('students').select('id,name,class,roll,father_name,phone').or(f).order('name').limit(30);
+  const {data,error}=await sb.from('students').select('id,name,class,roll,father_name,phone,photo_url,family_id').or(f).order('name').limit(30);
   if(error){$('ssr').innerHTML='<p class="msg">'+esc(error.message)+'</p>';return}
-  $('ssr').innerHTML=(data||[]).length?`<table>${data.map(s=>`<tr data-p="${s.id}" style="cursor:pointer"><td>${s.roll?esc(s.roll)+'. ':''}${esc(s.name)}<br><small class="mut">${esc(cn(s.class))}${s.father_name?' · '+esc(s.father_name):''}${s.phone?' · '+esc(s.phone):''}</small></td><td><button class="g" data-p="${s.id}">Profile</button></td></tr>`).join('')}</table>`:'<p class="mut">Koi student nahi mila.</p>';
+  $('ssr').innerHTML=(data||[]).length?`<table>${data.map(s=>`<tr data-p="${s.id}" style="cursor:pointer"><td>${s.photo_url?`<img class="av" src="${esc(s.photo_url)}" alt="">`:''}${s.family_id?'👨‍👩‍👧 ':''}${s.roll?esc(s.roll)+'. ':''}${esc(s.name)}<br><small class="mut">${esc(cn(s.class))}${s.father_name?' · '+esc(s.father_name):''}${s.phone?' · '+esc(s.phone):''}</small></td><td><button class="g" data-p="${s.id}">Profile</button></td></tr>`).join('')}</table>`:'<p class="mut">Koi student nahi mila.</p>';
  };
  let tm;$('ssq').oninput=()=>{clearTimeout(tm);tm=setTimeout(go,250)};
  $('ssr').onclick=e=>{const r=e.target.closest('[data-p]');if(r)profile('student',r.dataset.p)};
@@ -601,15 +615,17 @@ async function reportTab(){
 async function reminderTab(){
  const m=$('pmain');m.innerHTML='<p class="mut">Loading...</p>';
  await sb.rpc('run_accrual');
- const [st,bl,lg,cf]=await Promise.all([sb.from('students').select('id,name,phone,class').order('class').order('name'),sb.rpc('balances',{t:'student'}),sb.from('reminder_log').select('*').order('created_at',{ascending:false}).limit(30),isAdm()?sb.from('reminder_cfg').select('*').eq('id',1).maybeSingle():Promise.resolve({data:null})]);
+ const [st,bl,lg,cf,fm]=await Promise.all([sb.from('students').select('id,name,phone,class,family_id').order('class').order('name'),sb.rpc('balances',{t:'student'}),sb.from('reminder_log').select('*').order('created_at',{ascending:false}).limit(30),isAdm()?sb.from('reminder_cfg').select('*').eq('id',1).maybeSingle():Promise.resolve({data:null}),sb.from('families').select('id,phone')]);
  const due={},nm={};(bl.data||[]).forEach(b=>{due[b.pid]=+b.charged-+b.paid-+b.discounted});
  (st.data||[]).forEach(s=>{nm[s.id]=s.name});
- const rows=(st.data||[]).filter(s=>due[s.id]>0);
- const msg=s=>`नमस्ते! ${s.name} की ₹${Math.round(due[s.id])} फीस बाकी है। कृपया जल्द से जल्द जमा करें। धन्यवाद, ${v('school_name')}`;
- const wa=s=>{const d=String(s.phone||'').replace(/\D/g,'');return d.length>=10?'https://wa.me/'+(d.length===10?'91'+d:d)+'?text='+encodeURIComponent(msg(s)):''};
+ const fp={};(fm.data||[]).forEach(f=>{fp[f.id]=f.phone});
+ const G=new Map();(st.data||[]).filter(s=>due[s.id]>0).forEach(s=>{const k=s.family_id||s.id,g=G.get(k)||{m:[],due:0,phone:''};g.m.push(s);g.due+=due[s.id];const ph=(s.family_id&&fp[s.family_id])||s.phone||'';if(!g.phone&&String(ph).replace(/\D/g,'').length>=10)g.phone=ph;G.set(k,g)});
+ const rows=[...G.values()];
+ const msg=g=>g.m.length>1?`नमस्ते! ${g.m.map(x=>x.name).join(', ')} की कुल ₹${Math.round(g.due)} फीस बाकी है (${g.m.map(x=>x.name+': ₹'+Math.round(due[x.id])).join(', ')})। कृपया जल्द से जल्द जमा करें। धन्यवाद, ${v('school_name')}`:`नमस्ते! ${g.m[0].name} की ₹${Math.round(g.due)} फीस बाकी है। कृपया जल्द से जल्द जमा करें। धन्यवाद, ${v('school_name')}`;
+ const wa=g=>{const d=String(g.phone||'').replace(/\D/g,'');return d.length>=10?'https://wa.me/'+(d.length===10?'91'+d:d)+'?text='+encodeURIComponent(msg(g)):''};
  const c=cf.data||{enabled:false,day:2,voice:true};
  m.innerHTML=(isAdm()?`<div class="card2"><b>Automatic reminder</b><div class="f"><label>Auto reminder<select id="rc_e"><option value="true">Chalu</option><option value="false">Band</option></select></label><label>Mahine ki tarikh<input id="rc_d" type="number" min="1" max="28" value="${c.day}"></label><label>AI Voice bhi?<select id="rc_v"><option value="true">Haan</option><option value="false">Nahi</option></select></label></div><button id="rc_s">Save</button> <span id="rc_m" class="msg"></span><p class="mut"><small>Auto bhejne ke liye WhatsApp API setup zaroori hai. Abhi test ke liye neeche ka button ya manual list use karein.</small></p><button class="g" id="rc_now">Abhi sabko bhejein (auto)</button> <span id="rc_r" class="msg"></span></div>`:'')
- +`<p><b>Baaki fees: ${rows.length} bachhe</b></p><div class="wrap">${rows.length?`<table><tr><th>Name</th><th>Baaki</th><th></th></tr>${rows.map(s=>`<tr><td>${esc(s.name)}<br><small class="mut">${esc(cn(s.class))}</small></td><td>₹${Math.round(due[s.id])}</td><td>${wa(s)?`<a class="btn" target="_blank" rel="noopener" href="${wa(s)}">WhatsApp</a>`:'<small class="mut">Phone nahi</small>'}</td></tr>`).join('')}</table>`:'<p class="mut">Kisi ki fees baaki nahi hai 🎉</p>'}</div>`
+ +`<p><b>Baaki fees: ${rows.length} parivar/bachhe</b></p><div class="wrap">${rows.length?`<table><tr><th>Name</th><th>Baaki</th><th></th></tr>${rows.map(g=>`<tr><td>${g.m.map(x=>esc(x.name)).join(', ')}<br><small class="mut">${g.m.length>1?'👨‍👩‍👧 Family · ':''}${esc(cn(g.m[0].class))}</small></td><td>₹${Math.round(g.due)}</td><td>${wa(g)?`<a class="btn" target="_blank" rel="noopener" href="${wa(g)}">WhatsApp</a>`:'<small class="mut">Phone nahi</small>'}</td></tr>`).join('')}</table>`:'<p class="mut">Kisi ki fees baaki nahi hai 🎉</p>'}</div>`
  +`<p style="margin-top:16px"><b>Bheje gaye reminders</b></p><div class="wrap">${(lg.data||[]).length?`<table>${lg.data.map(l=>`<tr><td>${fmt(l.created_at)}</td><td>${esc(nm[l.student_id]||'')}</td><td>${l.kind==='voice'?'🔊':'💬'} ${l.status==='sent'?'✅':'❌'}<br><small class="mut">${esc(l.detail)}</small></td></tr>`).join('')}</table>`:'<p class="mut">Abhi koi nahi.</p>'}</div>`;
  if(isAdm()){
   $('rc_e').value=String(c.enabled);$('rc_v').value=String(c.voice);
@@ -664,6 +680,12 @@ async function profile(type,id){
  }
  let trk=[],pv=null;
  if(stu){const [a,b]=await Promise.all([sb.from('student_tracker').select('*').eq('student_id',id).order('date',{ascending:false}).order('created_at',{ascending:false}),isAdm()?sb.from('student_private').select('*').eq('student_id',id).maybeSingle():Promise.resolve({data:null})]);trk=a.data||[];pv=b.data}
+ let fam=null,sibs=[],dues={},sugg=[];
+ if(stu){
+  if(p.family_id){const [a,b]=await Promise.all([sb.from('families').select('*').eq('id',p.family_id).maybeSingle(),sb.from('students').select('id,name,class,roll,photo_url').eq('family_id',p.family_id).order('roll',{nullsFirst:false})]);fam=a.data;sibs=b.data||[]}
+  if(see&&sibs.length){const {data:bl}=await sb.rpc('balances',{t:'student'});(bl||[]).forEach(x=>{dues[x.pid]=+x.charged-+x.paid-+x.discounted})}
+  if(isAdm()&&p.father_name){const {data:sg}=await sb.from('students').select('id,name,class,roll').eq('father_name',p.father_name).neq('id',id).limit(8);sugg=(sg||[]).filter(x=>!sibs.some(y=>y.id===x.id))}
+ }
  let skm={};if(stu){const {data:sk}=await sb.from('student_skills').select('skill,status').eq('student_id',id);(sk||[]).forEach(x=>{skm[x.skill]=x.status})}
  const sum=k=>led.filter(x=>x.kind===k).reduce((s,x)=>s+ +x.amount,0);
  const due=sum('charge')-sum('payment')-sum('discount');
@@ -675,7 +697,14 @@ async function profile(type,id){
  let details=FL.filter(f=>f[2]!=='photo').map(([k,l])=>`<tr><th>${esc(l.split(' (')[0].split(' /')[0])}</th><td>${esc(p[k])}</td></tr>`).join('');
  if(stu&&isAdm())details+=`<tr><th>Aadhar</th><td>${esc(pv&&pv.aadhar)}</td></tr>`;
  const P={det:'',trk:'',fee:''};let h=`<button id="pbk">← Back</button>`;
- P.det+=`<div style="${card}">${p.photo_url?`<img src="${esc(p.photo_url)}" alt="" style="height:90px;border-radius:8px;margin-bottom:8px"><br>`:''}<table>${details}</table>${isAdm()?`<p><button class="g" id="ped">Edit details</button></p><div id="pedit" hidden>${FL.map(f=>inp(f,'p_')).join('')}<button id="psv">Save details</button> <span id="pem" class="msg"></span></div>`:''}</div>`;
+ P.det+=`<div style="${card}">${p.photo_url?`<img src="${esc(p.photo_url)}" alt="" style="width:96px;height:96px;object-fit:cover;border-radius:50%;margin-bottom:8px;border:2px solid var(--gold)"><br>`:''}<table>${details}</table>${isAdm()?`<p><button class="g" id="ped">Edit details</button></p><div id="pedit" hidden>${FL.map(f=>inp(f,'p_')).join('')}<button id="psv">Save details</button> <span id="pem" class="msg"></span></div>`:''}</div>`;
+ if(stu){
+  const tot=sibs.reduce((a,x)=>a+Math.max(dues[x.id]||0,0),0);
+  P.det+=`<div id="famc" style="${card}"><b>👨‍👩‍👧 Family / Bhai-behan</b>`
+  +(sibs.length>1?`<p class="mut"><small>Fee har bachhe ki alag judti hai, par reminder poore parivar ko ek hi message me jaata hai.</small></p><table>${sibs.map(x=>`<tr><td>${x.photo_url?`<img class="av" src="${esc(x.photo_url)}" alt="">`:''}${x.roll?esc(x.roll)+'. ':''}${esc(x.name)}${x.id===id?' <small class="mut">(ye)</small>':''}<br><small class="mut">${esc(cn(x.class))}</small></td>${see?`<td>${money(Math.max(dues[x.id]||0,0))}</td>`:''}<td>${x.id===id?'':`<button class="g" data-fo="${x.id}">Open</button>`}</td></tr>`).join('')}</table>${see?`<p><b>Kul baki (poora parivar): ${money(tot)}</b></p>`:''}`+(isAdm()?`<label>Reminder ka WhatsApp number (poore parivar ke liye)<input id="fm_ph" inputmode="tel" value="${esc(fam&&fam.phone)}"></label><button id="fm_sv">Save number</button> <button class="r" id="fm_un">Is bachhe ko family se hatayein</button>`:''):'<p class="mut">Abhi kisi bhai/behan se jura nahi hai.</p>')
+  +(isAdm()?`${sugg.length?`<p><small class="mut">Same parent ke naam wale:</small></p>${sugg.map(x=>`<p><button class="g" data-fl="${x.id}">${esc(x.name)} (${esc(cn(x.class))}) ko jodein</button></p>`).join('')}`:''}<label>Bhai/behan dhoondhkar jodein<input id="fl_q" placeholder="Naam likhein"></label><div id="fl_r"></div>`:'')
+  +`</div>`;
+ }
  if(stu){
   if(CURR[p.class])P.trk+=`<div style="${card}"><b>Seekhne ki list: ${esc(cn(p.class))}</b><div id="sk" style="margin-top:8px"></div></div>`;
   if(isAdm())P.det+=`<div style="${card}"><b>Aadhar &amp; Note (sirf Owner/Admin)</b><div class="f"><label>Aadhar number<input id="pv_a" inputmode="numeric" maxlength="12" value="${esc(pv&&pv.aadhar)}"></label></div><label>Note<textarea id="pv_n" rows="3">${esc(pv&&pv.note)}</textarea></label><button id="pvs">Save</button> <span id="pvm" class="msg"></span></div>`;
@@ -704,13 +733,38 @@ async function profile(type,id){
   $('psv').onclick=async()=>{
    try{
     const o={};
-    for(const [k,,t] of FL){const el=$('p_'+k);if(t==='photo'){const f=el.files[0];if(f)o[k]=await upPhoto(f,'teachers');continue}const val=el.value.trim();o[k]=val===''?null:(t==='number'?+val:val)}
+    for(const [k,,t] of FL){const el=$('p_'+k);if(t==='photo'){const f=el.files[0];if(f)o[k]=await upPhoto(f,stu?'students':'teachers');continue}const val=el.value.trim();o[k]=val===''?null:(t==='number'?+val:val)}
     const {error}=await sb.from(stu?'students':'teachers').update(o).eq('id',id);
     if(error)throw error;profile(type,id);
    }catch(x){$('pem').textContent=x.code==='23505'?'Ye Roll no. kisi aur bachhe ka hai. Doosra Roll no. daalein.':x.message}
   };
  }
   if(stu){
+  if($('famc')){
+   const done=async fn=>{try{await fn();profile(type,id)}catch(x){alert(x.message)}};
+   const linkFam=async oid=>{
+    const {data:o,error:e0}=await sb.from('students').select('id,family_id,phone').eq('id',oid).single();if(e0)throw e0;
+    let fid=p.family_id||o.family_id;
+    if(!fid){const {data:f,error}=await sb.from('families').insert({name:((p.father_name||p.name)+' ka parivar'),phone:p.phone||o.phone||null}).select('id').single();if(error)throw error;fid=f.id}
+    const {error:e1}=await sb.from('students').update({family_id:fid}).in('id',[id,oid]);if(e1)throw e1;
+    if(o.family_id&&o.family_id!==fid){await sb.from('students').update({family_id:fid}).eq('family_id',o.family_id);await sb.from('families').delete().eq('id',o.family_id)}
+   };
+   const unlinkFam=async()=>{
+    const {error}=await sb.from('students').update({family_id:null}).eq('id',id);if(error)throw error;
+    if(sibs.filter(x=>x.id!==id).length<=1){await sb.from('students').update({family_id:null}).eq('family_id',p.family_id);await sb.from('families').delete().eq('id',p.family_id)}
+   };
+   $('famc').onclick=e=>{
+    const t=e.target;
+    if(t.dataset.fo)profile('student',t.dataset.fo);
+    if(t.dataset.fl)done(()=>linkFam(t.dataset.fl));
+    if(t.id==='fm_sv')done(async()=>{const {error}=await sb.from('families').update({phone:$('fm_ph').value.trim()||null}).eq('id',p.family_id);if(error)throw error});
+    if(t.id==='fm_un'&&confirm('Is bachhe ko family se hata dein?'))done(unlinkFam);
+   };
+   if($('fl_q')){let tq;$('fl_q').oninput=()=>{clearTimeout(tq);tq=setTimeout(async()=>{
+    const q=$('fl_q').value.trim().replace(/[,()%*\\]/g,' ').trim();if(!q){$('fl_r').innerHTML='';return}
+    const {data}=await sb.from('students').select('id,name,class,roll').ilike('name','%'+q+'%').neq('id',id).limit(8);
+    $('fl_r').innerHTML=(data||[]).filter(x=>!sibs.some(y=>y.id===x.id)).map(x=>`<p><button class="g" data-fl="${x.id}">${esc(x.name)} (${esc(cn(x.class))})${x.roll?' · Roll '+esc(x.roll):''}</button></p>`).join('')||'<p class="mut">Koi nahi mila.</p>'},250)}}
+  }
   if(stu&&CURR[p.class]&&$('sk')){
    const G=CURR[p.class],all=G.flatMap(g=>g[1]),IC={doing:'🟡 Chal raha',done:'✅ Ho gaya'},NX=CONFIG.classes[CONFIG.classes.indexOf(p.class)+1];
    const drawSk=()=>{

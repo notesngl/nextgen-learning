@@ -32,17 +32,33 @@ Deno.serve(async (req) => {
     const { data: led } = await db.from("ledger").select("person_id,kind,amount").eq("person_type", "student");
     const due: Record<string, number> = {};
     (led || []).forEach((l) => { due[l.person_id] = (due[l.person_id] || 0) + (l.kind === "charge" ? 1 : -1) * +l.amount; });
-    const { data: st } = await db.from("students").select("id,name,phone");
+    const { data: st } = await db.from("students").select("id,name,phone,family_id");
+    const { data: fams } = await db.from("families").select("id,phone");
+    const fp: Record<string, string> = {};
+    (fams || []).forEach((x) => { fp[x.id] = x.phone || ""; });
     const { data: done } = await db.from("reminder_log").select("student_id").eq("month", month).eq("kind", "text").eq("status", "sent");
     const sent = new Set((done || []).map((x) => x.student_id));
     const ml = new Date(month + "T00:00:00Z").toLocaleDateString("hi-IN", { month: "long", year: "numeric", timeZone: "UTC" });
 
-    let ok = 0, skip = 0, bad = 0;
+    // Bhai-behan ek parivar me: ek hi message, kul baki ke saath
+    const groups = new Map<string, { ids: string[]; names: string[]; due: number; phone: string }>();
     for (const s of st || []) {
-      const d = due[s.id] || 0, ph = String(s.phone || "").replace(/\D/g, "");
-      if (d <= 0 || ph.length < 10 || sent.has(s.id)) { skip++; continue; }
-      const comps: unknown[] = [{ type: "body", parameters: [s.name, String(Math.round(d)), ml].map((text) => ({ type: "text", text })) }];
-      if (cfg.voice) comps.push({ type: "button", sub_type: "quick_reply", index: "0", parameters: [{ type: "payload", payload: "VOICE|" + s.id }] });
+      const d = due[s.id] || 0;
+      if (d <= 0) continue;
+      const k = s.family_id || s.id;
+      const g = groups.get(k) || { ids: [], names: [], due: 0, phone: "" };
+      g.ids.push(s.id); g.names.push(s.name); g.due += d;
+      const ph = (s.family_id && fp[s.family_id]) || s.phone || "";
+      if (!g.phone && String(ph).replace(/\D/g, "").length >= 10) g.phone = ph;
+      groups.set(k, g);
+    }
+
+    let ok = 0, skip = 0, bad = 0;
+    for (const g of groups.values()) {
+      const ph = String(g.phone).replace(/\D/g, "");
+      if (ph.length < 10 || g.ids.some((i) => sent.has(i))) { skip++; continue; }
+      const comps: unknown[] = [{ type: "body", parameters: [g.names.join(", "), String(Math.round(g.due)), ml].map((text) => ({ type: "text", text })) }];
+      if (cfg.voice) comps.push({ type: "button", sub_type: "quick_reply", index: "0", parameters: [{ type: "payload", payload: "VOICE|" + g.ids[0] }] });
       const r = await fetch(`https://graph.facebook.com/v21.0/${E("WA_PHONE_ID")}/messages`, {
         method: "POST",
         headers: { Authorization: "Bearer " + E("WA_TOKEN"), "Content-Type": "application/json" },
@@ -52,10 +68,12 @@ Deno.serve(async (req) => {
         }),
       });
       const j = await r.json().catch(() => ({}));
-      await db.from("reminder_log").insert({
-        student_id: s.id, month, kind: "text", status: r.ok ? "sent" : "failed",
-        detail: r.ok ? null : JSON.stringify(j.error || j).slice(0, 300),
-      });
+      for (const sid of g.ids) {
+        await db.from("reminder_log").insert({
+          student_id: sid, month, kind: "text", status: r.ok ? "sent" : "failed",
+          detail: r.ok ? null : JSON.stringify(j.error || j).slice(0, 300),
+        });
+      }
       r.ok ? ok++ : bad++;
       await new Promise((res) => setTimeout(res, 200));
     }
