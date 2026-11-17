@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#0A0F1F">
+<meta name="theme-color" content="#F3F7FF">
+<script>document.documentElement.dataset.theme=localStorage.getItem("theme")||"light"</script>
 <title>NextGen Learning</title>
 <link rel="icon" href="logo.png">
 <link rel="manifest" href="manifest.json">
@@ -13,28 +14,30 @@
 <meta name="apple-mobile-web-app-title" content="NextGen Learning">
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Plus+Jakarta+Sans:wght@500;800&family=Noto+Sans+Devanagari:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0A0F1F;--surface:#111833;--surface2:#172044;--ink:#EEF2FF;--mut:#9AA6C9;--line:#26305A;--gold:#FF8A3D;--neon:#35D0BA;--green:#1B2B63;--brown:#0F1630;--red:#FF6B6B;--f:'Rajdhani','Noto Sans Devanagari',sans-serif}
-*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:72px;color-scheme:dark}
+:root{--bg:#F3F7FF;--surface:#FFFFFF;--surface2:#E8F0FF;--ink:#0B1B3F;--mut:#566690;--line:#D3DFF5;--gold:#1D4ED8;--neon:#0369A1;--green:#1E40AF;--brown:#0F1630;--red:#DC2626;--onacc:#FFFFFF;--acc:29,78,216;--sec:3,105,161;--hdr:rgba(255,255,255,.92);--hdr2:rgba(255,255,255,.97);--foot:#E3ECFD;--h1a:#0B1B3F;--f:'Rajdhani','Noto Sans Devanagari',sans-serif;color-scheme:light}
+:root[data-theme=dark]{--bg:#0E0A1F;--surface:#171130;--surface2:#21183F;--ink:#F2EEFF;--mut:#A99FCB;--line:#33295C;--gold:#A78BFA;--neon:#E879F9;--green:#5B21B6;--red:#FB7185;--onacc:#1A0F3A;--acc:167,139,250;--sec:232,121,249;--hdr:rgba(14,10,31,.92);--hdr2:rgba(14,10,31,.97);--foot:#0A0717;--h1a:#FFFFFF;color-scheme:dark}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:72px}
 body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.65 'Noto Sans Devanagari','Plus Jakarta Sans',sans-serif;padding-bottom:calc(72px + env(safe-area-inset-bottom,0px));counter-reset:sec}
 .w{max-width:1040px;margin:0 auto;padding:0 20px}a{color:inherit}.mut{color:var(--mut)}
 :focus-visible{outline:2px solid var(--neon);outline-offset:2px}
-header{position:sticky;top:0;z-index:20;background:rgba(10,15,31,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+header{position:sticky;top:0;z-index:20;background:var(--hdr);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
 header .w{display:flex;align-items:center;justify-content:space-between;height:62px;gap:10px}
 .logo{display:flex;align-items:center;gap:10px;font:700 20px var(--f);letter-spacing:.05em;text-transform:uppercase;text-decoration:none;color:var(--ink);white-space:nowrap;min-width:0}
-.logo img{height:42px;width:auto;filter:drop-shadow(0 0 6px rgba(255,138,61,.45))}
+.logo img{height:42px;width:auto;filter:drop-shadow(0 0 6px rgba(var(--acc),.45))}
 .logo span{overflow:hidden;text-overflow:ellipsis}
 nav.top{display:none;gap:16px;font:600 15px var(--f);letter-spacing:.07em;text-transform:uppercase}
 nav.top a{color:var(--mut);text-decoration:none}nav.top a:hover{color:var(--neon)}
 @media(min-width:960px){nav.top{display:flex}}
 .cut{clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)}
-#lang{background:var(--gold);color:#1f0e00;border:0;padding:8px 14px;font:700 15px var(--f);letter-spacing:.05em;cursor:pointer;clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px)}
-.hero{position:relative;overflow:hidden;padding:34px 0 44px;border-bottom:1px solid var(--line);background-color:var(--bg);background-image:radial-gradient(520px 280px at 85% 0%,rgba(53,208,186,.20),transparent 70%),radial-gradient(460px 260px at 0% 100%,rgba(255,138,61,.14),transparent 70%),linear-gradient(rgba(53,208,186,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(53,208,186,.06) 1px,transparent 1px);background-size:auto,auto,34px 34px,34px 34px}
+#thm{background:var(--surface2);border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:5px 10px;font-size:18px;line-height:1.2;cursor:pointer}
+#lang{background:var(--gold);color:var(--onacc);border:0;padding:8px 14px;font:700 15px var(--f);letter-spacing:.05em;cursor:pointer;clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px)}
+.hero{position:relative;overflow:hidden;padding:34px 0 44px;border-bottom:1px solid var(--line);background-color:var(--bg);background-image:radial-gradient(520px 280px at 85% 0%,rgba(var(--sec),.20),transparent 70%),radial-gradient(460px 260px at 0% 100%,rgba(var(--acc),.14),transparent 70%),linear-gradient(rgba(var(--sec),.06) 1px,transparent 1px),linear-gradient(90deg,rgba(var(--sec),.06) 1px,transparent 1px);background-size:auto,auto,34px 34px,34px 34px}
 .hero .w{display:grid;gap:20px;grid-template-columns:1fr;align-items:center}
-.herologo{width:min(170px,44vw);justify-self:center;filter:drop-shadow(0 0 22px rgba(255,138,61,.35))}
+.herologo{width:min(170px,44vw);justify-self:center;filter:drop-shadow(0 0 22px rgba(var(--acc),.35))}
 @media(prefers-reduced-motion:no-preference){.herologo{animation:fl 5s ease-in-out infinite}@keyframes fl{50%{transform:translateY(-8px)}}}
-.hero h1{font:700 clamp(34px,8vw,66px)/1.05 var(--f);text-transform:uppercase;margin:0 0 12px;background:linear-gradient(90deg,#fff 30%,var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero h1{font:700 clamp(34px,8vw,66px)/1.05 var(--f);text-transform:uppercase;margin:0 0 12px;background:linear-gradient(90deg,var(--h1a) 30%,var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}
 .hero p{color:var(--mut);max-width:46ch;margin:0 0 22px}
-.btn{display:inline-block;background:var(--gold);color:#1f0e00;padding:13px 28px;font:700 18px var(--f);letter-spacing:.07em;text-transform:uppercase;text-decoration:none;clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px)}
+.btn{display:inline-block;background:var(--gold);color:var(--onacc);padding:13px 28px;font:700 18px var(--f);letter-spacing:.07em;text-transform:uppercase;text-decoration:none;clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px)}
 .btn:hover{filter:brightness(1.12)}
 .hud{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:24px;max-width:520px}
 .hud div{background:var(--surface);border:1px solid var(--line);border-top:2px solid var(--neon);padding:8px 6px;text-align:center}
@@ -56,14 +59,14 @@ th{background:var(--surface2);color:var(--gold);font:700 15px var(--f);text-tran
 .gal{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding-bottom:6px}
 .gal img{flex:0 0 78%;max-width:380px;aspect-ratio:4/3;object-fit:cover;border-radius:8px;border:1px solid var(--line);scroll-snap-align:center;cursor:zoom-in}
 #lb{position:fixed;inset:0;z-index:80;background:rgba(0,0,0,.96)}#lb[hidden]{display:none}#lbs{display:flex;height:100%;overflow-x:auto;scroll-snap-type:x mandatory}.lbi{flex:0 0 100%;scroll-snap-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:56px 8px}.lbi img{max-width:100%;max-height:78vh;object-fit:contain}.lbi p{color:#fff;margin:8px 0 0}#lb button{position:absolute;background:rgba(255,255,255,.15);color:#fff;border:0;border-radius:50%;width:44px;height:44px;font-size:22px;cursor:pointer}#lbx{top:12px;right:12px}#lbp{top:50%;left:8px}#lbn{top:50%;right:8px}#lbc{position:absolute;top:20px;left:16px;color:#fff;font:600 15px sans-serif}
-.ptabs{display:flex;gap:6px;margin:12px 0;overflow-x:auto}#panelView .ptabs button{flex:1 0 auto;background:var(--surface2);border:1px solid var(--line);color:var(--ink)}#panelView .ptabs button.on{background:var(--gold);color:#1f0e00;border-color:var(--gold)}.pane[hidden]{display:none}
+.ptabs{display:flex;gap:6px;margin:12px 0;overflow-x:auto}#panelView .ptabs button{flex:1 0 auto;background:var(--surface2);border:1px solid var(--line);color:var(--ink)}#panelView .ptabs button.on{background:var(--gold);color:var(--onacc);border-color:var(--gold)}.pane[hidden]{display:none}
 .rg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}.rc{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px}.rc small{display:block;color:var(--mut)}.rc b{font:800 22px var(--f)}
 .n{padding:12px 14px;margin-bottom:8px;background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--gold);max-width:720px}
 .n time{color:var(--gold);font:700 14px var(--f);letter-spacing:.1em}.n b{display:block}
-footer{border-top:1px solid var(--line);padding:24px 0 30px;color:var(--mut);font-size:14px;background:#070A16}a.adm{color:var(--gold)}
-#bar{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;background:rgba(10,15,31,.96);backdrop-filter:blur(8px);border-top:1px solid var(--neon);padding-bottom:env(safe-area-inset-bottom,0px)}
+footer{border-top:1px solid var(--line);padding:24px 0 30px;color:var(--mut);font-size:14px;background:var(--foot)}a.adm{color:var(--gold)}
+#bar{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;background:var(--hdr2);backdrop-filter:blur(8px);border-top:1px solid var(--neon);padding-bottom:env(safe-area-inset-bottom,0px)}
 #bar button{flex:1;background:none;border:0;color:var(--mut);padding:8px 0 6px;font:700 13px var(--f);letter-spacing:.08em;text-transform:uppercase;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px}
-#bar button span{font-size:20px;line-height:1}#bar button.on{color:var(--gold);text-shadow:0 0 10px rgba(255,138,61,.6)}
+#bar button span{font-size:20px;line-height:1}#bar button.on{color:var(--gold);text-shadow:0 0 10px rgba(var(--acc),.6)}
 #sheet{position:fixed;inset:0;z-index:25;background:rgba(0,0,0,.6);display:flex;align-items:flex-end}#sheet[hidden]{display:none}
 .sh{background:var(--bg);width:100%;border-radius:16px 16px 0 0;border-top:2px solid var(--neon);padding:16px 14px calc(88px + env(safe-area-inset-bottom,0px));max-height:86vh;overflow:auto}
 .fold{margin-bottom:10px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
@@ -78,7 +81,7 @@ footer{border-top:1px solid var(--line);padding:24px 0 30px;color:var(--mut);fon
 #panelView input,#panelView select,#panelView textarea{width:100%;padding:9px;border:1px solid var(--line);border-radius:6px;background:var(--surface2);margin:3px 0 10px;font:inherit;color:var(--ink)}
 #panelView label{display:block;font-size:14px;color:var(--mut)}
 #panelView button{background:var(--green);color:#fff;border:1px solid var(--neon);border-radius:6px;padding:9px 14px;cursor:pointer;font:600 15px 'Noto Sans Devanagari','Plus Jakarta Sans',sans-serif}
-#panelView button.g{background:var(--gold);color:#1f0e00;border-color:var(--gold)}
+#panelView button.g{background:var(--gold);color:var(--onacc);border-color:var(--gold)}
 #panelView button.r{background:#7A2323;border-color:#7A2323;padding:5px 9px;font-size:13px}
 #panelView button:disabled{opacity:.6}
 #panelView .f{display:grid;gap:0 12px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
@@ -88,10 +91,10 @@ footer{border-top:1px solid var(--line);padding:24px 0 30px;color:var(--mut);fon
 #panelView .msg{color:var(--red)}#panelView .ok{color:var(--neon);font-weight:600}
 #panelView .att label{display:inline;margin-right:10px;white-space:nowrap;color:var(--ink)}#panelView .att input{width:auto;margin:0 3px 0 0}
 #panelView .wrap{overflow-x:auto}
-#panelView .cb{margin:0 6px 8px 0;background:var(--surface2);border-color:var(--line)}#panelView .cb.on{background:var(--gold);color:#1f0e00;border-color:var(--gold)}
+#panelView .cb{margin:0 6px 8px 0;background:var(--surface2);border-color:var(--line);color:var(--ink)}#panelView .cb.on{background:var(--gold);color:var(--onacc);border-color:var(--gold)}
 .tk{border:1px solid var(--line);border-left:3px solid var(--neon);background:var(--surface2);border-radius:6px;padding:10px 12px;margin-bottom:8px;font-size:15px}#bar{overflow-x:auto;scrollbar-width:none}#bar::-webkit-scrollbar{display:none}#bar button{flex:1 0 auto;min-width:76px;padding-left:10px;padding-right:10px}
 .waf{position:fixed;right:14px;bottom:calc(86px + env(safe-area-inset-bottom,0px));z-index:20;width:52px;height:52px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;font-size:26px;text-decoration:none;box-shadow:0 4px 14px rgba(0,0,0,.45)}.waf[hidden],.waf.nop{display:none}.wabtn{background:#25D366!important;color:#06210f!important}
-#pv{position:fixed;inset:0;z-index:60;background:#fff;color:#000;overflow:auto}#pv[hidden]{display:none}#pv button{background:#1B2B63;color:#fff;border:0;padding:8px 12px;border-radius:6px;font:600 14px sans-serif;cursor:pointer}
+#pv{position:fixed;inset:0;z-index:60;background:#fff;color:#000;overflow:auto}#pv[hidden]{display:none}#pv button{background:#1E40AF;color:#fff;border:0;padding:8px 12px;border-radius:6px;font:600 14px sans-serif;cursor:pointer}
 @media print{body>*:not(#pv){display:none!important}#pv{position:static;overflow:visible}.noprint{display:none!important}body{padding:0;background:#fff}}
 .card2{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;margin:0 0 14px}.stars{color:var(--gold);letter-spacing:2px}
 </style>
@@ -100,7 +103,7 @@ footer{border-top:1px solid var(--line);padding:24px 0 30px;color:var(--mut);fon
 <header><div class="w">
 <a class="logo" href="#top"><img src="logo.png" alt=""><span data-n></span></a>
 <nav class="top"><a href="#about" data-i="nav_about"></a><a href="#admission" data-adm data-i="nav_adm"></a><a href="#fees" data-adm data-i="nav_fee"></a><a href="#teachers" data-i="nav_tch"></a><a href="#gallery" data-i="nav_gal"></a><a href="#notices" data-i="nav_not"></a><a href="#contact" data-i="nav_con"></a></nav>
-<button id="lang">English</button>
+<div style="display:flex;gap:8px;align-items:center"><button id="thm" aria-label="Theme"></button><button id="lang">English</button></div>
 </div></header>
 <div id="site"><main id="top">
 <div class="hero"><div class="w">
@@ -142,7 +145,9 @@ const T={hi:{nav_home:"होम",nav_exp:"मेन्यू",nav_about:"हम
 en:{nav_home:"Home",nav_exp:"Menu",nav_about:"About",nav_fac:"Facilities",h1v:"Class 1–8",h2v:"Hindi + English",hud1:"Classes",hud2:"Medium",hud3:"Location",f_school:"Coaching",f_students:"Students & Parents",f_media:"Media",f_contact:"Contact",nav_adm:"Admission",nav_fee:"Fees",nav_tch:"Teachers",nav_gal:"Gallery",nav_not:"Notices",nav_con:"Contact",apply:"Join now",cls:"Class",adm_fee:"Admission fee",mon_fee:"Monthly fee",addr_l:"Address",ph_l:"Phone",tm_l:"Class timing",none:"Nothing here yet.",lng:"Hinglish",h3v:"Rajmahal",nav_att:"Attendance",nav_mgt:"Management",nav_exm:"Exam",nav_pnl:"Panel",stf:"Staff login",wa_t:"Chat on WhatsApp",wa_msg:"Hello, I would like to know about NextGen Learning."},
 hg:{nav_home:"Home",nav_exp:"Menu",nav_about:"Hamare Bare Me",nav_fac:"Suvidhayein",h1v:"Class 1–8",h2v:"Hindi + English",h3v:"Rajmahal",hud1:"Classes",hud2:"Medium",hud3:"Location",f_school:"Coaching",f_students:"Students & Parents",f_media:"Media",f_contact:"Sampark",nav_adm:"Admission",nav_fee:"Fees",nav_tch:"Teachers",nav_gal:"Gallery",nav_not:"Notices",nav_con:"Sampark",apply:"Abhi Judein",cls:"Class",adm_fee:"Admission fee",mon_fee:"Monthly fee",addr_l:"Pata",ph_l:"Phone",tm_l:"Class ka samay",none:"Abhi kuch nahi hai.",lng:"हिन्दी",nav_att:"Hazri",nav_mgt:"Prabandhan",nav_exm:"Exam",nav_pnl:"Panel",stf:"Staff Login",wa_t:"WhatsApp par baat karein",wa_msg:"Namaste, mujhe NextGen Learning ke bare me jankari chahiye."}};
 let L=localStorage.getItem('lang')||'hi',S={},D={},ME=null;
-const sb=CONFIG.url.includes('YOUR-')?null:supabase.createClient(CONFIG.url,CONFIG.key);
+const REM=()=>localStorage.getItem('remember')!=='0';
+const AS={getItem:k=>localStorage.getItem(k)??sessionStorage.getItem(k),setItem:(k,v)=>{(REM()?localStorage:sessionStorage).setItem(k,v);(REM()?sessionStorage:localStorage).removeItem(k)},removeItem:k=>{localStorage.removeItem(k);sessionStorage.removeItem(k)}};
+const sb=CONFIG.url.includes('YOUR-')?null:supabase.createClient(CONFIG.url,CONFIG.key,{auth:{storage:AS,persistSession:true,autoRefreshToken:true}});
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const today=()=>{const d=new Date();return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10)};
@@ -179,6 +184,9 @@ function openLB(i){
  $('lbp').onclick=()=>sc.scrollBy({left:-sc.clientWidth});$('lbn').onclick=()=>sc.scrollBy({left:sc.clientWidth});
 }
 addEventListener('keydown',e=>{const lb=$('lb');if(!lb||lb.hidden)return;if(e.key==='Escape')$('lbx').click();if(e.key==='ArrowRight')$('lbn').click();if(e.key==='ArrowLeft')$('lbp').click()});
+const paintTheme=()=>{const d=document.documentElement.dataset.theme==='dark';$('thm').textContent=d?'☀️':'🌙';document.querySelector('meta[name=theme-color]').content=d?'#0E0A1F':'#F3F7FF'};
+$('thm').onclick=()=>{const t=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=t;try{localStorage.setItem('theme',t)}catch(e){}paintTheme()};
+paintTheme();
 $('lang').onclick=()=>{L=L==='hi'?'en':L==='en'?'hg':'hi';localStorage.setItem('lang',L);paint()};
 async function load(){
  if(!sb)return;
@@ -193,7 +201,7 @@ const POSTS=["Director","Teacher","Coordinator","Office Staff","Other"];
 const ACC={admin:"Full control (Admin)",teacher:"Teacher (students, attendance, notices)",staff:"Basic (sirf notices dekhna)"};
 const isAdm=()=>ME&&(ME.access==='owner'||ME.access==='admin');
 const lvl=t=>ME.access==='owner'?'edit':((t==='student'?ME.fees_access:ME.salary_access)||'none');
-const allowed=k=>{if(k==='fees'||k==='reminder'||k==='report')return lvl('student')!=='none';if(k==='salary')return lvl('employee')!=='none';return isAdm()||(ME.access==='teacher'?['students','sa','notices'].includes(k):k==='notices')};
+const allowed=k=>{if(k==='fees'||k==='reminder'||k==='report'||k==='ssearch')return lvl('student')!=='none';if(k==='salary')return lvl('employee')!=='none';return isAdm()||(ME.access==='teacher'?['students','sa','notices'].includes(k):k==='notices')};
 async function fn(body){
  const {data,error}=await sb.functions.invoke('staff-admin',{body});
  if(error)throw new Error(error.message);
@@ -213,12 +221,13 @@ const TABS={
  fees:{label:'Fees / फीस',run:()=>mgmtList('student')},
  reminder:{label:'Fee Reminder',run:reminderTab},
  report:{label:'Fee Report',run:reportTab},
+ ssearch:{label:'Search Student',run:ssearchTab},
  exam:{label:'Exam / परीक्षा',run:examTab},
  salary:{label:'Salary / वेतन',run:()=>mgmtList('employee')},
  gallery:{label:'Gallery',run:()=>crud('gallery',[['url','Photos (ek saath kai chun sakte hain)','photos'],['caption','Caption (optional)']],['url','caption'],'created_at',true)}
 };
 
-const ICON={fees:'💰',salary:'💼',site:'✏️',staff:'👥',students:'🎓',sa:'✅',ta:'🧑‍🏫',teachers:'👩‍🏫',notices:'📢',gallery:'🖼️',reminder:'🔔',report:'📊',exam:'📋'};
+const ICON={fees:'💰',salary:'💼',site:'✏️',staff:'👥',students:'🎓',sa:'✅',ta:'🧑‍🏫',teachers:'👩‍🏫',notices:'📢',gallery:'🖼️',reminder:'🔔',report:'📊',ssearch:'🔍',exam:'📋'};
 let BAR='home';
 const setBar=a=>{BAR=a;renderBar();$('waf').classList.toggle('nop',a==='panel')};
 function showSite(){$('site').hidden=false;$('admView').hidden=true;$('panelView').hidden=true;$('sheet').hidden=true;setBar('home');window.scrollTo(0,0)}
@@ -235,9 +244,10 @@ async function loadMe(){
 }
 function showLogin(){
  showPanel();$('ptitle').textContent='Staff login';$('pwho').textContent='';
- $('pmain').innerHTML='<div class="box"><label>Gmail<input id="lem" type="email" autocomplete="username"></label><label>Password<input id="lpw" type="password" autocomplete="current-password"></label><button id="go">Login</button><p class="msg" id="lm"></p><p class="mut"><small>Password bhool gaye? Admin se naya password banwayein.</small></p></div>';
+ $('pmain').innerHTML='<div class="box"><label>Gmail<input id="lem" type="email" autocomplete="username"></label><label>Password<input id="lpw" type="password" autocomplete="current-password"></label><label style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="rem" style="width:auto"'+(REM()?' checked':'')+'> Mujhe yaad rakhein (Remember me)</label><button id="go">Login</button><p class="msg" id="lm"></p><p class="mut"><small>Password bhool gaye? Admin se naya password banwayein.</small></p></div>';
  $('go').onclick=async()=>{
   if(!sb){$('lm').textContent='Supabase set nahi hai (config.js)';return}
+  localStorage.setItem('remember',$('rem').checked?'1':'0');
   const {error}=await sb.auth.signInWithPassword({email:$('lem').value.trim().toLowerCase(),password:$('lpw').value});
   if(error){$('lm').textContent=error.message;return}
   if(await loadMe())goFirst();
@@ -251,7 +261,7 @@ function openTab(k){lastTab=k;PTAB='det';
 }
 const goFirst=()=>openTab(Object.keys(TABS).filter(allowed)[0]);
 const foldersHTML=(groups)=>groups.map(g=>`<details class="fold" open><summary>${g[0]}</summary><div class="shg">${g[1]}</div></details>`).join('');
-const GROUPS=[['📁 Management',['fees','reminder','report','salary']],['📁 Students',['students']],['📁 Staff',['teachers','staff']],['📁 Attendance',['sa','ta']],['📁 Exam',['exam']],['📁 Website',['site','notices','gallery']]];
+const GROUPS=[['📁 Management',['ssearch','fees','reminder','report','salary']],['📁 Students',['students']],['📁 Staff',['teachers','staff']],['📁 Attendance',['sa','ta']],['📁 Exam',['exam']],['📁 Website',['site','notices','gallery']]];
 const FOLD=[['Attendance','nav_att','✅'],['Management','nav_mgt','💼'],['Exam','nav_exm','📋']];
 function folderKeys(n){const ks=Object.keys(TABS).filter(allowed),g=GROUPS.find(g=>g[0].includes(n));return g?g[1].filter(k=>ks.includes(k)):[]}
 function renderBar(){
@@ -443,7 +453,7 @@ async function attendance(list,att,idCol,byClass){
 
 
 /* ---------- Students folder: class-wise list + Study Tracker ---------- */
-let CC='',PTAB='det';
+let CC='',PTAB='det',SSQ='';
 
 const cn=c=>/^\d/.test(c)?'Class '+c:c;
 const CURR={
@@ -456,7 +466,7 @@ const stars=r=>r?'<span class="stars">'+'★'.repeat(r)+'☆'.repeat(5-r)+'</spa
 const RLAB={1:'1 - Bahut kamzor',2:'2 - Kamzor',3:'3 - Theek',4:'4 - Achha',5:'5 - Bahut badhiya'};
 async function studentsTab(){
  const cls=CONFIG.classes;if(!CC||(CC!=='ALL'&&!cls.includes(CC)))CC=cls[0];
- $('pmain').innerHTML=`<div><button class="cb ${CC==='ALL'?'on':''}" data-c="ALL">All students</button>${cls.map(c=>`<button class="cb ${c===CC?'on':''}" data-c="${esc(c)}">${esc(cn(c))}</button>`).join('')}</div>`+(isAdm()?`<p><button class="g" id="sadd">+ Add student</button></p><div id="sform" hidden><div class="f">${STU_F.map(f=>inp(f,'f_')).join('')}<label>Aadhar number<input id="f_aadhar" inputmode="numeric" maxlength="12"></label></div><button id="ssave">Save student</button> <span class="msg" id="e"></span></div>`:'')+`<label>Search<input id="sq" placeholder="Naam"></label><p class="mut" id="scnt"></p><div class="wrap" id="slist">Loading...</div>`;
+ $('pmain').innerHTML=`<div><button class="cb ${CC==='ALL'?'on':''}" data-c="ALL">All students</button>${cls.map(c=>`<button class="cb ${c===CC?'on':''}" data-c="${esc(c)}">${esc(cn(c))}</button>`).join('')}</div>`+(isAdm()?`<p><button class="g" id="sadd">+ Add student</button></p><div id="sform" hidden><div class="f">${STU_F.map(f=>inp(f,'f_')).join('')}<label>Aadhar number<input id="f_aadhar" inputmode="numeric" maxlength="12"></label><label>Monthly fee (₹), is bachhe ki<input id="f_fee" type="number" inputmode="numeric"></label></div><button id="ssave">Save student</button> <span class="msg" id="e"></span></div>`:'')+`<label>Search<input id="sq" placeholder="Naam"></label><p class="mut" id="scnt"></p><div class="wrap" id="slist">Loading...</div>`;
  document.querySelectorAll('.cb').forEach(b=>b.onclick=()=>{CC=b.dataset.c;studentsTab()});
  if(isAdm()){
   if(CC!=='ALL')$('f_class').value=CC;
@@ -468,6 +478,7 @@ async function studentsTab(){
     const ad=$('f_aadhar').value.replace(/\s/g,'');if(ad&&!/^\d{12}$/.test(ad))throw new Error('Aadhar 12 ank ka hona chahiye');
     const {data:ns,error}=await sb.from('students').insert(o).select('id').single();if(error)throw error;
     if(ad){const r=await sb.from('student_private').upsert({student_id:ns.id,aadhar:ad},{onConflict:'student_id'});if(r.error)throw r.error}
+    const fee=+$('f_fee').value;if(fee>0){const r2=await sb.from('accounts').upsert({person_type:'student',person_id:ns.id,mode:'auto',monthly_amount:fee,start_month:monthStart()},{onConflict:'person_type,person_id'});if(r2.error)throw r2.error}
     CC=CC==='ALL'?'ALL':(o.class||CC);studentsTab();
    }catch(x){$('e').textContent=x.code==='23505'?'Ye Roll no. kisi aur bachhe ka hai. Doosra Roll no. daalein.':x.message}
   };
@@ -475,7 +486,8 @@ async function studentsTab(){
  let sq=sb.from('students').select('*');if(CC!=='ALL')sq=sq.eq('class',CC);else sq=sq.order('class');
  const {data:st,error}=await sq.order('roll',{nullsFirst:false}).order('name');
  if(error){$('slist').textContent=error.message;return}
- const ids=(st||[]).map(s=>s.id),L={},DN={};
+ const ids=(st||[]).map(s=>s.id),L={},DN={},FEE={},sf=lvl('student')!=='none';
+ if(sf&&ids.length){const {data:ac}=await sb.from('accounts').select('person_id,monthly_amount').eq('person_type','student').in('person_id',ids);(ac||[]).forEach(a=>{FEE[a.person_id]=a.monthly_amount})}
  if(ids.length){const {data:tr}=await sb.from('student_tracker').select('student_id,date,rating,created_at').in('student_id',ids).order('date',{ascending:false}).order('created_at',{ascending:false});
   (tr||[]).forEach(t=>{(L[t.student_id]=L[t.student_id]||[]).push(t)});
   const {data:sk}=await sb.from('student_skills').select('student_id').eq('status','done').in('student_id',ids);(sk||[]).forEach(x=>{DN[x.student_id]=(DN[x.student_id]||0)+1})}
@@ -483,7 +495,7 @@ async function studentsTab(){
   const q=$('sq').value.trim().toLowerCase();
   const list=(st||[]).filter(s=>!q||String(s.name).toLowerCase().includes(q));
   $('scnt').textContent=(CC==='ALL'?'All students':cn(CC))+': '+(st||[]).length+' students';
-  $('slist').innerHTML=list.length?`<table><tr><th>Roll</th><th>Name</th><th>Skills</th><th>Padhai</th><th>Last update</th><th></th></tr>${list.map(s=>{const t=(L[s.id]||[]).slice(0,3).filter(x=>x.rating);const av=t.length?Math.round(t.reduce((a,x)=>a+x.rating,0)/t.length):0;const last=(L[s.id]||[])[0];return `<tr><td>${esc(s.roll)}</td><td>${esc(s.name)}<br><small class="mut">${esc(s.father_name)}${CC==='ALL'?' · '+esc(cn(s.class)):''}</small></td><td>${SKN(s.class)?(DN[s.id]||0)+'/'+SKN(s.class):'-'}</td><td>${stars(av)}</td><td>${last?fmt(last.date):'-'}</td><td><button class="g" data-p="${s.id}">Open</button></td></tr>`}).join('')}</table>`:'<p class="mut">Is class me abhi koi student nahi hai.</p>';
+  $('slist').innerHTML=list.length?`<table><tr><th>Roll</th><th>Name</th><th>Skills</th>${sf?'<th>Fee</th>':''}<th>Padhai</th><th>Last update</th><th></th></tr>${list.map(s=>{const t=(L[s.id]||[]).slice(0,3).filter(x=>x.rating);const av=t.length?Math.round(t.reduce((a,x)=>a+x.rating,0)/t.length):0;const last=(L[s.id]||[])[0];return `<tr><td>${esc(s.roll)}</td><td>${esc(s.name)}<br><small class="mut">${esc(s.father_name)}${CC==='ALL'?' · '+esc(cn(s.class)):''}</small></td><td>${SKN(s.class)?(DN[s.id]||0)+'/'+SKN(s.class):'-'}</td>${sf?`<td>${FEE[s.id]!=null?money(FEE[s.id]):'-'}</td>`:''}<td>${stars(av)}</td><td>${last?fmt(last.date):'-'}</td><td><button class="g" data-p="${s.id}">Open</button></td></tr>`}).join('')}</table>`:'<p class="mut">Is class me abhi koi student nahi hai.</p>';
  };
  $('sq').oninput=draw;draw();
  $('slist').onclick=e=>{const id=e.target.dataset.p;if(id)profile('student',id)};
@@ -538,6 +550,22 @@ async function examTab(){
    };
   };
  };
+}
+
+/* ---------- Search student ---------- */
+function ssearchTab(){
+ $('pmain').innerHTML=`<label>Student dhoondhein<input id="ssq" placeholder="Naam / Roll no. / Phone / Parent ka naam" autocomplete="off" value="${esc(SSQ)}"></label><div class="wrap" id="ssr"></div>`;
+ const go=async()=>{
+  SSQ=$('ssq').value;const q=SSQ.trim().replace(/[,()%*\\]/g,' ').trim();
+  if(!q){$('ssr').innerHTML='<p class="mut">Naam likhna shuru karein.</p>';return}
+  let f=`name.ilike.%${q}%,father_name.ilike.%${q}%,phone.ilike.%${q}%`;if(/^\d+$/.test(q))f+=`,roll.eq.${q}`;
+  const {data,error}=await sb.from('students').select('id,name,class,roll,father_name,phone').or(f).order('name').limit(30);
+  if(error){$('ssr').innerHTML='<p class="msg">'+esc(error.message)+'</p>';return}
+  $('ssr').innerHTML=(data||[]).length?`<table>${data.map(s=>`<tr data-p="${s.id}" style="cursor:pointer"><td>${s.roll?esc(s.roll)+'. ':''}${esc(s.name)}<br><small class="mut">${esc(cn(s.class))}${s.father_name?' · '+esc(s.father_name):''}${s.phone?' · '+esc(s.phone):''}</small></td><td><button class="g" data-p="${s.id}">Profile</button></td></tr>`).join('')}</table>`:'<p class="mut">Koi student nahi mila.</p>';
+ };
+ let tm;$('ssq').oninput=()=>{clearTimeout(tm);tm=setTimeout(go,250)};
+ $('ssr').onclick=e=>{const r=e.target.closest('[data-p]');if(r)profile('student',r.dataset.p)};
+ go();if(!SSQ)$('ssq').focus();
 }
 
 /* ---------- Fee Report ---------- */
