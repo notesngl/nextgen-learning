@@ -240,7 +240,7 @@ async function fn(body){
  if(data&&data.error)throw new Error(data.error);
  return data;
 }
-const STU_F=[['photo_url','Photo (upload karein)','photo'],['name','Name / नाम'],['class','Class / कक्षा','sel'],['roll','Roll no (har bachhe ka alag)','number'],['father_name',"Parent's name / अभिभावक"],['phone','Mobile'],['address','Address'],['dob','Date of birth','date']];
+const STU_F=[['photo_url','Photo (upload karein)','photo'],['name','Name / नाम'],['class','Class / कक्षा','sel'],['roll','Roll no (har bachhe ka alag)','number'],['father_name',"Parent's name / अभिभावक"],['phone','Mobile (primary)'],['address','Address'],['dob','Date of birth','date']];
 const EMP_F=[['name','Name'],['post','Post','opt:Teacher|Director|Coordinator|Office Staff|Other'],['subject','Subject (teacher ke liye)'],['qualification','Qualification'],['phone','Phone'],['address','Address'],['joining_date','Joining date','date'],['show_public','Website par dikhayein?','opt:true=Haan|false=Nahi'],['photo_url','Photo (upload karein)','photo']];
 const TABS={
  site:{label:'Website edit',run:siteTab},
@@ -482,6 +482,7 @@ async function attendance(list,att,idCol,byClass){
   let q=sb.from(list).select('*');q=byClass?q.eq('class',$('cl').value).eq('status','active').order('roll',{nullsFirst:false}).order('name'):q.order('name');
   const [{data:people},{data:rec}]=await Promise.all([q,sb.from(att).select('*').eq('date',dt)]);
   const ids=(people||[]).map(p=>p.id),cur={};(rec||[]).forEach(r=>cur[r[idCol]]=r.status);
+  const CTm={};if(byClass&&ids.length){const {data:cts}=await sb.from('student_contacts').select('student_id,label,phone').in('student_id',ids);(cts||[]).forEach(c=>{(CTm[c.student_id]=CTm[c.student_id]||[]).push(c)})}
   const from=new Date(new Date(dt+'T00:00:00').getTime()-45*864e5).toLocaleDateString('sv');
   let H=[];
   if(ids.length)for(let o=0;o<5000;o+=1000){const {data}=await sb.from(att).select(idCol+',date,status').in(idCol,ids).gte('date',from).lt('date',dt).order('date',{ascending:false}).range(o,o+999);H=H.concat(data||[]);if(!data||data.length<1000)break}
@@ -489,7 +490,7 @@ async function attendance(list,att,idCol,byClass){
   H.forEach(r=>{(mp[r[idCol]]=mp[r[idCol]]||{})[r.date]=r.status;const o=byD[r.date]=byD[r.date]||{P:0,A:0,L:0};o[r.status]=(o[r.status]||0)+1});
   const streak={};ids.forEach(id=>{let n=0;for(const d of days){if((mp[id]||{})[d]==='A')n++;else break}streak[id]=n});
   const last=days[0],ab=(people||[]).filter(p=>last&&(mp[p.id]||{})[last]==='A');
-  const cb=p=>{const d=String(p.phone||'').replace(/\D/g,''),n=d.length===10?'91'+d:d;return d.length>=10?`<a class="btn" href="tel:+${n}">📞 Call</a> <a class="btn wabtn" target="_blank" rel="noopener" href="https://wa.me/${n}?text=${encodeURIComponent('Namaste! '+p.name+' '+v('school_name')+' me nahi aaya/aayi. Sab theek hai na?')}">💬</a>`:'<small class="mut">Phone nahi</small>'};
+  const cb=p=>{const d=String(p.phone||'').replace(/\D/g,''),n=d.length===10?'91'+d:d;return (d.length>=10?`<a class="btn" href="tel:+${n}">📞 Call</a> <a class="btn wabtn" target="_blank" rel="noopener" href="https://wa.me/${n}?text=${encodeURIComponent('Namaste! '+p.name+' '+v('school_name')+' me nahi aaya/aayi. Sab theek hai na?')}">💬</a>`:'<small class="mut">Phone nahi</small>')+(CTm[p.id]||[]).map(c=>{const d=String(c.phone).replace(/\D/g,'');return d.length>=10?` <a class="btn" href="tel:+${d.length===10?'91'+d:d}">📞 ${esc(c.label||'Other')}</a>`:''}).join('')};
   const todayAb=(people||[]).filter(p=>cur[p.id]==='A');
   $('ab').innerHTML=(todayAb.length?`<div class="card2"><b>🔴 ${fmt(dt)} ke Absent (${todayAb.length})</b><table>${todayAb.map(p=>`<tr><td>${esc(p.name)}${streak[p.id]?`<br><small class="mut">pichhle ${streak[p.id]} din se bhi absent</small>`:''}</td><td>${cb(p)}</td></tr>`).join('')}</table></div>`:'')
   +(last?`<div class="card2"><b>Pichli attendance (${fmt(last)}):</b> ${ab.length?`<span style="color:var(--red)">${ab.length} absent</span><table>${ab.map(p=>`<tr><td>${esc(p.name)}<br><small style="color:var(--red)">🔴 ${streak[p.id]} din se absent</small></td><td>${cb(p)}</td></tr>`).join('')}</table>`:'<span class="ok">sab aaye ✅</span>'}</div>`:'<p class="mut">Pichli attendance ka record abhi nahi hai.</p>');
@@ -643,6 +644,7 @@ function ssearchTab(){
   SSQ=$('ssq').value;const q=SSQ.trim().replace(/[,()%*\\]/g,' ').trim();
   if(!q){$('ssr').innerHTML='<p class="mut">Naam likhna shuru karein.</p>';return}
   let f=`name.ilike.%${q}%,father_name.ilike.%${q}%,phone.ilike.%${q}%`;if(/^\d+$/.test(q))f+=`,roll.eq.${q}`;
+  {const {data:cs}=await sb.from('student_contacts').select('student_id').ilike('phone','%'+q+'%').limit(20);if(cs&&cs.length)f+=`,id.in.(${cs.map(x=>x.student_id).join(',')})`}
   const {data,error}=await sb.from('students').select('id,name,class,roll,father_name,phone,photo_url,family_id,status').or(f).order('name').limit(30);
   if(error){$('ssr').innerHTML='<p class="msg">'+esc(error.message)+'</p>';return}
   $('ssr').innerHTML=(data||[]).length?`<table>${data.map(s=>`<tr data-p="${s.id}" style="cursor:pointer"><td>${s.photo_url?`<img class="av" src="${esc(s.photo_url)}" alt="">`:''}${s.family_id?'👨‍👩‍👧 ':''}${s.roll?esc(s.roll)+'. ':''}${esc(s.name)}${s.status&&s.status!=='active'?` <span class="pill">${s.status==='left'?'Left':'Pass out'}</span>`:''}<br><small class="mut">${esc(cn(s.class))}${s.father_name?' · '+esc(s.father_name):''}${s.phone?' · '+esc(s.phone):''}</small></td><td><button class="g" data-p="${s.id}">Profile</button></td></tr>`).join('')}</table>`:'<p class="mut">Koi student nahi mila.</p>';
@@ -711,15 +713,17 @@ async function reportTab(){
 async function feesTab(){
  const m=$('pmain');m.innerHTML='<p class="mut">Loading...</p>';
  await sb.rpc('run_accrual');
- const [st,bl,lg,cf,fm]=await Promise.all([sb.from('students').select('id,name,phone,class,family_id,roll,status').order('roll',{nullsFirst:false}).order('name'),sb.rpc('balances',{t:'student'}),sb.from('reminder_log').select('*').order('created_at',{ascending:false}).limit(30),isAdm()?sb.from('reminder_cfg').select('*').eq('id',1).maybeSingle():Promise.resolve({data:null}),sb.from('families').select('id,phone')]);
+ const [st,bl,lg,cf,fm,ct]=await Promise.all([sb.from('students').select('id,name,phone,class,family_id,roll,status').order('roll',{nullsFirst:false}).order('name'),sb.rpc('balances',{t:'student'}),sb.from('reminder_log').select('*').order('created_at',{ascending:false}).limit(30),isAdm()?sb.from('reminder_cfg').select('*').eq('id',1).maybeSingle():Promise.resolve({data:null}),sb.from('families').select('id,phone'),sb.from('student_contacts').select('student_id,label,phone')]);
  const due={},nm={};(bl.data||[]).forEach(b=>{due[b.pid]=+b.charged-+b.paid-+b.discounted});
  (st.data||[]).forEach(s=>{nm[s.id]=s.name});
+ const CT={};(ct.data||[]).forEach(c=>{(CT[c.student_id]=CT[c.student_id]||[]).push(c)});
  const fp={};(fm.data||[]).forEach(f=>{fp[f.id]=f.phone});
  const G=new Map();
  (st.data||[]).filter(s=>s.status==='active'||(due[s.id]||0)>0).forEach(s=>{const k=s.family_id||s.id,g=G.get(k)||{m:[],due:0,phone:''};g.m.push(s);g.due+=Math.max(due[s.id]||0,0);const ph=(s.family_id&&fp[s.family_id])||s.phone||'';if(!g.phone&&String(ph).replace(/\D/g,'').length>=10)g.phone=ph;G.set(k,g)});
  const all=[...G.values()],c=cf.data||{enabled:false,day:2,voice:true},rd=x=>Math.round(x);
  const msg=g=>{const d=g.m.filter(x=>(due[x.id]||0)>0);return d.length>1?`नमस्ते! ${d.map(x=>x.name).join(', ')} की कुल ₹${rd(g.due)} फीस बाकी है (${d.map(x=>x.name+': ₹'+rd(due[x.id])).join(', ')})। कृपया जल्द से जल्द जमा करें। धन्यवाद, ${v('school_name')}`:`नमस्ते! ${d[0].name} की ₹${rd(g.due)} फीस बाकी है। कृपया जल्द से जल्द जमा करें। धन्यवाद, ${v('school_name')}`};
- const wa=g=>{const d=String(g.phone||'').replace(/\D/g,'');return d.length>=10?'https://wa.me/'+(d.length===10?'91'+d:d)+'?text='+encodeURIComponent(msg(g)):''};
+ const wa=(g,ph)=>{const d=String(ph||g.phone||'').replace(/\D/g,'');return d.length>=10?'https://wa.me/'+(d.length===10?'91'+d:d)+'?text='+encodeURIComponent(msg(g)):''};
+ const extras=g=>{const main=String(g.phone||'').replace(/\D/g,'').slice(-10),seen=new Set([main]),o=[];g.m.filter(x=>(due[x.id]||0)>0).forEach(x=>(CT[x.id]||[]).forEach(c=>{const k=String(c.phone).replace(/\D/g,'').slice(-10);if(k.length>=10&&!seen.has(k)){seen.add(k);o.push(c)}}));return o};
  m.innerHTML=`<div id="fsum"></div><div class="f"><label>Class<select id="fc"><option value="ALL">Sabhi</option>${CONFIG.classes.map(c=>`<option value="${esc(c)}">${esc(cn(c))}</option>`).join('')}</select></label><label>Kitne dikhayein<select id="fs"><option value="due">Sirf baki wale</option><option value="all">Sabhi bachhe</option></select></label></div><label>Search<input id="fq" placeholder="Naam"></label><div class="wrap" id="fl2"></div>`
  +(isAdm()?`<details class="card2" style="margin-top:16px"><summary><b>⚙️ Automatic reminder (har mahine)</b></summary><div class="f"><label>Auto reminder<select id="rc_e"><option value="true">Chalu</option><option value="false">Band</option></select></label><label>Mahine ki tarikh<input id="rc_d" type="number" min="1" max="28" value="${c.day}"></label><label>AI Voice bhi?<select id="rc_v"><option value="true">Haan</option><option value="false">Nahi</option></select></label></div><button id="rc_s">Save</button> <span id="rc_m" class="msg"></span><p class="mut"><small>Auto bhejne ke liye WhatsApp API setup zaroori hai.</small></p><button class="g" id="rc_now">Abhi sabko bhejein (auto)</button> <span id="rc_r" class="msg"></span></details>`:'')
  +`<details class="card2"><summary><b>Bheje gaye reminders</b></summary><div class="wrap">${(lg.data||[]).length?`<table>${lg.data.map(l=>`<tr><td>${fmt(l.created_at)}</td><td>${esc(nm[l.student_id]||'')}</td><td>${l.kind==='voice'?'🔊':'💬'} ${l.status==='sent'?'✅':'❌'}<br><small class="mut">${esc(l.detail)}</small></td></tr>`).join('')}</table>`:'<p class="mut">Abhi koi nahi.</p>'}</div></details>`;
@@ -728,7 +732,7 @@ async function feesTab(){
   const L=all.filter(g=>(sh==='all'||g.due>0)&&(cl==='ALL'||g.m.some(x=>x.class===cl))&&(!q||g.m.some(x=>String(x.name).toLowerCase().includes(q)))).sort((a,b)=>b.due-a.due);
   const tot=L.reduce((a,g)=>a+g.due,0),nb=L.filter(g=>g.due>0).length;
   $('fsum').innerHTML=`<div class="rg"><div class="rc"><small>Kul baki</small><b style="color:var(--red)">${money(tot)}</b></div><div class="rc"><small>Baki wale parivar/bachhe</small><b>${nb}</b></div></div>`;
-  $('fl2').innerHTML=L.length?`<table><tr><th>Bachhe aur baki fees</th><th>Reminder</th></tr>${L.map(g=>{const sh2=g.m.filter(x=>sh==='all'||(due[x.id]||0)>0);return `<tr><td>${sh2.map(x=>`<a data-p="${x.id}" style="cursor:pointer;color:var(--gold);font-weight:700">${esc(x.name)}</a> <small class="mut">${esc(cn(x.class))}</small>${x.status!=='active'?` <span class="pill">${x.status==='left'?'Left':'Pass out'}</span>`:''} · ${money(Math.max(due[x.id]||0,0))}`).join('<br>')}${g.m.length>1?`<br><b>👨‍👩‍👧 Kul: ${money(g.due)}</b>`:''}</td><td>${g.due>0?(wa(g)?`<a class="btn wabtn" target="_blank" rel="noopener" href="${wa(g)}">📩 Manual Reminder</a>`:'<small class="mut">Phone nahi</small>'):'<small class="ok">Baki nahi</small>'}</td></tr>`}).join('')}</table>`:'<p class="ok">Kisi ki fees baki nahi hai 🎉</p>';
+  $('fl2').innerHTML=L.length?`<table><tr><th>Bachhe aur baki fees</th><th>Reminder</th></tr>${L.map(g=>{const sh2=g.m.filter(x=>sh==='all'||(due[x.id]||0)>0);return `<tr><td>${sh2.map(x=>`<a data-p="${x.id}" style="cursor:pointer;color:var(--gold);font-weight:700">${esc(x.name)}</a> <small class="mut">${esc(cn(x.class))}</small>${x.status!=='active'?` <span class="pill">${x.status==='left'?'Left':'Pass out'}</span>`:''} · ${money(Math.max(due[x.id]||0,0))}`).join('<br>')}${g.m.length>1?`<br><b>👨‍👩‍👧 Kul: ${money(g.due)}</b>`:''}</td><td>${g.due>0?(wa(g)?`<a class="btn wabtn" target="_blank" rel="noopener" href="${wa(g)}">📩 Manual Reminder</a>`:'<small class="mut">Phone nahi</small>')+extras(g).map(c=>`<br><a class="btn wabtn" target="_blank" rel="noopener" href="${wa(g,c.phone)}">📩 ${esc(c.label||'Other')}</a>`).join(''):'<small class="ok">Baki nahi</small>'}</td></tr>`}).join('')}</table>`:'<p class="ok">Kisi ki fees baki nahi hai 🎉</p>';
  };
  $('fc').onchange=$('fs').onchange=draw;$('fq').oninput=draw;
  $('fl2').onclick=e=>{const id=e.target.dataset.p;if(id)profile('student',id)};
@@ -786,8 +790,9 @@ async function profile(type,id){
  }
  let trk=[],pv=null;
  if(stu){const [a,b]=await Promise.all([sb.from('student_tracker').select('*').eq('student_id',id).order('date',{ascending:false}).order('created_at',{ascending:false}),isAdm()?sb.from('student_private').select('*').eq('student_id',id).maybeSingle():Promise.resolve({data:null})]);trk=a.data||[];pv=b.data}
- let fam=null,sibs=[],dues={},sugg=[];
+ let fam=null,sibs=[],dues={},sugg=[],contacts=[];
  if(stu){
+  {const {data:ct}=await sb.from('student_contacts').select('*').eq('student_id',id).order('created_at');contacts=ct||[]}
   if(p.family_id){const [a,b]=await Promise.all([sb.from('families').select('*').eq('id',p.family_id).maybeSingle(),sb.from('students').select('id,name,class,roll,photo_url').eq('family_id',p.family_id).order('roll',{nullsFirst:false})]);fam=a.data;sibs=b.data||[]}
   if(see&&sibs.length){const {data:bl}=await sb.rpc('balances',{t:'student'});(bl||[]).forEach(x=>{dues[x.pid]=+x.charged-+x.paid-+x.discounted})}
   if(isAdm()&&p.father_name){const {data:sg}=await sb.from('students').select('id,name,class,roll').eq('father_name',p.father_name).neq('id',id).limit(8);sugg=(sg||[]).filter(x=>!sibs.some(y=>y.id===x.id))}
@@ -809,6 +814,14 @@ async function profile(type,id){
  const mnu=[...(isAdm()?[['edit','✏️ Edit details']]:[]),['id','🪪 ID Card'],...(isAdm()?[['share','🔗 Share profile'],['fam','👨‍👩‍👧 Family / Bhai-behan']]:[])].map(([k,l])=>`<button data-mi="${k}">${l}</button>`).join('')+(ph10?`<a href="tel:+${ph10}">📞 Call</a><a target="_blank" rel="noopener" href="https://wa.me/${ph10}">💬 WhatsApp</a>`:'')+(isAdm()?((p.status&&p.status!=='active')?'<button data-mi="act">↩️ Wapas Active karein</button>':'<button data-mi="left">🚪 Mark as Left</button><button data-mi="pass">🎓 Mark as Pass out</button>')+'<button class="dg" data-mi="del">🗑️ Delete student</button>':'');
  if(stu)h+=`<div class="ph"><button class="dots" id="pdots" aria-label="Menu">⋮</button><div class="pmenu" id="pmenu" hidden>${mnu}</div><div class="pha">${p.photo_url?`<img src="${esc(p.photo_url)}" alt="">`:`<span>${esc((p.name||'?').trim().charAt(0).toUpperCase())}</span>`}</div><div class="phi"><h2>${esc(p.name)}</h2><div><span class="pill">${esc(cn(p.class))}</span>${p.roll?`<span class="pill">Roll ${esc(p.roll)}</span>`:''}${p.family_id?'<span class="pill">👨‍👩‍👧 Family</span>':''}${p.status&&p.status!=='active'?`<span class="pill" style="border-color:var(--red);color:var(--red)">${p.status==='left'?'🚪 Left':'🎓 Pass out'}${p.left_on?' · '+fmt(p.left_on):''}</span>`:''}</div>${p.father_name?`<small class="mut">👤 ${esc(p.father_name)}</small>`:''}</div></div><div class="pst">${see?`<div><small>Baki fees</small><b style="color:${myDue>0?'var(--red)':'var(--neon)'}">${money(myDue)}</b></div>`:''}${CA.length?`<div><small>Skills</small><b>${cdn}/${CA.length}</b></div>`:''}<div><small>Remarks</small><b>${trk.length}</b></div></div><div class="pact">${ph10?`<a class="btn" href="tel:+${ph10}">📞 Call</a><a class="btn wabtn" target="_blank" rel="noopener" href="https://wa.me/${ph10}">💬 WhatsApp</a>`:''}${isAdm()?'<button class="g" id="shb">🔗 Share profile</button>':''}</div><div id="shbox" hidden></div>`;
  P.det+=`<div style="${card}">${!stu&&p.photo_url?`<img src="${esc(p.photo_url)}" alt="" style="width:96px;height:96px;object-fit:cover;border-radius:50%;margin-bottom:8px;border:2px solid var(--gold)"><br>`:''}${details}${isAdm()?`<p><button class="g" id="ped">Edit details</button></p><div id="pedit" hidden>${FL.map(f=>inp(f,'p_')).join('')}<button id="psv">Save details</button> <span id="pem" class="msg"></span></div>`:''}</div>`;
+ if(stu){
+  const LBL=['Papa','Mummy','Dada','Dadi','Chacha','Bhai/Behan','Other'],tl=n=>{const d=String(n||'').replace(/\D/g,'');return d.length>=10?(d.length===10?'91'+d:d):''};
+  const crow=(lab,num,ex)=>`<div class="ir"><span>📞</span><div style="flex:1"><small>${esc(lab)}</small><b>${esc(num)}</b></div>${tl(num)?`<a class="btn" href="tel:+${tl(num)}">Call</a><a class="btn wabtn" target="_blank" rel="noopener" href="https://wa.me/${tl(num)}">💬</a>`:''}</div>${ex||''}`;
+  P.det+=`<div id="phc" style="${card}"><b>📞 Phone numbers</b><div class="irs" style="margin-top:8px">`
+  +(p.phone?crow((p.phone_label||'Primary')+' (primary)',p.phone,isAdm()?`<label style="margin:0 0 6px">Ye number kiska hai?<select id="pc_pl"><option value="">Primary</option>${LBL.map(l=>`<option ${p.phone_label===l?'selected':''}>${l}</option>`).join('')}</select></label>`:''):'<p class="mut">Primary number abhi nahi hai (Edit details me Mobile daalein).</p>')
+  +contacts.map(c=>crow(c.label||'Other',c.phone,isAdm()?`<div class="pact" style="margin:0 0 6px"><button class="g" data-cr="${c.id}">Reminder: ${c.reminder?'Haan ✅':'Nahi'}</button><button class="g" data-cp="${c.id}">Primary banao</button><button class="r" data-cd="${c.id}">✕ Hatayein</button></div>`:'')).join('')
+  +`</div>`+(isAdm()?`<div class="f" style="margin-top:10px"><label>Kiska number<select id="pc_l">${LBL.map(l=>`<option>${l}</option>`).join('')}</select></label><label>Number<input id="pc_n" inputmode="tel" placeholder="10 ank ka number"></label></div><label style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="pc_r" style="width:auto"> Fee reminder is number par bhi bhejein</label><button id="pc_a">+ Number jodein</button> <span id="pc_m" class="msg"></span>`:'')+`</div>`;
+ }
  if(stu){
   const tot=sibs.reduce((a,x)=>a+Math.max(dues[x.id]||0,0),0);
   P.det+=`<div id="famc" style="${card}"><b>👨‍👩‍👧 Family / Bhai-behan</b>`
@@ -874,6 +887,21 @@ async function profile(type,id){
    if($('sh_n'))$('sh_n').onclick=()=>navigator.share({title:p.name,text:txt,url}).catch(()=>{});
    $('sh_x').onclick=async()=>{if(!confirm('Ye link band kar dein? Purana link kaam nahi karega.'))return;const {error}=await sb.from('students').update({share_token:null}).eq('id',id);if(error)alert(error.message);else{p.share_token=null;bx.hidden=true}};
   };
+  if($('phc')){
+   const done2=async fn=>{try{await fn();profile(type,id)}catch(x){alert(x.message)}};
+   const ck=e=>{if(e&&e.error)throw e.error};
+   if($('pc_pl'))$('pc_pl').onchange=()=>done2(async()=>ck(await sb.from('students').update({phone_label:$('pc_pl').value||null}).eq('id',id)));
+   if($('pc_a'))$('pc_a').onclick=()=>{const n=$('pc_n').value.replace(/[^\d+]/g,'');if(n.replace(/\D/g,'').length<10){$('pc_m').textContent='Sahi 10 ank ka number daalein';return}
+    done2(async()=>ck(await sb.from('student_contacts').insert({student_id:id,label:$('pc_l').value,phone:n,reminder:$('pc_r').checked})))};
+   $('phc').onclick=e=>{
+    const t=e.target,cr=t.dataset.cr,cp=t.dataset.cp,cd=t.dataset.cd,c=id2=>contacts.find(x=>x.id===id2);
+    if(cr)done2(async()=>ck(await sb.from('student_contacts').update({reminder:!c(cr).reminder}).eq('id',cr)));
+    if(cd&&confirm('Ye number hata dein?'))done2(async()=>ck(await sb.from('student_contacts').delete().eq('id',cd)));
+    if(cp&&confirm('Is number ko Primary bana dein? Purana primary number list me chala jayega.'))done2(async()=>{const n=c(cp);
+     ck(await sb.from('students').update({phone:n.phone,phone_label:n.label}).eq('id',id));
+     if(p.phone)ck(await sb.from('student_contacts').update({phone:p.phone,label:p.phone_label||'Other'}).eq('id',cp));else ck(await sb.from('student_contacts').delete().eq('id',cp))});
+   };
+  }
   if($('famc')){
    const done=async fn=>{try{await fn();profile(type,id)}catch(x){alert(x.message)}};
    const linkFam=async oid=>{

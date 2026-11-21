@@ -40,42 +40,52 @@ Deno.serve(async (req) => {
     const sent = new Set((done || []).map((x) => x.student_id));
     const ml = new Date(month + "T00:00:00Z").toLocaleDateString("hi-IN", { month: "long", year: "numeric", timeZone: "UTC" });
 
+    // Extra numbers (Mummy/Papa...) jinpar reminder "Haan" hai
+    const { data: cts } = await db.from("student_contacts").select("student_id,phone").eq("reminder", true);
+    const ex: Record<string, string[]> = {};
+    (cts || []).forEach((c) => { (ex[c.student_id] = ex[c.student_id] || []).push(c.phone); });
+
     // Bhai-behan ek parivar me: ek hi message, kul baki ke saath
-    const groups = new Map<string, { ids: string[]; names: string[]; due: number; phone: string }>();
+    const groups = new Map<string, { ids: string[]; names: string[]; due: number; phones: string[] }>();
+    const add = (g: { phones: string[] }, ph: string) => {
+      let d = String(ph || "").replace(/\D/g, "");
+      if (d.length === 10) d = "91" + d;
+      if (d.length >= 10 && !g.phones.includes(d)) g.phones.push(d);
+    };
     for (const s of st || []) {
       const d = due[s.id] || 0;
       if (d <= 0) continue;
       const k = s.family_id || s.id;
-      const g = groups.get(k) || { ids: [], names: [], due: 0, phone: "" };
+      const g = groups.get(k) || { ids: [], names: [], due: 0, phones: [] as string[] };
       g.ids.push(s.id); g.names.push(s.name); g.due += d;
-      const ph = (s.family_id && fp[s.family_id]) || s.phone || "";
-      if (!g.phone && String(ph).replace(/\D/g, "").length >= 10) g.phone = ph;
+      add(g, (s.family_id && fp[s.family_id]) || s.phone || "");
+      (ex[s.id] || []).forEach((p) => add(g, p));
       groups.set(k, g);
     }
 
     let ok = 0, skip = 0, bad = 0;
     for (const g of groups.values()) {
-      const ph = String(g.phone).replace(/\D/g, "");
-      if (ph.length < 10 || g.ids.some((i) => sent.has(i))) { skip++; continue; }
+      if (!g.phones.length || g.ids.some((i) => sent.has(i))) { skip++; continue; }
       const comps: unknown[] = [{ type: "body", parameters: [g.names.join(", "), String(Math.round(g.due)), ml].map((text) => ({ type: "text", text })) }];
       if (cfg.voice) comps.push({ type: "button", sub_type: "quick_reply", index: "0", parameters: [{ type: "payload", payload: "VOICE|" + g.ids[0] }] });
-      const r = await fetch(`https://graph.facebook.com/v21.0/${E("WA_PHONE_ID")}/messages`, {
-        method: "POST",
-        headers: { Authorization: "Bearer " + E("WA_TOKEN"), "Content-Type": "application/json" },
-        body: JSON.stringify({
-          messaging_product: "whatsapp", to: ph.length === 10 ? "91" + ph : ph, type: "template",
-          template: { name: cfg.template_name, language: { code: cfg.lang }, components: comps },
-        }),
-      });
-      const j = await r.json().catch(() => ({}));
-      for (const sid of g.ids) {
-        await db.from("reminder_log").insert({
-          student_id: sid, month, kind: "text", status: r.ok ? "sent" : "failed",
-          detail: r.ok ? null : JSON.stringify(j.error || j).slice(0, 300),
+      let any = false, err = "";
+      for (const to of g.phones) {
+        const r = await fetch(`https://graph.facebook.com/v21.0/${E("WA_PHONE_ID")}/messages`, {
+          method: "POST",
+          headers: { Authorization: "Bearer " + E("WA_TOKEN"), "Content-Type": "application/json" },
+          body: JSON.stringify({
+            messaging_product: "whatsapp", to, type: "template",
+            template: { name: cfg.template_name, language: { code: cfg.lang }, components: comps },
+          }),
         });
+        const j = await r.json().catch(() => ({}));
+        if (r.ok) any = true; else err = JSON.stringify(j.error || j).slice(0, 300);
+        await new Promise((res) => setTimeout(res, 200));
       }
-      r.ok ? ok++ : bad++;
-      await new Promise((res) => setTimeout(res, 200));
+      for (const sid of g.ids) {
+        await db.from("reminder_log").insert({ student_id: sid, month, kind: "text", status: any ? "sent" : "failed", detail: any ? null : err });
+      }
+      any ? ok++ : bad++;
     }
     return J({ sent: ok, skipped: skip, failed: bad });
   } catch (e) {
