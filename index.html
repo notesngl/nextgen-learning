@@ -110,6 +110,7 @@ footer{border-top:1px solid var(--line);padding:24px 0 30px;color:var(--mut);fon
 .pmenu{position:absolute;top:52px;right:8px;z-index:15;background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.28);min-width:220px;overflow:hidden}.pmenu[hidden]{display:none}
 .pmenu button,.pmenu a{display:block;width:100%;text-align:left;background:transparent!important;color:var(--ink)!important;border:0!important;border-bottom:1px solid var(--line)!important;padding:12px 14px;font:600 15px/1.2 var(--f);clip-path:none!important;border-radius:0!important;text-decoration:none;box-sizing:border-box}.pmenu .dg{color:var(--red)!important}
 #pv img.idc{display:block;max-width:100%;margin:16px auto;box-shadow:0 4px 16px rgba(0,0,0,.3)}@media print{#pv img.idc{width:86mm;box-shadow:none;margin:0}}
+.xo{display:flex;gap:10px;align-items:center;padding:10px;border:1px solid var(--line);border-radius:10px;margin:6px 0;background:var(--surface2);cursor:pointer}.xo input{width:auto;margin:0}
 .card2{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;margin:0 0 14px}.stars{color:var(--gold);letter-spacing:2px}
 </style>
 </head>
@@ -148,6 +149,7 @@ footer{border-top:1px solid var(--line);padding:24px 0 30px;color:var(--mut);fon
 <table><tr><th data-i="cls"></th><th data-i="adm_fee"></th><th data-i="mon_fee"></th></tr><tbody id="feerows"></tbody></table>
 <p class="mut" data-s="fee_note"></p></div></section>
 <section><div class="w"><a id="wa2" class="btn wabtn" target="_blank" rel="noopener"></a></div></section></div>
+<div id="exView" hidden><div class="w" id="exBody" style="padding:20px 16px"></div></div>
 <div id="pubView" hidden><div class="w" id="pubBody" style="padding:20px 16px"></div></div>
 <div id="panelView" hidden><div class="w"><h2 id="ptitle"></h2><p class="mut" id="pwho" style="margin:0 0 14px"></p><div id="pmain"></div></div></div>
 <nav id="bar"></nav>
@@ -157,9 +159,9 @@ footer{border-top:1px solid var(--line);padding:24px 0 30px;color:var(--mut);fon
 <script src="config.js"></script>
 <script src="defaults.js"></script>
 <script>
-const T={hi:{nav_home:"होम",nav_exp:"मेन्यू",nav_about:"हमारे बारे में",nav_fac:"सुविधाएँ",h1v:"कक्षा 1–8",h2v:"हिंदी + अंग्रेज़ी",hud1:"कक्षाएँ",hud2:"माध्यम",hud3:"स्थान",f_school:"कोचिंग",f_students:"छात्र व अभिभावक",f_media:"मीडिया",f_contact:"संपर्क",nav_adm:"एडमिशन",nav_fee:"शुल्क",nav_tch:"शिक्षक",nav_gal:"गैलरी",nav_not:"सूचना",nav_con:"संपर्क",apply:"अभी जुड़ें",cls:"कक्षा",adm_fee:"प्रवेश शुल्क",mon_fee:"मासिक शुल्क",addr_l:"पता",ph_l:"फोन",tm_l:"क्लास का समय",none:"अभी कुछ नहीं है।",lng:"English",nav_inv:"रेफर करें",inv_msg:"NextGen Learning, कोइलाबाज़ार, राजमहल में कक्षा 1–8 की कोचिंग। देखें:",h3v:"राजमहल",nav_att:"हाज़िरी",nav_mgt:"प्रबंधन",nav_exm:"परीक्षा",nav_pnl:"पैनल",stf:"स्टाफ लॉगिन",wa_t:"व्हाट्सऐप पर बात करें",wa_msg:"नमस्ते, मुझे NextGen Learning के बारे में जानकारी चाहिए।"},
-en:{nav_home:"Home",nav_exp:"Menu",nav_about:"About",nav_fac:"Facilities",h1v:"Class 1–8",h2v:"Hindi + English",hud1:"Classes",hud2:"Medium",hud3:"Location",f_school:"Coaching",f_students:"Students & Parents",f_media:"Media",f_contact:"Contact",nav_adm:"Admission",nav_fee:"Fees",nav_tch:"Teachers",nav_gal:"Gallery",nav_not:"Notices",nav_con:"Contact",apply:"Join now",cls:"Class",adm_fee:"Admission fee",mon_fee:"Monthly fee",addr_l:"Address",ph_l:"Phone",tm_l:"Class timing",none:"Nothing here yet.",lng:"Hinglish",nav_inv:"Invite",inv_msg:"NextGen Learning, coaching for Class 1–8 at Koilabazar, Rajmahal. Check it out:",h3v:"Rajmahal",nav_att:"Attendance",nav_mgt:"Management",nav_exm:"Exam",nav_pnl:"Panel",stf:"Staff login",wa_t:"Chat on WhatsApp",wa_msg:"Hello, I would like to know about NextGen Learning."},
-hg:{nav_home:"Home",nav_exp:"Menu",nav_about:"Hamare Bare Me",nav_fac:"Suvidhayein",h1v:"Class 1–8",h2v:"Hindi + English",h3v:"Rajmahal",hud1:"Classes",hud2:"Medium",hud3:"Location",f_school:"Coaching",f_students:"Students & Parents",f_media:"Media",f_contact:"Sampark",nav_adm:"Admission",nav_fee:"Fees",nav_tch:"Teachers",nav_gal:"Gallery",nav_not:"Notices",nav_con:"Sampark",apply:"Abhi Judein",cls:"Class",adm_fee:"Admission fee",mon_fee:"Monthly fee",addr_l:"Pata",ph_l:"Phone",tm_l:"Class ka samay",none:"Abhi kuch nahi hai.",lng:"हिन्दी",nav_inv:"Invite",inv_msg:"NextGen Learning, Koilabazar, Rajmahal me Class 1–8 ki coaching. Dekhein:",nav_att:"Hazri",nav_mgt:"Prabandhan",nav_exm:"Exam",nav_pnl:"Panel",stf:"Staff Login",wa_t:"WhatsApp par baat karein",wa_msg:"Namaste, mujhe NextGen Learning ke bare me jankari chahiye."}};
+const T={hi:{nav_home:"होम",nav_exp:"मेन्यू",nav_about:"हमारे बारे में",nav_fac:"सुविधाएँ",h1v:"कक्षा 1–8",h2v:"हिंदी + अंग्रेज़ी",hud1:"कक्षाएँ",hud2:"माध्यम",hud3:"स्थान",f_school:"कोचिंग",f_students:"छात्र व अभिभावक",f_media:"मीडिया",f_contact:"संपर्क",nav_adm:"एडमिशन",nav_fee:"शुल्क",nav_tch:"शिक्षक",nav_gal:"गैलरी",nav_not:"सूचना",nav_con:"संपर्क",apply:"अभी जुड़ें",cls:"कक्षा",adm_fee:"प्रवेश शुल्क",mon_fee:"मासिक शुल्क",addr_l:"पता",ph_l:"फोन",tm_l:"क्लास का समय",none:"अभी कुछ नहीं है।",lng:"English",nav_exd:"परीक्षा दें",nav_inv:"रेफर करें",inv_msg:"NextGen Learning, कोइलाबाज़ार, राजमहल में कक्षा 1–8 की कोचिंग। देखें:",h3v:"राजमहल",nav_att:"हाज़िरी",nav_mgt:"प्रबंधन",nav_exm:"परीक्षा",nav_pnl:"पैनल",stf:"स्टाफ लॉगिन",wa_t:"व्हाट्सऐप पर बात करें",wa_msg:"नमस्ते, मुझे NextGen Learning के बारे में जानकारी चाहिए।"},
+en:{nav_home:"Home",nav_exp:"Menu",nav_about:"About",nav_fac:"Facilities",h1v:"Class 1–8",h2v:"Hindi + English",hud1:"Classes",hud2:"Medium",hud3:"Location",f_school:"Coaching",f_students:"Students & Parents",f_media:"Media",f_contact:"Contact",nav_adm:"Admission",nav_fee:"Fees",nav_tch:"Teachers",nav_gal:"Gallery",nav_not:"Notices",nav_con:"Contact",apply:"Join now",cls:"Class",adm_fee:"Admission fee",mon_fee:"Monthly fee",addr_l:"Address",ph_l:"Phone",tm_l:"Class timing",none:"Nothing here yet.",lng:"Hinglish",nav_exd:"Take exam",nav_inv:"Invite",inv_msg:"NextGen Learning, coaching for Class 1–8 at Koilabazar, Rajmahal. Check it out:",h3v:"Rajmahal",nav_att:"Attendance",nav_mgt:"Management",nav_exm:"Exam",nav_pnl:"Panel",stf:"Staff login",wa_t:"Chat on WhatsApp",wa_msg:"Hello, I would like to know about NextGen Learning."},
+hg:{nav_home:"Home",nav_exp:"Menu",nav_about:"Hamare Bare Me",nav_fac:"Suvidhayein",h1v:"Class 1–8",h2v:"Hindi + English",h3v:"Rajmahal",hud1:"Classes",hud2:"Medium",hud3:"Location",f_school:"Coaching",f_students:"Students & Parents",f_media:"Media",f_contact:"Sampark",nav_adm:"Admission",nav_fee:"Fees",nav_tch:"Teachers",nav_gal:"Gallery",nav_not:"Notices",nav_con:"Sampark",apply:"Abhi Judein",cls:"Class",adm_fee:"Admission fee",mon_fee:"Monthly fee",addr_l:"Pata",ph_l:"Phone",tm_l:"Class ka samay",none:"Abhi kuch nahi hai.",lng:"हिन्दी",nav_exd:"Exam do",nav_inv:"Invite",inv_msg:"NextGen Learning, Koilabazar, Rajmahal me Class 1–8 ki coaching. Dekhein:",nav_att:"Hazri",nav_mgt:"Prabandhan",nav_exm:"Exam",nav_pnl:"Panel",stf:"Staff Login",wa_t:"WhatsApp par baat karein",wa_msg:"Namaste, mujhe NextGen Learning ke bare me jankari chahiye."}};
 let L=localStorage.getItem('lang')||'hi',S={},D={},ME=null;
 const REM=()=>localStorage.getItem('remember')!=='0';
 const AS={getItem:k=>localStorage.getItem(k)??sessionStorage.getItem(k),setItem:(k,v)=>{(REM()?localStorage:sessionStorage).setItem(k,v);(REM()?sessionStorage:localStorage).removeItem(k)},removeItem:k=>{localStorage.removeItem(k);sessionStorage.removeItem(k)}};
@@ -189,9 +191,51 @@ $('ph').textContent=p;$('ph').href='tel:'+p.replace(/[^+\d]/g,'');
  $('gal').innerHTML=(D.g||[]).map((x,i)=>`<img src="${esc(x.url)}" alt="${esc(x.caption)}" loading="lazy" data-gi="${i}">`).join('')||none;$('gal').onclick=e=>{const i=e.target.dataset.gi;if(i!=null)openLB(+i)};
  $('not').innerHTML=(D.n||[]).map(x=>`<div class="n"><time>${esc(x.date)}</time><b>${esc(x.title)}</b><span class="mut">${esc(x.body)}</span></div>`).join('')||none;
 }
+async function showExam(code0){
+ document.body.classList.add('pubmode');
+ $('site').hidden=true;$('admView').hidden=true;$('panelView').hidden=true;$('sheet').hidden=true;$('pubView').hidden=true;$('exView').hidden=false;window.scrollTo(0,0);
+ const B=$('exBody'),home=`<p style="margin-top:20px"><button class="g" id="exhome">← ${esc(v('school_name'))} website</button></p>`;
+ const goHome=()=>{window.onbeforeunload=null;location.hash='';showSite()};
+ const msgBox=(h,p)=>{B.innerHTML=`<h2>${h}</h2><p class="mut">${p}</p><p><button id="exagain">Dobara try karein</button></p>`+home;$('exagain').onclick=entry;$('exhome').onclick=goHome};
+ const entry=()=>{
+  B.innerHTML=`<h2>📝 Exam do</h2><p class="mut">Teacher ne jo <b>Exam number</b> diya hai wo daalein.</p><label>Exam number<input id="xe_c" inputmode="numeric" maxlength="8" value="${esc(code0||'')}" placeholder="6 ank ka number"></label><label>Aapka naam<input id="xe_n" autocomplete="name"></label><label>Roll no (agar pata ho)<input id="xe_r" inputmode="numeric"></label><button id="xe_go">Exam shuru karein</button> <span id="xe_m" class="msg"></span>`+home;
+  $('exhome').onclick=goHome;
+  $('xe_go').onclick=async()=>{
+   const c=$('xe_c').value.trim(),nm=$('xe_n').value.trim(),rl=$('xe_r').value.trim();
+   if(!/^\d{4,8}$/.test(c)){$('xe_m').textContent='Sahi Exam number daalein';return}
+   if(nm.length<2){$('xe_m').textContent='Apna naam likhein';return}
+   $('xe_m').className='ok';$('xe_m').textContent='Exam khul raha hai...';
+   const {data:ex,error}=await sb.rpc('exam_public',{c});
+   if(error||!ex){$('xe_m').className='msg';$('xe_m').textContent='Exam number galat hai ya exam abhi chalu nahi hai';return}
+   run(ex,c,nm,rl);
+  };
+ };
+ const run=(ex,c,nm,rl)=>{
+  const items=ex.items||[],ANS=items.map(()=>null),L='ABCD',end=Date.now()+(+ex.minutes||30)*60000;let fin=false,tmr;
+  window.onbeforeunload=()=>'Exam chal raha hai';
+  B.innerHTML=`<div style="position:sticky;top:64px;z-index:5;background:var(--hdr2);padding:8px 0;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:8px;align-items:center"><b>${esc(ex.title||'Exam')} · ${esc(ex.subject)}</b><span class="pill" id="xt">--:--</span><span class="pill" id="xp">0/${items.length}</span></div><p class="mut"><small>${esc(nm)}${rl?' · Roll '+esc(rl):''} · ${esc(cn(ex.class))}</small></p>${items.map((q,i)=>`<div class="card2"><b>${i+1}. ${esc(q.q)}</b>${(q.o||[]).map((o,j)=>`<label class="xo"><input type="radio" name="q${i}" value="${j}"><span>(${L[j]}) ${esc(o)}</span></label>`).join('')}</div>`).join('')}<button id="xs">Exam jama karein</button> <span id="xm" class="msg"></span>`;
+  B.onchange=e=>{const m=e.target.name&&e.target.name.match(/^q(\d+)$/);if(m){ANS[+m[1]]=+e.target.value;$('xp').textContent=ANS.filter(x=>x!==null).length+'/'+items.length}};
+  const tick=()=>{const left=Math.max(0,Math.round((end-Date.now())/1000));$('xt').textContent='⏱ '+String(Math.floor(left/60)).padStart(2,'0')+':'+String(left%60).padStart(2,'0');if(left<=0&&!fin)submit(true)};
+  tick();tmr=setInterval(tick,1000);
+  const submit=async auto=>{
+   if(fin)return;const un=ANS.filter(x=>x===null).length;
+   if(!auto&&un&&!confirm(un+' sawal chhoot gaye hain. Phir bhi jama karein?'))return;
+   fin=true;clearInterval(tmr);$('xs').disabled=true;$('xm').className='ok';$('xm').textContent='Jama ho raha hai...';
+   const {data:r,error}=await sb.rpc('exam_submit',{c,nm,rl,ans:ANS});
+   window.onbeforeunload=null;
+   if(error||!r||r.error){fin=false;$('xs').disabled=false;const k=r&&r.error;$('xm').className='msg';$('xm').textContent=k==='dup'?'Is naam aur roll se exam pehle de diya ja chuka hai.':k==='closed'?'Exam band ho chuka hai.':'Jama nahi hua, internet check karke dobara dabayein.';if(k)clearInterval(tmr);return}
+   B.onchange=null;
+   B.innerHTML=`<div class="ph" style="flex-direction:column;text-align:center"><div style="font-size:48px">🎉</div><h2>${esc(nm)}</h2><div style="font:800 44px var(--f);color:var(--gold)">${r.score} / ${r.total}</div><div class="mut">${r.max>r.total?`Number: ${r.marks} / ${r.max} · `:''}${Math.round(r.score*100/r.total)}% sahi</div><p class="ok">Aapka result save ho gaya hai.</p></div>`
+   +(r.review?`<h3>Jawab dekhein</h3>${items.map((q,i)=>{const rv=r.review[i]||{};const ok=rv.y===rv.c;return `<div class="card2"><b>${i+1}. ${esc(q.q)}</b><p style="margin:6px 0">${ok?'✅':'❌'} Aapka jawab: ${rv.y===null||rv.y===undefined?'chhoda':'('+L[rv.y]+') '+esc((q.o||[])[rv.y])}</p>${ok?'':`<p style="margin:0;color:var(--neon)">Sahi jawab: (${L[rv.c]}) ${esc((q.o||[])[rv.c])}</p>`}</div>`}).join('')}`:'')+home;
+   $('exhome').onclick=goHome;window.scrollTo(0,0);
+  };
+  $('xs').onclick=()=>submit(false);
+ };
+ entry();
+}
 async function showPub(t){
  document.body.classList.add('pubmode');
- $('site').hidden=true;$('admView').hidden=true;$('panelView').hidden=true;$('sheet').hidden=true;$('pubView').hidden=false;
+ $('site').hidden=true;$('admView').hidden=true;$('panelView').hidden=true;$('sheet').hidden=true;$('pubView').hidden=false;$('exView').hidden=true;
  $('pubBody').innerHTML='<p class="mut">Loading...</p>';window.scrollTo(0,0);
  const {data:d}=sb?await sb.rpc('public_profile',{t}):{data:null};
  const home=`<p style="margin-top:20px"><button class="g" id="pubhome">← ${esc(v('school_name'))} website</button></p>`;
@@ -265,9 +309,9 @@ const TABS={
 const ICON={fees:'💰',salary:'💼',site:'✏️',staff:'👥',students:'🎓',sa:'✅',ta:'🧑‍🏫',teachers:'👩‍🏫',notices:'📢',gallery:'🖼️',reminder:'🔔',report:'📊',ssearch:'🔍',missing:'❓',feeset:'🧾',batches:'🕐',classes:'🏫',exam:'📋'};
 let BAR='home';
 const setBar=a=>{BAR=a;renderBar();$('waf').classList.toggle('nop',a==='panel')};
-function showSite(){document.body.classList.remove('pubmode');$('pubView').hidden=true;$('site').hidden=false;$('admView').hidden=true;$('panelView').hidden=true;$('sheet').hidden=true;setBar('home');window.scrollTo(0,0)}
-function showAdm(){document.body.classList.remove('pubmode');$('pubView').hidden=true;$('site').hidden=true;$('admView').hidden=false;$('panelView').hidden=true;$('sheet').hidden=true;setBar('adm');window.scrollTo(0,0)}
-function showPanel(){document.body.classList.remove('pubmode');$('pubView').hidden=true;$('site').hidden=true;$('admView').hidden=true;$('panelView').hidden=false;$('sheet').hidden=true;setBar('panel');window.scrollTo(0,0)}
+function showSite(){document.body.classList.remove('pubmode');$('exView').hidden=true;window.onbeforeunload=null;$('pubView').hidden=true;$('site').hidden=false;$('admView').hidden=true;$('panelView').hidden=true;$('sheet').hidden=true;setBar('home');window.scrollTo(0,0)}
+function showAdm(){document.body.classList.remove('pubmode');$('exView').hidden=true;window.onbeforeunload=null;$('pubView').hidden=true;$('site').hidden=true;$('admView').hidden=false;$('panelView').hidden=true;$('sheet').hidden=true;setBar('adm');window.scrollTo(0,0)}
+function showPanel(){document.body.classList.remove('pubmode');$('exView').hidden=true;window.onbeforeunload=null;$('pubView').hidden=true;$('site').hidden=true;$('admView').hidden=true;$('panelView').hidden=false;$('sheet').hidden=true;setBar('panel');window.scrollTo(0,0)}
 const barLabel=()=>{renderBar();renderBday()};
 async function renderBday(){
  const el=$('bday');
@@ -319,7 +363,7 @@ const GROUPS=[['📁 Management',['ssearch','fees','feeset','report','salary']],
 const FOLD=[['Attendance','nav_att','✅'],['Management','nav_mgt','💼'],['Exam','nav_exm','📋']];
 function folderKeys(n){const ks=Object.keys(TABS).filter(allowed),g=GROUPS.find(g=>g[0].includes(n));return g?g[1].filter(k=>ks.includes(k)):[]}
 function renderBar(){
- const t=T[L],it=[['home','🏠',t.nav_home],['adm','📝',t.nav_adm],['inv','🎁',t.nav_inv]];
+ const t=T[L],it=[['home','🏠',t.nav_home],['adm','📝',t.nav_adm],['exd','🧪',t.nav_exd],['inv','🎁',t.nav_inv]];
  if(ME)FOLD.forEach(([n,k,ic])=>{if(folderKeys(n).length)it.push(['f:'+n,ic,t[k]])});
  it.push(['exp','🧭',t.nav_exp],['panel',ME?'🎮':'🔐',ME?t.nav_pnl:t.stf]);
  $('bar').innerHTML=it.map(([id,ic,l])=>`<button data-b="${id}" class="${id===BAR?'on':''}"><span>${ic}</span>${esc(l)}</button>`).join('');
@@ -336,6 +380,7 @@ function invite(){
 }
 function barGo(id){
  if(id==='inv')return invite();
+ if(id==='exd')return showExam('');
  if(id==='home')return showSite();
  if(id==='adm')return showAdm();
  if(id==='exp')return openExplore();
@@ -618,33 +663,67 @@ function showPaper(x){
  $('pv_k').onclick=()=>{$('akey').hidden=!$('akey').hidden};
  $('pv_c').onclick=()=>{pv.hidden=true};
 }
+function parseMCQ(t){
+ const out=[];
+ String(t).split(/\n\s*\n/).forEach(bk=>{
+  const L=bk.split('\n').map(x=>x.trim()).filter(Boolean),q=[],o=[];let a=-1;
+  L.forEach(l=>{
+   const am=l.match(/^(?:ans(?:wer)?|उत्तर)\s*[:\-]?\s*\(?([A-Da-d1-4])\)?/i),om=l.match(/^\(?([A-Da-d])[).:]\s*(.+)$/);
+   if(am){const c=am[1].toUpperCase();a=/\d/.test(c)?+c-1:'ABCD'.indexOf(c)}
+   else if(om&&o.length<4&&'ABCD'.indexOf(om[1].toUpperCase())===o.length)o.push(om[2]);
+   else if(!o.length)q.push(l.replace(/^\d+[).\s]+/,''));
+  });
+  if(q.length&&o.length===4&&a>=0)out.push({q:q.join(' '),o,a});
+ });
+ return out;
+}
 async function examTab(){
  $('pmain').innerHTML='<p class="mut">Loading...</p>';
- const {data,error}=await sb.from('exams').select('*').order('created_at',{ascending:false}).limit(30);
- if(error){$('pmain').innerHTML='<p class="msg">'+esc(error.message)+'</p>';return}
- const ex=data||[];
- $('pmain').innerHTML=`<div id="xw"><p><button id="xn">+ Exam lena hai</button></p><div id="xf"></div><p><b>Purane exams</b></p>${ex.length?`<table>${ex.map(x=>`<tr><td>${esc(cn(x.class))} · ${esc(x.subject)}<br><small class="mut">${esc(x.title||'')} ${fmt(x.exam_date)} · ${x.items.length} MCQ</small></td><td><button class="g" data-o="${x.id}">Open</button> <button class="r" data-d="${x.id}">Delete</button></td></tr>`).join('')}</table>`:'<p class="mut">Abhi koi exam nahi.</p>'}</div>`;
+ const [{data,error},rs]=await Promise.all([sb.from('exams').select('*').order('created_at',{ascending:false}).limit(30),sb.from('exam_results').select('exam_id')]);
+ if(error){$('pmain').innerHTML='<p class="msg">'+esc(error.message)+'</p><p class="mut">update13.sql Run karein.</p>';return}
+ const ex=data||[],RC={};(rs.data||[]).forEach(r=>{RC[r.exam_id]=(RC[r.exam_id]||0)+1});
+ const link=x=>location.origin+location.pathname+'#exam='+x.code;
+ $('pmain').innerHTML=`<div id="xw"><p><button id="xn">+ Exam lena hai</button></p><div id="xf"></div><p><b>Exams</b></p>${ex.length?ex.map(x=>`<div class="card2"><b>${esc(cn(x.class))} · ${esc(x.subject)}</b><br><small class="mut">${esc(x.title||'')} ${fmt(x.exam_date)} · ${x.items.length} MCQ · ${esc(x.minutes)} min</small><br>${x.code?`<span class="pill">Exam No: <b>${esc(x.code)}</b></span>`:''}<span class="pill" style="color:${x.is_open?'var(--neon)':'var(--red)'}">${x.is_open?'● Chalu':'● Band'}</span><div class="pact" style="margin-top:8px"><button data-t="${x.id}">${x.is_open?'⏹ Band karein':'▶ Chalu karein'}</button><button class="g" data-sh="${x.id}">📤 Share</button><button class="g" data-r="${x.id}">📊 Results (${RC[x.id]||0})</button><button class="g" data-o="${x.id}">📄 Paper</button><button class="g" data-sa="${x.id}">Jawab dikhana: ${x.show_answers===false?'Nahi':'Haan'}</button><button class="r" data-d="${x.id}">Delete</button></div><div id="xr_${x.id}"></div></div>`).join(''):'<p class="mut">Abhi koi exam nahi.</p>'}</div>`;
  $('xw').onclick=async e=>{
-  const o=e.target.dataset.o,d=e.target.dataset.d;
-  if(o)showPaper(ex.find(x=>x.id===o));
-  if(d&&confirm('Ye exam hata dein?')){const {error}=await sb.from('exams').delete().eq('id',d);if(error)alert(error.message);else examTab()}
+  const t=e.target.closest('button');if(!t)return;const d=t.dataset,X=id=>ex.find(x=>x.id===id);
+  if(d.o)showPaper(X(d.o));
+  if(d.t){const x=X(d.t),{error}=await sb.from('exams').update({is_open:!x.is_open}).eq('id',x.id);if(error)alert(error.message);else examTab()}
+  if(d.sa){const x=X(d.sa),{error}=await sb.from('exams').update({show_answers:x.show_answers===false}).eq('id',x.id);if(error)alert(error.message);else examTab()}
+  if(d.sh){const x=X(d.sh),txt=`Exam: ${x.title||'Exam'} (${cn(x.class)} ${x.subject})\nExam number: ${x.code}\nPhone me ye link kholein aur exam dein: ${link(x)}`;if(navigator.share)navigator.share({text:txt}).catch(()=>{});else window.open('https://wa.me/?text='+encodeURIComponent(txt),'_blank')}
+  if(d.d&&confirm('Ye exam aur uske saare results hata dein?')){const {error}=await sb.from('exams').delete().eq('id',d.d);if(error)alert(error.message);else examTab()}
+  if(d.rd&&confirm('Ye result hata dein? (Bachha dobara exam de sakega)')){const {error}=await sb.from('exam_results').delete().eq('id',d.rd);if(error)alert(error.message);else{const el=$('xr_'+d.rx);if(el){el.innerHTML='';document.querySelector(`[data-r="${d.rx}"]`).click()}}}
+  if(d.r){
+   const el=$('xr_'+d.r);if(el.innerHTML){el.innerHTML='';return}
+   const {data:R,error}=await sb.from('exam_results').select('*').eq('exam_id',d.r).order('score',{ascending:false}).order('submitted_at');
+   if(error){el.innerHTML='<p class="msg">'+esc(error.message)+'</p>';return}
+   const x=X(d.r),n=(R||[]).length,avg=n?R.reduce((a,r)=>a+r.score,0)/n:0;
+   el.innerHTML=n?`<p class="mut"><small>${n} bachhon ne diya · Average: ${avg.toFixed(1)} / ${x.items.length}</small></p><table><tr><th>#</th><th>Naam</th><th>Number</th><th></th></tr>${R.map((r,i)=>`<tr><td>${i+1}</td><td>${esc(r.name)}${r.roll?` <small class="mut">Roll ${esc(r.roll)}</small>`:''}<br><small class="mut">${fmt(r.submitted_at)}</small></td><td><b>${r.score}/${r.total}</b> <small class="mut">(${Math.round(r.score*100/r.total)}%)</small></td><td><button class="r" data-rd="${r.id}" data-rx="${d.r}">✕</button></td></tr>`).join('')}</table>`:'<p class="mut">Abhi kisi ne exam nahi diya.</p>';
+  }
  };
  $('xn').onclick=()=>{
   $('xf').innerHTML=`<div class="card2"><div class="f"><label>Class<select id="x_c">${CONFIG.classes.map(c=>`<option value="${esc(c)}">${esc(cn(c))}</option>`).join('')}</select></label><label>Subject<input id="x_s" placeholder="Jaise: Maths"></label><label>Exam ka naam<input id="x_t" placeholder="Unit Test 1"></label><label>Date<input id="x_d" type="date" value="${today()}"></label><label>Time (minute)<input id="x_m" type="number" value="30"></label><label>Har question ke number<input id="x_k" type="number" value="1"></label><label>Paper ki bhasha<select id="x_l"><option value="hi">Hindi</option><option value="en">English</option><option value="hg">Hinglish</option></select></label></div><button id="x_go">Aage badhein</button> <span id="x_e" class="msg"></span></div>`;
   $('x_go').onclick=()=>{
    const x={class:$('x_c').value,subject:$('x_s').value.trim(),title:$('x_t').value.trim(),exam_date:$('x_d').value||today(),minutes:+$('x_m').value||30,marks:+$('x_k').value||1,lang:$('x_l').value};
    if(!x.subject){$('x_e').textContent='Subject likhein';return}
-   $('xf').innerHTML=`<div class="card2"><p>🤖 <b>${esc(cn(x.class))} · ${esc(x.subject)}</b> ka exam. Ab apne questions bhejein: har question nayi line me likhein. Answer pata ho to saath likh dein. Main inhe MCQ me badal dunga.</p><label>Questions<textarea id="x_q" rows="10"></textarea></label><label>Kul MCQ (khali chhodein = jitne aapne bheje)<input id="x_n" type="number"></label><button id="x_ai">AI se MCQ banayein</button> <span id="x_e2" class="msg"></span><div id="x_r"></div></div>`;
-   $('x_ai').onclick=async()=>{
-    const q=$('x_q').value.trim();if(!q){$('x_e2').textContent='Pehle questions likhein';return}
-    $('x_e2').className='ok';$('x_e2').textContent='AI MCQ bana raha hai...';
-    const {data:r,error}=await sb.functions.invoke('exam-ai',{body:{class:cn(x.class),subject:x.subject,language:x.lang,questions:q,count:+$('x_n').value||0}});
-    const err=error?error.message:r&&r.error;
-    if(err){$('x_e2').className='msg';$('x_e2').textContent=err;return}
-    x.items=r.items;$('x_e2').textContent='';
+   $('xf').innerHTML=`<div class="card2"><p>🤖 <b>${esc(cn(x.class))} · ${esc(x.subject)}</b> ka exam. Ab apne questions bhejein: har question nayi line me likhein. Main inhe MCQ me badal dunga.</p><label>Questions<textarea id="x_q" rows="10"></textarea></label><label>Kul MCQ (khali chhodein = jitne aapne bheje)<input id="x_n" type="number"></label><button id="x_ai">AI se MCQ banayein</button> <span id="x_e2" class="msg"></span><details style="margin-top:10px"><summary><b>Bina AI ke (khud MCQ likhein)</b></summary><p class="mut"><small>Har MCQ ke beech ek khali line chhodein:<br>2+2 kitna hota hai?<br>A) 3<br>B) 4<br>C) 5<br>D) 6<br>Answer: B</small></p><button class="g" id="x_my">Mere likhe MCQ se paper banayein</button></details><div id="x_r"></div></div>`;
+   const done=items=>{x.items=items;$('x_e2').textContent='';
     $('x_r').innerHTML=`<p class="ok">✅ ${x.items.length} MCQ taiyaar hain.</p><button id="x_v">Paper dekhein / Print</button> <button id="x_sv">Save exam</button> <span id="x_e3" class="msg"></span>`;
     $('x_v').onclick=()=>showPaper(x);
-    $('x_sv').onclick=async()=>{const {error}=await sb.from('exams').insert(x);if(error)$('x_e3').textContent=error.message;else examTab()};
+    $('x_sv').onclick=async()=>{let er=null;for(let k=0;k<4;k++){x.code=String(Math.floor(100000+Math.random()*900000));const {error}=await sb.from('exams').insert(x);er=error;if(!error||error.code!=='23505')break}
+     if(er)$('x_e3').textContent=er.message;else examTab()};
+   };
+   $('x_my').onclick=()=>{const it=parseMCQ($('x_q').value);if(!it.length){$('x_e2').className='msg';$('x_e2').textContent='Format sahi nahi mila. Upar ka udaharan dekhein (4 option aur Answer line zaroori).';return}done(it)};
+   $('x_ai').onclick=async()=>{
+    const q=$('x_q').value.trim();if(!q){$('x_e2').className='msg';$('x_e2').textContent='Pehle questions likhein';return}
+    $('x_e2').className='ok';$('x_e2').textContent='AI MCQ bana raha hai (thoda time lagega)...';
+    const {data:r,error}=await sb.functions.invoke('exam-ai',{body:{class:cn(x.class),subject:x.subject,language:x.lang,questions:q,count:+$('x_n').value||0}});
+    let err=null;
+    if(error){
+     err=(error.name==='FunctionsFetchError'||/Failed to send/i.test(error.message))?'AI function tak request nahi pahunchi. Supabase me check karein: function ka naam exam-ai ho, Deploy ho chuka ho aur "Verify JWT" OFF ho. Tab tak "Bina AI" wala tareeka use kar sakte hain.':error.message;
+     try{if(error.context&&error.context.json){const j=await error.context.json();if(j&&(j.error||j.message))err=String(j.error||j.message)}}catch(_){}
+    }else if(r&&r.error)err=r.error;
+    if(err){$('x_e2').className='msg';$('x_e2').textContent=err;return}
+    done(r.items);
    };
   };
  };
@@ -1130,7 +1209,7 @@ if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWor
 paint();load();
 loadMe().then(ok=>{if(location.hash==='#panel'){ok?goFirst():showLogin()}});
 
-const hp=()=>{const m=location.hash.match(/^#p=([A-Za-z0-9]{16,64})$/);if(m)showPub(m[1])};
+const hp=()=>{let m=location.hash.match(/^#p=([A-Za-z0-9]{16,64})$/);if(m)return showPub(m[1]);m=location.hash.match(/^#exam(?:=(\d{4,8}))?$/);if(m)showExam(m[1]||'')};
 hp();addEventListener('hashchange',hp);
 </script>
 </body>
