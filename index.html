@@ -639,16 +639,17 @@ async function studentsTab(){
  let sq=sb.from('students').select('*');if(CC==='LEFT')sq=sq.eq('status','left');else if(CC==='PASS')sq=sq.eq('status','passout');else{sq=sq.eq('status','active');if(CC!=='ALL')sq=sq.eq('class',CC)}
  const {data:st,error}=await sq.order('roll',{nullsFirst:false}).order('name');
  if(error){$('slist').textContent=error.message;return}
- const ids=(st||[]).map(s=>s.id),L={},DN={},FEE={},sf=lvl('student')!=='none';
+ const ids=(st||[]).map(s=>s.id),L={},DN={},FEE={},DUE={},sf=lvl('student')!=='none';
  if(sf&&ids.length){const {data:ac}=await sb.from('accounts').select('person_id,monthly_amount').eq('person_type','student').in('person_id',ids);(ac||[]).forEach(a=>{FEE[a.person_id]=a.monthly_amount})}
+ if(sf&&ids.length){try{await sb.rpc('run_accrual')}catch(e){}const {data:bl}=await sb.rpc('balances',{t:'student'});(bl||[]).forEach(b=>{DUE[b.pid]=Math.max(+b.charged-+b.paid-+b.discounted,0)})}
  if(ids.length){const {data:tr}=await sb.from('student_tracker').select('student_id,date,rating,created_at').in('student_id',ids).order('date',{ascending:false}).order('created_at',{ascending:false});
   (tr||[]).forEach(t=>{(L[t.student_id]=L[t.student_id]||[]).push(t)});
   const {data:sk}=await sb.from('student_skills').select('student_id').eq('status','done').in('student_id',ids);(sk||[]).forEach(x=>{DN[x.student_id]=(DN[x.student_id]||0)+1})}
  const draw=()=>{
   const q=$('sq').value.trim().toLowerCase();
   const list=(st||[]).filter(s=>!q||String(s.name).toLowerCase().includes(q));
-  $('scnt').textContent=(CC==='ALL'?'All students':CC==='LEFT'?'Left':CC==='PASS'?'Pass out':cn(CC))+': '+(st||[]).length+' students';
-  $('slist').innerHTML=list.length?`<table><tr><th>Roll</th><th>Name</th><th>Skills</th>${sf?'<th>Fee</th>':''}<th>Padhai</th><th>Last update</th><th></th></tr>${list.map(s=>{const t=(L[s.id]||[]).slice(0,3).filter(x=>x.rating);const av=t.length?Math.round(t.reduce((a,x)=>a+x.rating,0)/t.length):0;const last=(L[s.id]||[])[0];return `<tr><td>${esc(s.roll)}</td><td>${s.photo_url?`<img class="av" src="${esc(s.photo_url)}" alt="">`:''}${s.family_id?'👨‍👩‍👧 ':''}${esc(s.name)}<br><small class="mut">${esc(s.father_name)}${showCls?' · '+esc(cn(s.class)):''}${bn(s.batch_id)?' · 🕐 '+esc(bn(s.batch_id)):''}</small></td><td>${SKN(s.class)?(DN[s.id]||0)+'/'+SKN(s.class):'-'}</td>${sf?`<td>${FEE[s.id]!=null?money(FEE[s.id]):'-'}</td>`:''}<td>${stars(av)}</td><td>${last?fmt(last.date):'-'}</td><td><button class="g" data-p="${s.id}">Open</button></td></tr>`}).join('')}</table>`:'<p class="mut">Is class me abhi koi student nahi hai.</p>';
+  $('scnt').textContent=(CC==='ALL'?'All students':CC==='LEFT'?'Left':CC==='PASS'?'Pass out':cn(CC))+': '+(st||[]).length+' students'+(sf?' · Kul baki '+money(list.reduce((t,x)=>t+(DUE[x.id]||0),0)):'');
+  $('slist').innerHTML=list.length?`<table><tr><th>Roll</th><th>Name</th><th>Skills</th>${sf?'<th>Fee / Baki</th>':''}<th>Padhai</th><th>Last update</th><th></th></tr>${list.map(s=>{const t=(L[s.id]||[]).slice(0,3).filter(x=>x.rating);const av=t.length?Math.round(t.reduce((a,x)=>a+x.rating,0)/t.length):0;const last=(L[s.id]||[])[0];return `<tr><td>${esc(s.roll)}</td><td>${s.photo_url?`<img class="av" src="${esc(s.photo_url)}" alt="">`:''}${s.family_id?'👨‍👩‍👧 ':''}${esc(s.name)}<br><small class="mut">${esc(s.father_name)}${showCls?' · '+esc(cn(s.class)):''}${bn(s.batch_id)?' · 🕐 '+esc(bn(s.batch_id)):''}</small></td><td>${SKN(s.class)?(DN[s.id]||0)+'/'+SKN(s.class):'-'}</td>${sf?`<td><small class="mut">${FEE[s.id]!=null?money(FEE[s.id])+'/mahina':'Fee set nahi'}</small><br>${(DUE[s.id]||0)>0?`<b style="color:var(--red)">Baki ${money(DUE[s.id])}</b>`:'<small class="ok">Baki nahi ✓</small>'}</td>`:''}<td>${stars(av)}</td><td>${last?fmt(last.date):'-'}</td><td><button class="g" data-p="${s.id}">Open</button></td></tr>`}).join('')}</table>`:'<p class="mut">Is class me abhi koi student nahi hai.</p>';
  };
  $('sq').oninput=draw;draw();
  $('slist').onclick=e=>{const id=e.target.dataset.p;if(id)profile('student',id)};
