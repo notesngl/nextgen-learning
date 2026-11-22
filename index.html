@@ -111,6 +111,17 @@ footer{border-top:1px solid var(--line);padding:24px 0 30px;color:var(--mut);fon
 .pmenu button,.pmenu a{display:block;width:100%;text-align:left;background:transparent!important;color:var(--ink)!important;border:0!important;border-bottom:1px solid var(--line)!important;padding:12px 14px;font:600 15px/1.2 var(--f);clip-path:none!important;border-radius:0!important;text-decoration:none;box-sizing:border-box}.pmenu .dg{color:var(--red)!important}
 #pv img.idc{display:block;max-width:100%;margin:16px auto;box-shadow:0 4px 16px rgba(0,0,0,.3)}@media print{#pv img.idc{width:86mm;box-shadow:none;margin:0}}
 .xo{display:flex;gap:10px;align-items:center;padding:10px;border:1px solid var(--line);border-radius:10px;margin:6px 0;background:var(--surface2);cursor:pointer}.xo input{width:auto;margin:0}
+.hx{background:linear-gradient(135deg,#4F46E5,#7C3AED);color:#fff;border-radius:22px;padding:24px 18px;text-align:center;margin-bottom:16px;box-shadow:0 12px 32px rgba(79,70,229,.35)}.hx .em{font-size:50px;line-height:1}.hx h2{margin:8px 0 4px;color:#fff;font-size:30px}.hx p{margin:0;color:#fff;opacity:.92}
+.fc{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:0 8px 24px rgba(0,0,0,.08)}.fc label{display:block;margin:14px 0 4px;font-weight:600;font-size:15px}.fc input{display:block;width:100%;box-sizing:border-box;margin-top:6px;padding:13px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface2);color:var(--ink);font-size:17px;font-family:inherit}.fc input:focus{outline:2px solid #7C3AED;border-color:#7C3AED}
+.fc input.big{font:800 26px var(--f);text-align:center;letter-spacing:6px}
+.bigb{display:block;width:100%;margin-top:14px;padding:15px;font:800 19px var(--f)!important;border-radius:14px!important;background:linear-gradient(135deg,#4F46E5,#7C3AED)!important;color:#fff!important;border:0!important;clip-path:none!important;cursor:pointer;box-shadow:0 6px 16px rgba(79,70,229,.35)}.bigb:disabled{opacity:.6}
+.tips{color:var(--mut);font-size:14px;line-height:1.7;margin:14px 4px;padding-left:18px}
+.xbar{position:sticky;top:66px;z-index:5;background:var(--hdr2);backdrop-filter:blur(8px);padding:10px 4px 8px;border-bottom:1px solid var(--line);margin-bottom:12px}.pgb{height:8px;background:var(--line);border-radius:6px;margin:8px 0 4px;overflow:hidden}.pgb>div{height:100%;background:linear-gradient(90deg,#4F46E5,#22C55E);border-radius:6px;transition:width .3s}
+.xq{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px;box-shadow:0 4px 14px rgba(0,0,0,.05)}.xqh{display:flex;gap:10px;align-items:flex-start;margin-bottom:8px}.xn{flex:0 0 auto;width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#4F46E5,#7C3AED);color:#fff;display:flex;align-items:center;justify-content:center;font:800 15px var(--f)}
+.xl{flex:0 0 auto;width:28px;height:28px;border-radius:50%;border:2px solid var(--line);display:flex;align-items:center;justify-content:center;font:800 14px var(--f)}.xo.sel{border-color:#7C3AED;background:rgba(124,58,237,.12)}.xo.sel .xl{background:#7C3AED;border-color:#7C3AED;color:#fff}
+.ring{width:150px;height:150px;border-radius:50%;margin:10px auto;display:flex;align-items:center;justify-content:center;background:conic-gradient(#22C55E calc(var(--p)*1%),var(--line) 0)}.ring>div{width:116px;height:116px;border-radius:50%;background:var(--surface);display:flex;flex-direction:column;align-items:center;justify-content:center}.ring b{font:800 34px var(--f)}
+.rv{border-left:5px solid var(--line)}.rv.ok{border-left-color:#22C55E}.rv.no{border-left-color:#EF4444}
+.fk{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px;display:flex;justify-content:space-between;gap:10px;align-items:center}.fk .amt{font:800 24px var(--f)}
 .card2{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;margin:0 0 14px}.stars{color:var(--gold);letter-spacing:2px}
 </style>
 </head>
@@ -149,6 +160,7 @@ footer{border-top:1px solid var(--line);padding:24px 0 30px;color:var(--mut);fon
 <table><tr><th data-i="cls"></th><th data-i="adm_fee"></th><th data-i="mon_fee"></th></tr><tbody id="feerows"></tbody></table>
 <p class="mut" data-s="fee_note"></p></div></section>
 <section><div class="w"><a id="wa2" class="btn wabtn" target="_blank" rel="noopener"></a></div></section></div>
+<div id="feView" hidden><div class="w" id="feBody" style="padding:20px 16px"></div></div>
 <div id="exView" hidden><div class="w" id="exBody" style="padding:20px 16px"></div></div>
 <div id="pubView" hidden><div class="w" id="pubBody" style="padding:20px 16px"></div></div>
 <div id="panelView" hidden><div class="w"><h2 id="ptitle"></h2><p class="mut" id="pwho" style="margin:0 0 14px"></p><div id="pmain"></div></div></div>
@@ -159,9 +171,9 @@ footer{border-top:1px solid var(--line);padding:24px 0 30px;color:var(--mut);fon
 <script src="config.js"></script>
 <script src="defaults.js"></script>
 <script>
-const T={hi:{nav_home:"होम",nav_exp:"मेन्यू",nav_about:"हमारे बारे में",nav_fac:"सुविधाएँ",h1v:"कक्षा 1–8",h2v:"हिंदी + अंग्रेज़ी",hud1:"कक्षाएँ",hud2:"माध्यम",hud3:"स्थान",f_school:"कोचिंग",f_students:"छात्र व अभिभावक",f_media:"मीडिया",f_contact:"संपर्क",nav_adm:"एडमिशन",nav_fee:"शुल्क",nav_tch:"शिक्षक",nav_gal:"गैलरी",nav_not:"सूचना",nav_con:"संपर्क",apply:"अभी जुड़ें",cls:"कक्षा",adm_fee:"प्रवेश शुल्क",mon_fee:"मासिक शुल्क",addr_l:"पता",ph_l:"फोन",tm_l:"क्लास का समय",none:"अभी कुछ नहीं है।",lng:"English",nav_exd:"परीक्षा दें",nav_inv:"रेफर करें",inv_msg:"NextGen Learning, कोइलाबाज़ार, राजमहल में कक्षा 1–8 की कोचिंग। देखें:",h3v:"राजमहल",nav_att:"हाज़िरी",nav_mgt:"प्रबंधन",nav_exm:"परीक्षा",nav_pnl:"पैनल",stf:"स्टाफ लॉगिन",wa_t:"व्हाट्सऐप पर बात करें",wa_msg:"नमस्ते, मुझे NextGen Learning के बारे में जानकारी चाहिए।"},
-en:{nav_home:"Home",nav_exp:"Menu",nav_about:"About",nav_fac:"Facilities",h1v:"Class 1–8",h2v:"Hindi + English",hud1:"Classes",hud2:"Medium",hud3:"Location",f_school:"Coaching",f_students:"Students & Parents",f_media:"Media",f_contact:"Contact",nav_adm:"Admission",nav_fee:"Fees",nav_tch:"Teachers",nav_gal:"Gallery",nav_not:"Notices",nav_con:"Contact",apply:"Join now",cls:"Class",adm_fee:"Admission fee",mon_fee:"Monthly fee",addr_l:"Address",ph_l:"Phone",tm_l:"Class timing",none:"Nothing here yet.",lng:"Hinglish",nav_exd:"Take exam",nav_inv:"Invite",inv_msg:"NextGen Learning, coaching for Class 1–8 at Koilabazar, Rajmahal. Check it out:",h3v:"Rajmahal",nav_att:"Attendance",nav_mgt:"Management",nav_exm:"Exam",nav_pnl:"Panel",stf:"Staff login",wa_t:"Chat on WhatsApp",wa_msg:"Hello, I would like to know about NextGen Learning."},
-hg:{nav_home:"Home",nav_exp:"Menu",nav_about:"Hamare Bare Me",nav_fac:"Suvidhayein",h1v:"Class 1–8",h2v:"Hindi + English",h3v:"Rajmahal",hud1:"Classes",hud2:"Medium",hud3:"Location",f_school:"Coaching",f_students:"Students & Parents",f_media:"Media",f_contact:"Sampark",nav_adm:"Admission",nav_fee:"Fees",nav_tch:"Teachers",nav_gal:"Gallery",nav_not:"Notices",nav_con:"Sampark",apply:"Abhi Judein",cls:"Class",adm_fee:"Admission fee",mon_fee:"Monthly fee",addr_l:"Pata",ph_l:"Phone",tm_l:"Class ka samay",none:"Abhi kuch nahi hai.",lng:"हिन्दी",nav_exd:"Exam do",nav_inv:"Invite",inv_msg:"NextGen Learning, Koilabazar, Rajmahal me Class 1–8 ki coaching. Dekhein:",nav_att:"Hazri",nav_mgt:"Prabandhan",nav_exm:"Exam",nav_pnl:"Panel",stf:"Staff Login",wa_t:"WhatsApp par baat karein",wa_msg:"Namaste, mujhe NextGen Learning ke bare me jankari chahiye."}};
+const T={hi:{nav_home:"होम",nav_exp:"मेन्यू",nav_about:"हमारे बारे में",nav_fac:"सुविधाएँ",h1v:"कक्षा 1–8",h2v:"हिंदी + अंग्रेज़ी",hud1:"कक्षाएँ",hud2:"माध्यम",hud3:"स्थान",f_school:"कोचिंग",f_students:"छात्र व अभिभावक",f_media:"मीडिया",f_contact:"संपर्क",nav_adm:"एडमिशन",nav_fee:"शुल्क",nav_tch:"शिक्षक",nav_gal:"गैलरी",nav_not:"सूचना",nav_con:"संपर्क",apply:"अभी जुड़ें",cls:"कक्षा",adm_fee:"प्रवेश शुल्क",mon_fee:"मासिक शुल्क",addr_l:"पता",ph_l:"फोन",tm_l:"क्लास का समय",none:"अभी कुछ नहीं है।",lng:"English",nav_exd:"परीक्षा दें",nav_fck:"फीस देखें",nav_inv:"रेफर करें",inv_msg:"NextGen Learning, कोइलाबाज़ार, राजमहल में कक्षा 1–8 की कोचिंग। देखें:",h3v:"राजमहल",nav_att:"हाज़िरी",nav_mgt:"प्रबंधन",nav_exm:"परीक्षा",nav_pnl:"पैनल",stf:"स्टाफ लॉगिन",wa_t:"व्हाट्सऐप पर बात करें",wa_msg:"नमस्ते, मुझे NextGen Learning के बारे में जानकारी चाहिए।"},
+en:{nav_home:"Home",nav_exp:"Menu",nav_about:"About",nav_fac:"Facilities",h1v:"Class 1–8",h2v:"Hindi + English",hud1:"Classes",hud2:"Medium",hud3:"Location",f_school:"Coaching",f_students:"Students & Parents",f_media:"Media",f_contact:"Contact",nav_adm:"Admission",nav_fee:"Fees",nav_tch:"Teachers",nav_gal:"Gallery",nav_not:"Notices",nav_con:"Contact",apply:"Join now",cls:"Class",adm_fee:"Admission fee",mon_fee:"Monthly fee",addr_l:"Address",ph_l:"Phone",tm_l:"Class timing",none:"Nothing here yet.",lng:"Hinglish",nav_exd:"Take exam",nav_fck:"Check fee",nav_inv:"Invite",inv_msg:"NextGen Learning, coaching for Class 1–8 at Koilabazar, Rajmahal. Check it out:",h3v:"Rajmahal",nav_att:"Attendance",nav_mgt:"Management",nav_exm:"Exam",nav_pnl:"Panel",stf:"Staff login",wa_t:"Chat on WhatsApp",wa_msg:"Hello, I would like to know about NextGen Learning."},
+hg:{nav_home:"Home",nav_exp:"Menu",nav_about:"Hamare Bare Me",nav_fac:"Suvidhayein",h1v:"Class 1–8",h2v:"Hindi + English",h3v:"Rajmahal",hud1:"Classes",hud2:"Medium",hud3:"Location",f_school:"Coaching",f_students:"Students & Parents",f_media:"Media",f_contact:"Sampark",nav_adm:"Admission",nav_fee:"Fees",nav_tch:"Teachers",nav_gal:"Gallery",nav_not:"Notices",nav_con:"Sampark",apply:"Abhi Judein",cls:"Class",adm_fee:"Admission fee",mon_fee:"Monthly fee",addr_l:"Pata",ph_l:"Phone",tm_l:"Class ka samay",none:"Abhi kuch nahi hai.",lng:"हिन्दी",nav_exd:"Exam do",nav_fck:"Fee dekhein",nav_inv:"Invite",inv_msg:"NextGen Learning, Koilabazar, Rajmahal me Class 1–8 ki coaching. Dekhein:",nav_att:"Hazri",nav_mgt:"Prabandhan",nav_exm:"Exam",nav_pnl:"Panel",stf:"Staff Login",wa_t:"WhatsApp par baat karein",wa_msg:"Namaste, mujhe NextGen Learning ke bare me jankari chahiye."}};
 let L=localStorage.getItem('lang')||'hi',S={},D={},ME=null;
 const REM=()=>localStorage.getItem('remember')!=='0';
 const AS={getItem:k=>localStorage.getItem(k)??sessionStorage.getItem(k),setItem:(k,v)=>{(REM()?localStorage:sessionStorage).setItem(k,v);(REM()?sessionStorage:localStorage).removeItem(k)},removeItem:k=>{localStorage.removeItem(k);sessionStorage.removeItem(k)}};
@@ -193,12 +205,11 @@ $('ph').textContent=p;$('ph').href='tel:'+p.replace(/[^+\d]/g,'');
 }
 async function showExam(code0){
  document.body.classList.add('pubmode');
- $('site').hidden=true;$('admView').hidden=true;$('panelView').hidden=true;$('sheet').hidden=true;$('pubView').hidden=true;$('exView').hidden=false;window.scrollTo(0,0);
- const B=$('exBody'),home=`<p style="margin-top:20px"><button class="g" id="exhome">← ${esc(v('school_name'))} website</button></p>`;
+ $('site').hidden=true;$('admView').hidden=true;$('panelView').hidden=true;$('sheet').hidden=true;$('pubView').hidden=true;$('feView').hidden=true;$('exView').hidden=false;window.scrollTo(0,0);
+ const B=$('exBody'),home=`<p style="margin-top:20px;text-align:center"><button class="g" id="exhome">← ${esc(v('school_name'))} website</button></p>`;
  const goHome=()=>{window.onbeforeunload=null;location.hash='';showSite()};
- const msgBox=(h,p)=>{B.innerHTML=`<h2>${h}</h2><p class="mut">${p}</p><p><button id="exagain">Dobara try karein</button></p>`+home;$('exagain').onclick=entry;$('exhome').onclick=goHome};
  const entry=()=>{
-  B.innerHTML=`<h2>📝 Exam do</h2><p class="mut">Teacher ne jo <b>Exam number</b> diya hai wo daalein.</p><label>Exam number<input id="xe_c" inputmode="numeric" maxlength="8" value="${esc(code0||'')}" placeholder="6 ank ka number"></label><label>Aapka naam<input id="xe_n" autocomplete="name"></label><label>Roll no (agar pata ho)<input id="xe_r" inputmode="numeric"></label><button id="xe_go">Exam shuru karein</button> <span id="xe_m" class="msg"></span>`+home;
+  B.innerHTML=`<div class="hx"><div class="em">📝</div><h2>Online Exam</h2><p>Exam number daalkar apna test dein</p></div><div class="fc"><label>Exam number<input id="xe_c" class="big" inputmode="numeric" maxlength="8" value="${esc(code0||'')}" placeholder="••••••"></label><label>Aapka naam<input id="xe_n" autocomplete="name" placeholder="Poora naam"></label><label>Roll no <small class="mut">(agar pata ho)</small><input id="xe_r" inputmode="numeric" placeholder="Jaise: 12"></label><button class="bigb" id="xe_go">Exam shuru karein →</button><p class="msg" id="xe_m" style="text-align:center;margin:10px 0 0"></p></div><ul class="tips"><li>⏱ Timer chalega. Time khatam hone par exam apne aap jama ho jayega.</li><li>📵 Exam ke beech page refresh na karein.</li><li>☑️ Har sawal ka ek hi sahi jawab hota hai.</li></ul>`+home;
   $('exhome').onclick=goHome;
   $('xe_go').onclick=async()=>{
    const c=$('xe_c').value.trim(),nm=$('xe_n').value.trim(),rl=$('xe_r').value.trim();
@@ -213,8 +224,8 @@ async function showExam(code0){
  const run=(ex,c,nm,rl)=>{
   const items=ex.items||[],ANS=items.map(()=>null),L='ABCD',end=Date.now()+(+ex.minutes||30)*60000;let fin=false,tmr;
   window.onbeforeunload=()=>'Exam chal raha hai';
-  B.innerHTML=`<div style="position:sticky;top:64px;z-index:5;background:var(--hdr2);padding:8px 0;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:8px;align-items:center"><b>${esc(ex.title||'Exam')} · ${esc(ex.subject)}</b><span class="pill" id="xt">--:--</span><span class="pill" id="xp">0/${items.length}</span></div><p class="mut"><small>${esc(nm)}${rl?' · Roll '+esc(rl):''} · ${esc(cn(ex.class))}</small></p>${items.map((q,i)=>`<div class="card2"><b>${i+1}. ${esc(q.q)}</b>${(q.o||[]).map((o,j)=>`<label class="xo"><input type="radio" name="q${i}" value="${j}"><span>(${L[j]}) ${esc(o)}</span></label>`).join('')}</div>`).join('')}<button id="xs">Exam jama karein</button> <span id="xm" class="msg"></span>`;
-  B.onchange=e=>{const m=e.target.name&&e.target.name.match(/^q(\d+)$/);if(m){ANS[+m[1]]=+e.target.value;$('xp').textContent=ANS.filter(x=>x!==null).length+'/'+items.length}};
+  B.innerHTML=`<div class="xbar"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><b>${esc(ex.title||'Exam')} · ${esc(ex.subject)}</b><span class="pill" id="xt">--:--</span></div><div class="pgb"><div id="xpb" style="width:0%"></div></div><small class="mut" id="xp">0 / ${items.length} jawab diye</small></div><p class="mut" style="margin:0 0 10px"><small>👤 ${esc(nm)}${rl?' · Roll '+esc(rl):''} · ${esc(cn(ex.class))}</small></p>${items.map((q,i)=>`<div class="xq"><div class="xqh"><span class="xn">${i+1}</span><b>${esc(q.q)}</b></div>${(q.o||[]).map((o,j)=>`<label class="xo"><input type="radio" name="q${i}" value="${j}"><span class="xl">${L[j]}</span><span>${esc(o)}</span></label>`).join('')}</div>`).join('')}<button class="bigb" id="xs">✅ Exam jama karein</button><p class="msg" id="xm" style="text-align:center"></p>`;
+  B.onchange=e=>{const m=e.target.name&&e.target.name.match(/^q(\d+)$/);if(m){ANS[+m[1]]=+e.target.value;const k=ANS.filter(x=>x!==null).length;$('xp').textContent=k+' / '+items.length+' jawab diye';$('xpb').style.width=(k*100/items.length)+'%';e.target.closest('.xq').querySelectorAll('.xo').forEach(l=>l.classList.toggle('sel',l.querySelector('input').checked))}};
   const tick=()=>{const left=Math.max(0,Math.round((end-Date.now())/1000));$('xt').textContent='⏱ '+String(Math.floor(left/60)).padStart(2,'0')+':'+String(left%60).padStart(2,'0');if(left<=0&&!fin)submit(true)};
   tick();tmr=setInterval(tick,1000);
   const submit=async auto=>{
@@ -224,18 +235,46 @@ async function showExam(code0){
    const {data:r,error}=await sb.rpc('exam_submit',{c,nm,rl,ans:ANS});
    window.onbeforeunload=null;
    if(error||!r||r.error){fin=false;$('xs').disabled=false;const k=r&&r.error;$('xm').className='msg';$('xm').textContent=k==='dup'?'Is naam aur roll se exam pehle de diya ja chuka hai.':k==='closed'?'Exam band ho chuka hai.':'Jama nahi hua, internet check karke dobara dabayein.';if(k)clearInterval(tmr);return}
-   B.onchange=null;
-   B.innerHTML=`<div class="ph" style="flex-direction:column;text-align:center"><div style="font-size:48px">🎉</div><h2>${esc(nm)}</h2><div style="font:800 44px var(--f);color:var(--gold)">${r.score} / ${r.total}</div><div class="mut">${r.max>r.total?`Number: ${r.marks} / ${r.max} · `:''}${Math.round(r.score*100/r.total)}% sahi</div><p class="ok">Aapka result save ho gaya hai.</p></div>`
-   +(r.review?`<h3>Jawab dekhein</h3>${items.map((q,i)=>{const rv=r.review[i]||{};const ok=rv.y===rv.c;return `<div class="card2"><b>${i+1}. ${esc(q.q)}</b><p style="margin:6px 0">${ok?'✅':'❌'} Aapka jawab: ${rv.y===null||rv.y===undefined?'chhoda':'('+L[rv.y]+') '+esc((q.o||[])[rv.y])}</p>${ok?'':`<p style="margin:0;color:var(--neon)">Sahi jawab: (${L[rv.c]}) ${esc((q.o||[])[rv.c])}</p>`}</div>`}).join('')}`:'')+home;
+   B.onchange=null;const pct=Math.round(r.score*100/r.total),msg=pct>=80?'Shabash! 🌟':pct>=50?'Achha prayas! 👍':'Aur mehnat karein 💪';
+   B.innerHTML=`<div class="hx"><div class="em">${pct>=80?'🏆':pct>=50?'🎉':'💪'}</div><h2>${msg}</h2><p>${esc(nm)}</p></div><div class="fc" style="text-align:center"><div class="ring" style="--p:${pct}"><div><b>${r.score}/${r.total}</b><small class="mut">${pct}%</small></div></div>${r.max>r.total?`<p>Kul number: <b>${r.marks} / ${r.max}</b></p>`:''}<p class="ok">✅ Aapka result save ho gaya hai.</p></div>`
+   +(r.review?`<h3 style="margin:18px 0 8px">Jawab dekhein</h3>${items.map((q,i)=>{const rv=r.review[i]||{},ok=rv.y===rv.c;return `<div class="xq rv ${ok?'ok':'no'}"><div class="xqh"><span class="xn">${i+1}</span><b>${esc(q.q)}</b></div><p style="margin:4px 0">${ok?'✅':'❌'} Aapka jawab: ${rv.y===null||rv.y===undefined?'chhoda':'('+L[rv.y]+') '+esc((q.o||[])[rv.y])}</p>${ok?'':`<p style="margin:0;color:#16A34A;font-weight:700">Sahi jawab: (${L[rv.c]}) ${esc((q.o||[])[rv.c])}</p>`}</div>`}).join('')}`:'')+home;
    $('exhome').onclick=goHome;window.scrollTo(0,0);
   };
   $('xs').onclick=()=>submit(false);
  };
  entry();
 }
+async function showFee(){
+ document.body.classList.add('pubmode');
+ $('site').hidden=true;$('admView').hidden=true;$('panelView').hidden=true;$('sheet').hidden=true;$('pubView').hidden=true;$('exView').hidden=true;$('feView').hidden=false;window.scrollTo(0,0);
+ const B=$('feBody'),home=`<p style="margin-top:20px;text-align:center"><button class="g" id="fehome">← ${esc(v('school_name'))} website</button></p>`;
+ const goHome=()=>{location.hash='';showSite()};
+ const entry=()=>{
+  B.innerHTML=`<div class="hx"><div class="em">💰</div><h2>Fee Dekhein</h2><p>Apne bachhe ki baki fee check karein</p></div><div class="fc"><label>Bachhe ka Roll no.<input id="fe_r" class="big" inputmode="numeric" maxlength="9" placeholder="Jaise: 12"></label><label>Aapka phone number <small class="mut">(jo coaching me save hai)</small><input id="fe_p" inputmode="tel" maxlength="14" placeholder="10 ank ka number"></label><button class="bigb" id="fe_go">Fee dekhein →</button><p class="msg" id="fe_m" style="text-align:center;margin:10px 0 0"></p></div><ul class="tips"><li>👨‍👩‍👧 Agar aapke ek se zyada bachhe hain, to sabki fee ek saath dikhegi.</li><li>🔒 Sirf wahi number chalega jo coaching me aapka save hai.</li></ul>`+home;
+  $('fehome').onclick=goHome;
+  $('fe_go').onclick=async()=>{
+   const r=$('fe_r').value.trim(),ph=$('fe_p').value.replace(/\D/g,'');
+   if(!/^\d{1,9}$/.test(r)){$('fe_m').textContent='Roll no. daalein';return}
+   if(ph.length<10){$('fe_m').textContent='10 ank ka phone number daalein';return}
+   $('fe_m').className='ok';$('fe_m').textContent='Dekh rahe hain...';$('fe_go').disabled=true;
+   const {data:d,error}=await sb.rpc('fee_lookup',{r:+r,ph});
+   $('fe_go').disabled=false;
+   if(error||!d||d.error){$('fe_m').className='msg';const k=d&&d.error;$('fe_m').textContent=k==='locked'?'Bahut zyada galat koshish hui. 15 minute baad dobara try karein.':k==='nomatch'?'Roll no. ya phone number match nahi hua. Wahi number daalein jo coaching me save hai.':'Kuch gadbad hui, dobara try karein.';return}
+   show(d);
+  };
+ };
+ const show=d=>{
+  const kids=(d.kids||[]).filter(k=>k.status==='active'||k.due>0),tot=kids.reduce((a,k)=>a+(+k.due||0),0),w=String(v('phone')).replace(/\D/g,'');
+  B.innerHTML=`<div class="hx"><div class="em">${tot>0?'💰':'🎉'}</div><h2>${tot>0?'Kul baki: '+money(tot):'Koi fee baki nahi'}</h2><p>${kids.length>1?'Poore parivar ki fee':'Aapke bachhe ki fee'}</p></div>`
+  +kids.map(k=>`<div class="fk"><div><b style="font-size:18px">${esc(k.name)}</b><br><small class="mut">${esc(cn(k.class))}${k.status!=='active'?' · '+(k.status==='left'?'Left':'Pass out'):''}</small>${(k.pays||[]).length?`<br><small class="mut">Pichli fee: ${k.pays.slice(0,3).map(p=>fmt(p.d)+' ('+money(p.a)+')').join(', ')}</small>`:''}</div><div class="amt" style="color:${k.due>0?'var(--red)':'#16A34A'}">${money(k.due)}</div></div>`).join('')
+  +`<p class="mut" style="text-align:center"><small>Fee jama karne ke liye coaching me sampark karein.</small></p><p style="text-align:center">${w.length>=10?`<a class="btn wabtn" target="_blank" rel="noopener" href="https://wa.me/${w.length===10?'91'+w:w}">💬 Coaching se baat karein</a> `:''}<button class="g" id="fe_again">Dobara dekhein</button></p>`+home;
+  $('fe_again').onclick=entry;$('fehome').onclick=goHome;window.scrollTo(0,0);
+ };
+ entry();
+}
 async function showPub(t){
  document.body.classList.add('pubmode');
- $('site').hidden=true;$('admView').hidden=true;$('panelView').hidden=true;$('sheet').hidden=true;$('pubView').hidden=false;$('exView').hidden=true;
+ $('site').hidden=true;$('admView').hidden=true;$('panelView').hidden=true;$('sheet').hidden=true;$('pubView').hidden=false;$('exView').hidden=true;$('feView').hidden=true;
  $('pubBody').innerHTML='<p class="mut">Loading...</p>';window.scrollTo(0,0);
  const {data:d}=sb?await sb.rpc('public_profile',{t}):{data:null};
  const home=`<p style="margin-top:20px"><button class="g" id="pubhome">← ${esc(v('school_name'))} website</button></p>`;
@@ -302,16 +341,17 @@ const TABS={
  classes:{label:'Classes',run:classesTab},
  missing:{label:'Missing Info',run:missingTab},
  exam:{label:'Exam / परीक्षा',run:examTab},
+ examres:{label:'Results',run:examresTab},
  salary:{label:'Salary / वेतन',run:()=>mgmtList('employee')},
  gallery:{label:'Gallery',run:()=>crud('gallery',[['url','Photos (ek saath kai chun sakte hain)','photos'],['caption','Caption (optional)']],['url','caption'],'created_at',true)}
 };
 
-const ICON={fees:'💰',salary:'💼',site:'✏️',staff:'👥',students:'🎓',sa:'✅',ta:'🧑‍🏫',teachers:'👩‍🏫',notices:'📢',gallery:'🖼️',reminder:'🔔',report:'📊',ssearch:'🔍',missing:'❓',feeset:'🧾',batches:'🕐',classes:'🏫',exam:'📋'};
+const ICON={fees:'💰',salary:'💼',site:'✏️',staff:'👥',students:'🎓',sa:'✅',ta:'🧑‍🏫',teachers:'👩‍🏫',notices:'📢',gallery:'🖼️',reminder:'🔔',report:'📊',ssearch:'🔍',missing:'❓',feeset:'🧾',batches:'🕐',classes:'🏫',exam:'📋',examres:'🏆'};
 let BAR='home';
 const setBar=a=>{BAR=a;renderBar();$('waf').classList.toggle('nop',a==='panel')};
-function showSite(){document.body.classList.remove('pubmode');$('exView').hidden=true;window.onbeforeunload=null;$('pubView').hidden=true;$('site').hidden=false;$('admView').hidden=true;$('panelView').hidden=true;$('sheet').hidden=true;setBar('home');window.scrollTo(0,0)}
-function showAdm(){document.body.classList.remove('pubmode');$('exView').hidden=true;window.onbeforeunload=null;$('pubView').hidden=true;$('site').hidden=true;$('admView').hidden=false;$('panelView').hidden=true;$('sheet').hidden=true;setBar('adm');window.scrollTo(0,0)}
-function showPanel(){document.body.classList.remove('pubmode');$('exView').hidden=true;window.onbeforeunload=null;$('pubView').hidden=true;$('site').hidden=true;$('admView').hidden=true;$('panelView').hidden=false;$('sheet').hidden=true;setBar('panel');window.scrollTo(0,0)}
+function showSite(){document.body.classList.remove('pubmode');$('exView').hidden=true;$('feView').hidden=true;window.onbeforeunload=null;$('pubView').hidden=true;$('site').hidden=false;$('admView').hidden=true;$('panelView').hidden=true;$('sheet').hidden=true;setBar('home');window.scrollTo(0,0)}
+function showAdm(){document.body.classList.remove('pubmode');$('exView').hidden=true;$('feView').hidden=true;window.onbeforeunload=null;$('pubView').hidden=true;$('site').hidden=true;$('admView').hidden=false;$('panelView').hidden=true;$('sheet').hidden=true;setBar('adm');window.scrollTo(0,0)}
+function showPanel(){document.body.classList.remove('pubmode');$('exView').hidden=true;$('feView').hidden=true;window.onbeforeunload=null;$('pubView').hidden=true;$('site').hidden=true;$('admView').hidden=true;$('panelView').hidden=false;$('sheet').hidden=true;setBar('panel');window.scrollTo(0,0)}
 const barLabel=()=>{renderBar();renderBday()};
 async function renderBday(){
  const el=$('bday');
@@ -359,11 +399,11 @@ function openTab(k){lastTab=k;PTAB='det';
 }
 const goFirst=()=>openTab(Object.keys(TABS).filter(allowed)[0]);
 const foldersHTML=(groups)=>groups.map(g=>`<details class="fold" open><summary>${g[0]}</summary><div class="shg">${g[1]}</div></details>`).join('');
-const GROUPS=[['📁 Management',['ssearch','fees','feeset','report','salary']],['📁 Students',['students','missing','batches','classes']],['📁 Staff',['teachers','staff']],['📁 Attendance',['sa','ta']],['📁 Exam',['exam']],['📁 Website',['site','notices','gallery']]];
+const GROUPS=[['📁 Management',['ssearch','fees','feeset','report','salary']],['📁 Students',['students','missing','batches','classes']],['📁 Staff',['teachers','staff']],['📁 Attendance',['sa','ta']],['📁 Exam',['exam','examres']],['📁 Website',['site','notices','gallery']]];
 const FOLD=[['Attendance','nav_att','✅'],['Management','nav_mgt','💼'],['Exam','nav_exm','📋']];
 function folderKeys(n){const ks=Object.keys(TABS).filter(allowed),g=GROUPS.find(g=>g[0].includes(n));return g?g[1].filter(k=>ks.includes(k)):[]}
 function renderBar(){
- const t=T[L],it=[['home','🏠',t.nav_home],['adm','📝',t.nav_adm],['exd','🧪',t.nav_exd],['inv','🎁',t.nav_inv]];
+ const t=T[L],it=[['home','🏠',t.nav_home],['adm','📝',t.nav_adm],['exd','🧪',t.nav_exd],['fck','💰',t.nav_fck],['inv','🎁',t.nav_inv]];
  if(ME)FOLD.forEach(([n,k,ic])=>{if(folderKeys(n).length)it.push(['f:'+n,ic,t[k]])});
  it.push(['exp','🧭',t.nav_exp],['panel',ME?'🎮':'🔐',ME?t.nav_pnl:t.stf]);
  $('bar').innerHTML=it.map(([id,ic,l])=>`<button data-b="${id}" class="${id===BAR?'on':''}"><span>${ic}</span>${esc(l)}</button>`).join('');
@@ -381,6 +421,7 @@ function invite(){
 function barGo(id){
  if(id==='inv')return invite();
  if(id==='exd')return showExam('');
+ if(id==='fck')return showFee();
  if(id==='home')return showSite();
  if(id==='adm')return showAdm();
  if(id==='exp')return openExplore();
@@ -746,6 +787,31 @@ function ssearchTab(){
  go();if(!SSQ)$('ssq').focus();
 }
 
+/* ---------- Exam Results ---------- */
+async function examresTab(){
+ const m=$('pmain');m.innerHTML='<p class="mut">Loading...</p>';
+ const [{data:ex,error},rs]=await Promise.all([sb.from('exams').select('id,class,subject,title,exam_date,items,marks').order('created_at',{ascending:false}).limit(60),sb.from('exam_results').select('exam_id')]);
+ if(error){m.innerHTML='<p class="msg">'+esc(error.message)+'</p><p class="mut">update13.sql Run karein.</p>';return}
+ if(!(ex||[]).length){m.innerHTML='<p class="mut">Abhi koi exam nahi. Pehle Exam folder me exam banayein.</p>';return}
+ const RC={};(rs.data||[]).forEach(r=>{RC[r.exam_id]=(RC[r.exam_id]||0)+1});
+ m.innerHTML=`<label>Exam chunein<select id="er_e">${ex.map(x=>`<option value="${x.id}">${esc(cn(x.class))} · ${esc(x.subject)} · ${esc(x.title||'')} (${RC[x.id]||0})</option>`).join('')}</select></label><div id="er_o"></div>`;
+ const draw=async()=>{
+  const x=ex.find(e=>e.id===$('er_e').value);$('er_o').innerHTML='<p class="mut">Loading...</p>';
+  const {data:R,error}=await sb.from('exam_results').select('*').eq('exam_id',x.id).order('score',{ascending:false}).order('submitted_at');
+  if(error){$('er_o').innerHTML='<p class="msg">'+esc(error.message)+'</p>';return}
+  const n=(R||[]).length,tot=x.items.length;
+  if(!n){$('er_o').innerHTML='<p class="mut">Abhi kisi ne ye exam nahi diya.</p>';return}
+  const avg=R.reduce((a,r)=>a+r.score,0)/n,hi=R[0].score,lo=R[n-1].score;
+  $('er_o').innerHTML=`<div class="rg"><div class="rc"><small>Bachhon ne diya</small><b>${n}</b></div><div class="rc"><small>Average</small><b>${avg.toFixed(1)}/${tot}</b></div><div class="rc"><small>Sabse zyada</small><b style="color:var(--neon)">${hi}/${tot}</b></div><div class="rc"><small>Sabse kam</small><b style="color:var(--red)">${lo}/${tot}</b></div></div><p><button class="g" id="er_p">🖨️ Print / PDF</button> <button class="g" id="er_s">📤 Share</button></p><div class="wrap"><table><tr><th>Rank</th><th>Naam</th><th>Number</th><th></th></tr>${R.map((r,i)=>`<tr><td>${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}</td><td>${esc(r.name)}${r.roll?` <small class="mut">Roll ${esc(r.roll)}</small>`:''}<br><small class="mut">${fmt(r.submitted_at)}</small></td><td><b>${r.score}/${r.total}</b><br><small class="mut">${Math.round(r.score*100/r.total)}%${x.marks>1?' · '+r.score*x.marks+' number':''}</small></td><td><button class="r" data-rd="${r.id}">✕</button></td></tr>`).join('')}</table></div>`;
+  $('er_p').onclick=()=>{let pv=$('pv');if(!pv){pv=document.createElement('div');pv.id='pv';document.body.appendChild(pv)}
+   pv.innerHTML=`<div class="noprint" style="position:sticky;top:0;background:#eee;padding:8px;display:flex;gap:8px"><button id="pv_p">🖨️ Print / PDF</button><button id="pv_c">Band karein</button></div><div style="max-width:760px;margin:0 auto;padding:18px;font:16px/1.5 sans-serif"><h2 style="text-align:center;margin:0">${esc(v('school_name'))}</h2><p style="text-align:center"><b>Result: ${esc(x.title||'Exam')}</b><br>${esc(cn(x.class))} · ${esc(x.subject)} · ${fmt(x.exam_date)}</p><table style="width:100%;border-collapse:collapse" border="1" cellpadding="6"><tr><th>Rank</th><th>Naam</th><th>Roll</th><th>Number</th><th>%</th></tr>${R.map((r,i)=>`<tr><td>${i+1}</td><td>${esc(r.name)}</td><td>${esc(r.roll||'')}</td><td>${r.score}/${r.total}</td><td>${Math.round(r.score*100/r.total)}%</td></tr>`).join('')}</table></div>`;
+   pv.hidden=false;$('pv_p').onclick=()=>window.print();$('pv_c').onclick=()=>{pv.hidden=true}};
+  $('er_s').onclick=()=>{const t=`${v('school_name')} - Result\n${cn(x.class)} ${x.subject} (${x.title||'Exam'})\n`+R.slice(0,10).map((r,i)=>`${i+1}. ${r.name} - ${r.score}/${r.total}`).join('\n')+`\nAverage: ${avg.toFixed(1)}/${tot}`;if(navigator.share)navigator.share({text:t}).catch(()=>{});else window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank')};
+  $('er_o').onclick=async e=>{const d=e.target.dataset.rd;if(d&&confirm('Ye result hata dein? (Bachha dobara exam de sakega)')){const {error}=await sb.from('exam_results').delete().eq('id',d);if(error)alert(error.message);else draw()}};
+ };
+ $('er_e').onchange=draw;draw();
+}
+
 /* ---------- Classes ---------- */
 async function classesTab(){
  const m=$('pmain');m.innerHTML='<p class="mut">Loading...</p>';
@@ -776,7 +842,7 @@ async function batchesTab(){
  const cnt={};(st||[]).forEach(s=>{if(s.batch_id)cnt[s.batch_id]=(cnt[s.batch_id]||0)+1});
  let E=null;
  const draw=()=>{
-  m.innerHTML=`<p class="mut"><small>Batch = time ke hisaab se group. Ek batch me alag-alag class ke bachhe ho sakte hain. Attendance batch ke hisaab se hoti hai.</small></p><div class="f"><label>Batch ka naam<input id="bt_n" value="${esc(E?E.name:'')}" placeholder="Jaise: Subah ka batch"></label><label>Shuru ka samay<input id="bt_s" type="time" value="${E&&E.start_time?E.start_time.slice(0,5):''}"></label><label>Khatam ka samay<input id="bt_e" type="time" value="${E&&E.end_time?E.end_time.slice(0,5):''}"></label></div><button id="bt_a">${E?'Update karein':'+ Batch jodein'}</button> ${E?'<button class="g" id="bt_x">Cancel</button>':''} <span id="bt_m" class="msg"></span><div class="wrap" style="margin-top:12px"><table>${BATCHES.length?BATCHES.map(b=>`<tr><td><b>${esc(b.name)}</b><br><small class="mut">${esc(tm(b.start_time))}${b.end_time?' – '+esc(tm(b.end_time)):''} · ${cnt[b.id]||0} bachhe</small></td><td><button class="g" data-e="${b.id}">Edit</button> <button class="r" data-d="${b.id}">✕</button></td></tr>`).join(''):'<tr><td class="mut">Abhi koi batch nahi.</td></tr>'}</table></div>`;
+  m.innerHTML=`<p class="mut"><small>Batch = time ke hisaab se group. Ek batch me alag-alag class ke bachhe ho sakte hain. Attendance batch ke hisaab se hoti hai.</small></p><div class="f"><label>Batch ka naam<input id="bt_n" value="${esc(E?E.name:'')}" placeholder="Jaise: Subah ka batch"></label><label>Shuru ka samay<input id="bt_s" type="time" value="${E&&E.start_time?E.start_time.slice(0,5):''}"></label><label>Khatam ka samay<input id="bt_e" type="time" value="${E&&E.end_time?E.end_time.slice(0,5):''}"></label></div><button id="bt_a">${E?'Update karein':'+ Batch jodein'}</button> ${E?'<button class="g" id="bt_x">Cancel</button>':''} <span id="bt_m" class="msg"></span><div class="wrap" style="margin-top:12px"><table>${BATCHES.length?BATCHES.map(b=>`<tr><td><b>${esc(b.name)}</b><br><small class="mut">${esc(tm(b.start_time))}${b.end_time?' – '+esc(tm(b.end_time)):''} · ${cnt[b.id]||0} bachhe</small></td><td><button class="g" data-as="${b.id}">➕ Bachhe</button> <button class="g" data-e="${b.id}">Edit</button> <button class="r" data-d="${b.id}">✕</button></td></tr>`).join(''):'<tr><td class="mut">Abhi koi batch nahi.</td></tr>'}</table></div>`;
   $('bt_a').onclick=async()=>{
    const o={name:$('bt_n').value.trim(),start_time:$('bt_s').value||null,end_time:$('bt_e').value||null};if(!o.name){$('bt_m').textContent='Naam likhein';return}
    const r=E?await sb.from('batches').update(o).eq('id',E.id):await sb.from('batches').insert({...o,sort:(BATCHES.length?Math.max(...BATCHES.map(x=>x.sort||0)):0)+1});
@@ -784,8 +850,34 @@ async function batchesTab(){
   };
   if($('bt_x'))$('bt_x').onclick=()=>{E=null;draw()};
   m.onclick=async e=>{const t=e.target.closest('button');if(!t)return;
+   if(t.dataset.as)batchAssign(BATCHES.find(x=>x.id===t.dataset.as));
    if(t.dataset.e){E=BATCHES.find(x=>x.id===t.dataset.e);draw();window.scrollTo(0,0)}
    if(t.dataset.d&&confirm('Ye batch hata dein? Iske bachhe "bina batch" ho jayenge.')){const {error}=await sb.from('batches').delete().eq('id',t.dataset.d);if(error)alert(error.message);else batchesTab()}};
+ };
+ draw();
+}
+
+async function batchAssign(b){
+ const m=$('pmain');m.innerHTML='<p class="mut">Loading...</p>';
+ const {data:S}=await sb.from('students').select('id,name,class,roll,batch_id').eq('status','active').order('roll',{nullsFirst:false}).order('name');
+ const sel=new Set((S||[]).filter(s=>s.batch_id===b.id).map(s=>s.id)),init=new Set(sel);
+ m.innerHTML=`<button id="ba_b">← Back</button><h3>${esc(bl(b))}</h3><p class="mut"><small>Jin bachhon ko is batch me rakhna hai unpar tick lagayein, phir Save dabayein. Untick karne par bachha is batch se hat jayega.</small></p><div class="f"><label>Class<select id="ba_c"><option value="ALL">Sabhi class</option>${CONFIG.classes.map(c=>`<option value="${esc(c)}">${esc(cn(c))}</option>`).join('')}</select></label><label>Search<input id="ba_q" placeholder="Naam"></label></div><button class="g" id="ba_all">Dikhe hue sabhi chunein</button> <button class="g" id="ba_none">Dikhe hue sabhi hataein</button><p class="mut" id="ba_n"></p><div class="wrap" id="ba_l"></div><button id="ba_s">Save</button> <span id="ba_m" class="msg"></span>`;
+ const vis=()=>{const c=$('ba_c').value,q=$('ba_q').value.trim().toLowerCase();return (S||[]).filter(s=>(c==='ALL'||s.class===c)&&(!q||String(s.name).toLowerCase().includes(q)))};
+ const draw=()=>{const L=vis();$('ba_l').innerHTML=L.length?`<table>${L.map(s=>`<tr><td><label class="xo" style="margin:2px 0"><input type="checkbox" data-s="${s.id}" ${sel.has(s.id)?'checked':''}><span>${s.roll?esc(s.roll)+'. ':''}${esc(s.name)} <small class="mut">${esc(cn(s.class))}${s.batch_id&&s.batch_id!==b.id&&bn(s.batch_id)?' · abhi: '+esc(bn(s.batch_id)):''}</small></span></label></td></tr>`).join('')}</table>`:'<p class="mut">Koi bachha nahi.</p>';$('ba_n').textContent=sel.size+' bachhe is batch ke liye chune hain'};
+ $('ba_c').onchange=$('ba_q').oninput=draw;
+ $('ba_l').onchange=e=>{const id=e.target.dataset.s;if(!id)return;e.target.checked?sel.add(id):sel.delete(id);$('ba_n').textContent=sel.size+' bachhe is batch ke liye chune hain'};
+ $('ba_all').onclick=()=>{vis().forEach(s=>sel.add(s.id));draw()};
+ $('ba_none').onclick=()=>{vis().forEach(s=>sel.delete(s.id));draw()};
+ $('ba_b').onclick=batchesTab;
+ $('ba_s').onclick=async()=>{
+  const add=[...sel].filter(i=>!init.has(i)),rem=[...init].filter(i=>!sel.has(i));
+  if(!add.length&&!rem.length){$('ba_m').className='msg';$('ba_m').textContent='Kuch badla nahi';return}
+  $('ba_m').className='ok';$('ba_m').textContent='Save ho raha hai...';
+  let er=null;
+  if(add.length){const {error}=await sb.from('students').update({batch_id:b.id}).in('id',add);if(error)er=error}
+  if(rem.length){const {error}=await sb.from('students').update({batch_id:null}).in('id',rem).eq('batch_id',b.id);if(error)er=error}
+  if(er){$('ba_m').className='msg';$('ba_m').textContent=er.message;return}
+  $('ba_m').className='ok';$('ba_m').textContent=add.length+' jude, '+rem.length+' hate ✓';init.clear();sel.forEach(i=>init.add(i));
  };
  draw();
 }
@@ -1209,7 +1301,7 @@ if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWor
 paint();load();
 loadMe().then(ok=>{if(location.hash==='#panel'){ok?goFirst():showLogin()}});
 
-const hp=()=>{let m=location.hash.match(/^#p=([A-Za-z0-9]{16,64})$/);if(m)return showPub(m[1]);m=location.hash.match(/^#exam(?:=(\d{4,8}))?$/);if(m)showExam(m[1]||'')};
+const hp=()=>{let m=location.hash.match(/^#p=([A-Za-z0-9]{16,64})$/);if(m)return showPub(m[1]);m=location.hash.match(/^#exam(?:=(\d{4,8}))?$/);if(m)return showExam(m[1]||'');if(location.hash==='#fee')showFee()};
 hp();addEventListener('hashchange',hp);
 </script>
 </body>
