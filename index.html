@@ -97,7 +97,7 @@ footer{border-top:1px solid var(--line);padding:24px 0 30px;color:var(--mut);fon
 #pv{position:fixed;inset:0;z-index:60;background:#fff;color:#000;overflow:auto}#pv[hidden]{display:none}#pv button{background:#1E40AF;color:#fff;border:0;padding:8px 12px;border-radius:6px;font:600 14px sans-serif;cursor:pointer}
 @media print{body>*:not(#pv){display:none!important}#pv{position:static;overflow:visible}.noprint{display:none!important}body{padding:0;background:#fff}}
 .av{width:34px;height:34px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:8px;border:1px solid var(--line)}
-#bdl{display:flex;gap:12px;overflow-x:auto;padding-bottom:6px}.bd{flex:0 0 auto;min-width:160px;background:var(--surface);border:1px solid var(--gold);border-radius:12px;padding:14px;text-align:center;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px}.bd img{width:88px;height:88px;border-radius:50%;object-fit:cover;border:3px solid var(--gold)}.bd>span{font-size:52px;line-height:88px}.bd em{color:var(--gold);font-style:normal;font-weight:700}
+#bdl{display:flex;gap:14px;overflow-x:auto;padding:6px 2px 10px;justify-content:safe center}.bd{flex:0 0 auto;min-width:160px;background:var(--surface);border:1px solid var(--gold);border-radius:12px;padding:14px;text-align:center;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px}.bd img{width:88px;height:88px;border-radius:50%;object-fit:cover;border:3px solid var(--gold)}.bd>span{font-size:52px;line-height:88px}.bd em{color:var(--gold);font-style:normal;font-weight:700}
 .ph{display:flex;gap:14px;align-items:center;background:linear-gradient(135deg,rgba(var(--acc),.18),rgba(var(--sec),.12));border:1px solid var(--line);border-radius:16px;padding:16px;margin:12px 0}
 .pha{width:84px;height:84px;border-radius:50%;overflow:hidden;flex:0 0 auto;border:3px solid var(--gold);background:var(--surface2);display:flex;align-items:center;justify-content:center;font:800 38px var(--f);color:var(--gold)}.pha img{width:100%;height:100%;object-fit:cover}
 .phi h2{margin:0 0 4px;font-size:24px}.pill{display:inline-block;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:2px 10px;font-size:13px;margin:0 4px 4px 0}
@@ -132,6 +132,13 @@ footer{border-top:1px solid var(--line);padding:24px 0 30px;color:var(--mut);fon
 .sg.P input:checked+span{background:#16A34A;border-color:#16A34A;color:#fff}.sg.A input:checked+span{background:#DC2626;border-color:#DC2626;color:#fff}.sg.L input:checked+span{background:#F59E0B;border-color:#F59E0B;color:#fff}
 .sbar{position:sticky;bottom:78px;z-index:6;background:var(--hdr2);backdrop-filter:blur(8px);border:1px solid var(--line);border-radius:14px;padding:10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:8px 0}
 .kc{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:14px;margin-bottom:14px;box-shadow:0 6px 18px rgba(0,0,0,.07)}.kh{display:flex;gap:12px;align-items:center}.kh .pha{width:68px;height:68px}.kd{margin-top:10px;border-top:1px dashed var(--line);padding-top:8px;font-size:14px;line-height:1.7}.kd b{font-weight:700}
+.bdy{position:relative;overflow:hidden;background:linear-gradient(135deg,#FF5FA2 0%,#FF9A3C 55%,#FFD93D 100%);color:#3b0a2a;padding:22px 0 14px;text-align:center}
+.bdy h2{color:#fff;font-size:32px;margin:0 0 2px;text-shadow:0 2px 8px rgba(120,0,60,.35);text-transform:none;letter-spacing:0}.bdy h2::before,.bdy h2::after{content:none!important;display:none!important}.bdy .w{position:relative;z-index:1}.bsub{margin:0 0 10px;color:#fff;font-weight:600}.bnote{margin:4px 0 0;font-size:12px;color:#fff;opacity:.9}
+.bbl{position:absolute;inset:0;pointer-events:none}.bbl i{position:absolute;font-style:normal;font-size:30px;opacity:.55;animation:bfl 6s ease-in-out infinite}.bbl i:nth-child(1){left:4%;top:20%}.bbl i:nth-child(2){left:22%;top:4%;animation-delay:1s}.bbl i:nth-child(3){right:20%;top:8%;animation-delay:2s}.bbl i:nth-child(4){right:5%;top:30%;animation-delay:3s}.bbl i:nth-child(5){left:46%;top:2%;animation-delay:4s}
+@keyframes bfl{0%,100%{transform:translateY(0) rotate(-6deg)}50%{transform:translateY(-12px) rotate(6deg)}}
+.bd2{flex:0 0 auto;min-width:200px;background:rgba(255,255,255,.95);color:#3b0a2a;border-radius:22px;padding:16px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;box-shadow:0 10px 26px rgba(120,0,60,.28);position:relative}
+.bd2 img,.bd2>.bdp{width:104px;height:104px;border-radius:50%;object-fit:cover;border:4px solid #FFB800;box-shadow:0 0 0 4px #FF5FA2}.bd2>.bdp{display:flex;align-items:center;justify-content:center;font-size:54px;background:#FFF3C4}
+.bd2 b{font:800 22px var(--f);margin-top:8px}.bd2 .br{display:inline-block;background:#FF5FA2;color:#fff;border-radius:999px;padding:1px 12px;font-size:13px;font-weight:700}.bd2 em{font-style:normal;font-weight:800;color:#D6246E;margin-top:4px}.bd2 .bw{margin-top:8px;background:#25D366;color:#06210f;border-radius:999px;padding:6px 14px;font-weight:700;font-size:14px;text-decoration:none}
 .card2{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;margin:0 0 14px}.stars{color:var(--gold);letter-spacing:2px}
 </style>
 </head>
@@ -142,6 +149,7 @@ footer{border-top:1px solid var(--line);padding:24px 0 30px;color:var(--mut);fon
 <div style="display:flex;gap:8px;align-items:center"><button id="thm" aria-label="Theme"></button><button id="lang">English</button></div>
 </div></header>
 <div id="site"><main id="top">
+<section id="bday" class="bdy" hidden><div class="bbl"><i>🎈</i><i>🎉</i><i>🎂</i><i>🎁</i><i>🎈</i></div><div class="w"><h2>🎉 Happy Birthday! 🎂</h2><p class="bsub">Aaj in bachhon ka janm-din hai</p><div id="bdl"></div><p class="bnote">Ye sirf Owner aur Admin ko dikhta hai.</p></div></section>
 <div class="hero"><div class="w">
 <img class="herologo" src="logo.png" alt="NextGen Learning">
 <div>
@@ -149,7 +157,7 @@ footer{border-top:1px solid var(--line);padding:24px 0 30px;color:var(--mut);fon
 <div class="hud"><div><b data-i="h1v"></b><span data-i="hud1"></span></div><div><b data-i="h2v"></b><span data-i="hud2"></span></div><div><b data-i="h3v"></b><span data-i="hud3"></span></div></div>
 </div>
 </div></div>
-<section id="bday" hidden><div class="w"><h2>🎂 Aaj ka Birthday</h2><div id="bdl"></div><p class="mut"><small>Ye sirf Owner ko dikhta hai.</small></p></div></section>
+
 <section id="about"><div class="w"><h2 data-i="nav_about"></h2><p data-s="about" style="white-space:pre-line;max-width:60ch"></p></div></section>
 <section id="facSec" class="alt"><div class="w"><h2 id="facilities" data-i="nav_fac"></h2><ul class="chips" id="fac"></ul></div></section>
 
@@ -353,13 +361,14 @@ const TABS={
  batches:{label:'Batches (time)',run:batchesTab},
  classes:{label:'Classes',run:classesTab},
  missing:{label:'Missing Info',run:missingTab},
+ birthdays:{label:'Birthdays',run:bdayTab},
  exam:{label:'Exam / परीक्षा',run:examTab},
  examres:{label:'Results',run:examresTab},
  salary:{label:'Salary / वेतन',run:()=>mgmtList('employee')},
  gallery:{label:'Gallery',run:()=>crud('gallery',[['url','Photos (ek saath kai chun sakte hain)','photos'],['caption','Caption (optional)']],['url','caption'],'created_at',true)}
 };
 
-const ICON={fees:'💰',salary:'💼',site:'✏️',staff:'👥',students:'🎓',sa:'✅',ta:'🧑‍🏫',teachers:'👩‍🏫',notices:'📢',gallery:'🖼️',reminder:'🔔',report:'📊',ssearch:'🔍',missing:'❓',feeset:'🧾',batches:'🕐',classes:'🏫',exam:'📋',examres:'🏆'};
+const ICON={fees:'💰',salary:'💼',site:'✏️',staff:'👥',students:'🎓',sa:'✅',ta:'🧑‍🏫',teachers:'👩‍🏫',notices:'📢',gallery:'🖼️',reminder:'🔔',report:'📊',ssearch:'🔍',missing:'❓',birthdays:'🎂',feeset:'🧾',batches:'🕐',classes:'🏫',exam:'📋',examres:'🏆'};
 let BAR='home';
 const setBar=a=>{BAR=a;renderBar();$('waf').classList.toggle('nop',a==='panel')};
 function showSite(){document.body.classList.remove('pubmode');$('exView').hidden=true;$('feView').hidden=true;window.onbeforeunload=null;$('pubView').hidden=true;$('site').hidden=false;$('admView').hidden=true;$('panelView').hidden=true;$('sheet').hidden=true;setBar('home');window.scrollTo(0,0)}
@@ -367,14 +376,15 @@ function showAdm(){document.body.classList.remove('pubmode');$('exView').hidden=
 function showPanel(){document.body.classList.remove('pubmode');$('exView').hidden=true;$('feView').hidden=true;window.onbeforeunload=null;$('pubView').hidden=true;$('site').hidden=true;$('admView').hidden=true;$('panelView').hidden=false;$('sheet').hidden=true;setBar('panel');window.scrollTo(0,0)}
 const barLabel=()=>{renderBar();renderBday()};
 async function renderBday(){
- const el=$('bday');
- if(!ME||ME.access!=='owner'||!sb){el.hidden=true;return}
+ const el=$('bday'),adm=ME&&(ME.access==='owner'||ME.access==='admin');
+ if(!adm||!sb){el.hidden=true;return}
  const md=today().slice(5),y=+today().slice(0,4);
- const {data}=await sb.from('students').select('id,name,class,dob,photo_url').eq('status','active').not('dob','is',null);
+ const {data}=await sb.from('students').select('id,name,class,roll,dob,photo_url,phone').eq('status','active').not('dob','is',null);
  const list=(data||[]).filter(s=>String(s.dob).slice(5)===md);
- if(!list.length||!ME||ME.access!=='owner'){el.hidden=true;return}
- $('bdl').innerHTML=list.map(s=>`<div class="bd" data-bd="${s.id}">${s.photo_url?`<img src="${esc(s.photo_url)}" alt="">`:'<span>🎂</span>'}<b>${esc(s.name)}</b><small>${esc(cn(s.class))} · ${y-+String(s.dob).slice(0,4)} saal</small><em>🎉 Happy Birthday!</em></div>`).join('');
- $('bdl').onclick=e=>{const c=e.target.closest('[data-bd]');if(c){showPanel();lastTab='students';profile('student',c.dataset.bd)}};
+ if(!list.length||!ME||!(ME.access==='owner'||ME.access==='admin')){el.hidden=true;return}
+ const wl=s=>{const d=String(s.phone||'').replace(/\D/g,'');return d.length>=10?`<a class="bw" target="_blank" rel="noopener" href="https://wa.me/${d.length===10?'91'+d:d}?text=${encodeURIComponent('Happy Birthday '+s.name+'! 🎂🎉 '+v('school_name')+' ki taraf se dher saari shubhkamnayein.')}">💬 Wish bhejein</a>`:''};
+ $('bdl').innerHTML=list.map(s=>`<div class="bd2" data-bd="${s.id}">${s.photo_url?`<img src="${esc(s.photo_url)}" alt="">`:'<div class="bdp">🎂</div>'}<b>${esc(s.name)}</b><div>${s.roll?`<span class="br">Roll ${esc(s.roll)}</span> `:''}<small>${esc(cn(s.class))}</small></div><small>🎈 ${y-+String(s.dob).slice(0,4)} saal ka</small><em>🎉 Happy Birthday! 🎉</em>${wl(s)}</div>`).join('');
+ $('bdl').onclick=e=>{if(e.target.closest('a'))return;const c=e.target.closest('[data-bd]');if(c){showPanel();lastTab='students';profile('student',c.dataset.bd)}};
  el.hidden=false;
 }
 let BATCHES=[],CLS=[],AT={b:'',c:'ALL'};
@@ -412,7 +422,7 @@ function openTab(k){lastTab=k;PTAB='det';
 }
 const goFirst=()=>openTab(Object.keys(TABS).filter(allowed)[0]);
 const foldersHTML=(groups)=>groups.map(g=>`<details class="fold" open><summary>${g[0]}</summary><div class="shg">${g[1]}</div></details>`).join('');
-const GROUPS=[['📁 Management',['ssearch','fees','feeset','report','salary']],['📁 Students',['students','missing','batches','classes']],['📁 Staff',['teachers','staff']],['📁 Attendance',['sa','ta']],['📁 Exam',['exam','examres']],['📁 Website',['site','notices','gallery']]];
+const GROUPS=[['📁 Management',['ssearch','fees','feeset','report','salary']],['📁 Students',['students','birthdays','missing','batches','classes']],['📁 Staff',['teachers','staff']],['📁 Attendance',['sa','ta']],['📁 Exam',['exam','examres']],['📁 Website',['site','notices','gallery']]];
 const FOLD=[['Attendance','nav_att','✅'],['Management','nav_mgt','💼'],['Exam','nav_exm','📋']];
 function folderKeys(n){const ks=Object.keys(TABS).filter(allowed),g=GROUPS.find(g=>g[0].includes(n));return g?g[1].filter(k=>ks.includes(k)):[]}
 function renderBar(){
@@ -829,6 +839,18 @@ async function examresTab(){
   $('er_o').onclick=async e=>{const d=e.target.dataset.rd;if(d&&confirm('Ye result hata dein? (Bachha dobara exam de sakega)')){const {error}=await sb.from('exam_results').delete().eq('id',d);if(error)alert(error.message);else draw()}};
  };
  $('er_e').onchange=draw;draw();
+}
+
+/* ---------- Birthdays (upcoming) ---------- */
+async function bdayTab(){
+ const m=$('pmain');m.innerHTML='<p class="mut">Loading...</p>';
+ const {data}=await sb.from('students').select('id,name,class,roll,dob,photo_url,phone').eq('status','active').not('dob','is',null);
+ const t=new Date(today()+'T00:00:00'),y=t.getFullYear();
+ const L=(data||[]).map(s=>{const [yy,mm,dd]=String(s.dob).split('-').map(Number);let n=new Date(y,mm-1,dd);if(n<t)n=new Date(y+1,mm-1,dd);return {s,n,days:Math.round((n-t)/864e5),age:n.getFullYear()-yy}}).sort((a,b)=>a.days-b.days);
+ m.innerHTML=`<label>Kitne din ke andar<select id="bd_r"><option value="0">Sirf aaj</option><option value="7">7 din</option><option value="30" selected>30 din</option><option value="90">90 din</option><option value="366">Sabhi</option></select></label><p class="mut" id="bd_n"></p><div class="wrap" id="bd_l"></div>`;
+ const draw=()=>{const r=+$('bd_r').value,F=L.filter(x=>x.days<=r);$('bd_n').textContent=F.length+' bachhon ka birthday';
+  $('bd_l').innerHTML=F.length?`<table>${F.map(({s,n,days,age})=>{const d=String(s.phone||'').replace(/\D/g,'');return `<tr data-p="${s.id}" style="cursor:pointer"><td>${s.photo_url?`<img class="av" src="${esc(s.photo_url)}" alt="">`:''}${s.roll?esc(s.roll)+'. ':''}${esc(s.name)}<br><small class="mut">${esc(cn(s.class))} · ${age} saal</small></td><td><b>${n.toLocaleDateString('en-IN',{day:'2-digit',month:'short'})}</b><br><small class="${days===0?'ok':'mut'}">${days===0?'🎉 Aaj!':days===1?'Kal':days+' din baad'}</small></td><td>${d.length>=10?`<a class="btn wabtn" target="_blank" rel="noopener" href="https://wa.me/${d.length===10?'91'+d:d}?text=${encodeURIComponent('Happy Birthday '+s.name+'! 🎂🎉 '+v('school_name')+' ki taraf se dher saari shubhkamnayein.')}">💬</a>`:''}</td></tr>`}).join('')}</table>`:'<p class="mut">Is samay me kisi ka birthday nahi hai.</p>'};
+ $('bd_r').onchange=draw;$('bd_l').onclick=e=>{if(e.target.closest('a'))return;const r=e.target.closest('[data-p]');if(r)profile('student',r.dataset.p)};draw();
 }
 
 /* ---------- Classes ---------- */
