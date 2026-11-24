@@ -338,7 +338,7 @@ const POSTS=["Director","Teacher","Coordinator","Office Staff","Other"];
 const ACC={admin:"Full control (Admin)",teacher:"Teacher (students, attendance, notices)",staff:"Basic (sirf notices dekhna)"};
 const isAdm=()=>ME&&(ME.access==='owner'||ME.access==='admin');
 const lvl=t=>ME.access==='owner'?'edit':((t==='student'?ME.fees_access:ME.salary_access)||'none');
-const allowed=k=>{if(k==='fees'||k==='reminder'||k==='report'||k==='ssearch'||k==='feeset')return lvl('student')!=='none';if(k==='salary')return lvl('employee')!=='none';return isAdm()||(ME.access==='teacher'?['students','sa','notices'].includes(k):k==='notices')};
+const allowed=k=>{if(k==='fees'||k==='reminder'||k==='report'||k==='ssearch'||k==='feeset'||k==='feehist')return lvl('student')!=='none';if(k==='salary')return lvl('employee')!=='none';return isAdm()||(ME.access==='teacher'?['students','sa','notices'].includes(k):k==='notices')};
 async function fn(body){
  const {data,error}=await sb.functions.invoke('staff-admin',{body});
  if(error)throw new Error(error.message);
@@ -357,6 +357,7 @@ const TABS={
  notices:{label:'Notices / सूचना',run:()=>crud('notices',[['title','Title'],['body','Details'],['date','Date','date']],['date','title','body'],'date',true,ME.access==='staff')},
  fees:{label:'Fees & Reminder',run:feesTab},
  report:{label:'Fee Report',run:reportTab},
+ feehist:{label:'Fee History',run:feehistTab},
  ssearch:{label:'Search Student',run:ssearchTab},
  feeset:{label:'Monthly Fee Setup',run:feesetTab},
  batches:{label:'Batches (time)',run:batchesTab},
@@ -369,7 +370,7 @@ const TABS={
  gallery:{label:'Gallery',run:()=>crud('gallery',[['url','Photos (ek saath kai chun sakte hain)','photos'],['caption','Caption (optional)']],['url','caption'],'created_at',true)}
 };
 
-const ICON={fees:'💰',salary:'💼',site:'✏️',staff:'👥',students:'🎓',sa:'✅',ta:'🧑‍🏫',teachers:'👩‍🏫',notices:'📢',gallery:'🖼️',reminder:'🔔',report:'📊',ssearch:'🔍',missing:'❓',birthdays:'🎂',feeset:'🧾',batches:'🕐',classes:'🏫',exam:'📋',examres:'🏆'};
+const ICON={fees:'💰',salary:'💼',site:'✏️',staff:'👥',students:'🎓',sa:'✅',ta:'🧑‍🏫',teachers:'👩‍🏫',notices:'📢',gallery:'🖼️',reminder:'🔔',report:'📊',feehist:'📜',ssearch:'🔍',missing:'❓',birthdays:'🎂',feeset:'🧾',batches:'🕐',classes:'🏫',exam:'📋',examres:'🏆'};
 let BAR='home';
 const setBar=a=>{BAR=a;renderBar();$('waf').classList.toggle('nop',a==='panel')};
 function showSite(){document.body.classList.remove('pubmode');$('exView').hidden=true;$('feView').hidden=true;window.onbeforeunload=null;$('pubView').hidden=true;$('site').hidden=false;$('admView').hidden=true;$('panelView').hidden=true;$('sheet').hidden=true;setBar('home');window.scrollTo(0,0)}
@@ -426,7 +427,7 @@ function openTab(k){lastTab=k;PTAB='det';
 }
 const goFirst=()=>openTab(Object.keys(TABS).filter(allowed)[0]);
 const foldersHTML=(groups)=>groups.map(g=>`<details class="fold" open><summary>${g[0]}</summary><div class="shg">${g[1]}</div></details>`).join('');
-const GROUPS=[['📁 Management',['ssearch','fees','feeset','report','salary']],['📁 Students',['students','birthdays','missing','batches','classes']],['📁 Staff',['teachers','staff']],['📁 Attendance',['sa','ta']],['📁 Exam',['exam','examres']],['📁 Website',['site','notices','gallery']]];
+const GROUPS=[['📁 Management',['ssearch','fees','feeset','report','feehist','salary']],['📁 Students',['students','birthdays','missing','batches','classes']],['📁 Staff',['teachers','staff']],['📁 Attendance',['sa','ta']],['📁 Exam',['exam','examres']],['📁 Website',['site','notices','gallery']]];
 const FOLD=[['Attendance','nav_att','✅'],['Management','nav_mgt','💼'],['Exam','nav_exm','📋']];
 function folderKeys(n){const ks=Object.keys(TABS).filter(allowed),g=GROUPS.find(g=>g[0].includes(n));return g?g[1].filter(k=>ks.includes(k)):[]}
 function renderBar(){
@@ -973,6 +974,40 @@ async function missingTab(){
  };
  $('mic').onchange=$('mif').onchange=draw;
  $('mil').onclick=e=>{const id=e.target.dataset.p;if(id)profile('student',id)};
+ draw();
+}
+
+/* ---------- Fee History ---------- */
+async function feehistTab(){
+ const m=$('pmain');m.innerHTML='<p class="mut">Loading...</p>';
+ let led=[];
+ for(let o=0;o<30000;o+=1000){const {data,error}=await sb.from('ledger').select('id,person_id,kind,amount,paid_on,created_at,note,auto,grp,month').eq('person_type','student').order('created_at',{ascending:false}).order('id').range(o,o+999);if(error){m.innerHTML='<p class="msg">'+esc(error.message)+'</p>';return}led=led.concat(data||[]);if(!data||data.length<1000)break}
+ const {data:st}=await sb.from('students').select('id,name,class,roll');const S={};(st||[]).forEach(x=>{S[x.id]=x});
+ const ymd=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+ led.forEach(r=>{r.d=r.auto&&r.month?String(r.month).slice(0,8)+'25':String(r.paid_on||r.created_at).slice(0,10)});
+ const LBL={payment:'💵 Fee mili',charge:'➕ Charge',discount:'🏷️ Discount'};
+ m.innerHTML=`<div class="f"><label>Samay<select id="fh_p"><option value="td">Aaj</option><option value="w1">Pichla 1 hafta</option><option value="cm" selected>Is mahina</option><option value="m3">Pichle 3 mahine</option><option value="m6">Pichle 6 mahine</option><option value="m12">Pichle 12 mahine</option><option value="all">Sabhi</option><option value="cu">Custom</option></select></label><label>Kya dikhayein<select id="fh_k"><option value="payment">Sirf fee mili</option><option value="all">Sab entries</option><option value="discount">Discount</option><option value="charge">Charge (extra + monthly)</option></select></label><label id="fh_l1" hidden>Se<input id="fh_f" type="date" value="${monthStart()}"></label><label id="fh_l2" hidden>Tak<input id="fh_t" type="date" value="${today()}"></label><label>Class<select id="fh_c"><option value="ALL">Sabhi</option>${CONFIG.classes.map(c=>`<option value="${esc(c)}">${esc(cn(c))}</option>`).join('')}</select></label><label>Naam<input id="fh_q" placeholder="Search"></label></div><div id="fh_o"></div>`;
+ const range=()=>{const v=$('fh_p').value,t=today(),sub=(n,u)=>{const d=new Date(t+'T00:00:00');if(u==='d')d.setDate(d.getDate()-n);else d.setMonth(d.getMonth()-n);d.setDate(d.getDate()+1);return ymd(d)};
+  if(v==='td')return [t,t];if(v==='w1')return [sub(7,'d'),t];if(v==='cm')return [monthStart(),t];if(v==='all')return ['2000-01-01','2999-12-31'];if(v==='cu')return [$('fh_f').value||'2000-01-01',$('fh_t').value||t];return [sub(+v.slice(1),'m'),t]};
+ let SHOW=[];
+ const draw=()=>{
+  $('fh_l1').hidden=$('fh_l2').hidden=$('fh_p').value!=='cu';
+  const [f,t]=range(),k=$('fh_k').value,c=$('fh_c').value,q=$('fh_q').value.trim().toLowerCase(),G={},rows=[];
+  led.forEach(r=>{
+   const s=S[r.person_id];if(!s)return;
+   if(r.d<f||r.d>t)return;if(k!=='all'&&r.kind!==k)return;if(c!=='ALL'&&s.class!==c)return;if(q&&!String(s.name).toLowerCase().includes(q))return;
+   if(r.grp){const g=G[r.grp]=G[r.grp]||{grp:r.grp,d:r.d,kind:r.kind,amt:0,names:[],ids:[],note:r.note};g.amt+=+r.amount;g.names.push(s.name);g.ids.push(s.id);if(!G[r.grp].added){G[r.grp].added=1;rows.push(G[r.grp])}}
+   else rows.push({d:r.d,kind:r.kind,amt:+r.amount,names:[s.name],ids:[s.id],note:r.note,auto:r.auto,cls:s.class,roll:s.roll});
+  });
+  rows.sort((a,b)=>String(b.d).localeCompare(String(a.d)));SHOW=rows;
+  const T={payment:0,charge:0,discount:0};rows.forEach(r=>{T[r.kind]+=r.amt});
+  $('fh_o').innerHTML=`<div class="rg"><div class="rc"><small>Fee mili</small><b style="color:var(--neon)">${money(T.payment)}</b></div><div class="rc"><small>Charge</small><b>${money(T.charge)}</b></div><div class="rc"><small>Discount</small><b>${money(T.discount)}</b></div><div class="rc"><small>Entries</small><b>${rows.length}</b></div></div><p><button class="g" id="fh_pr">🖨️ Print / PDF</button></p><div class="wrap">${rows.length?`<table><tr><th>Date</th><th>Kaun</th><th>Amount</th></tr>${rows.map((r,i)=>`<tr data-i="${i}" style="cursor:pointer"><td>${fmt(r.d)}</td><td>${r.ids.length>1?'👨‍👩‍👧 ':''}${esc(r.names.join(' + '))}<br><small class="mut">${r.cls&&r.ids.length===1?esc(cn(r.cls))+(r.roll?' · Roll '+esc(r.roll):'')+' · ':''}${r.auto?'Monthly (auto)':esc(r.note||'')}</small></td><td><b style="color:${r.kind==='payment'?'var(--neon)':r.kind==='discount'?'var(--gold)':'inherit'}">${money(r.amt)}</b><br><small class="mut">${LBL[r.kind]||r.kind}</small></td></tr>`).join('')}</table>`:'<p class="mut">Is chunav me koi entry nahi hai.</p>'}</div>`;
+  $('fh_pr').onclick=()=>{let pv=$('pv');if(!pv){pv=document.createElement('div');pv.id='pv';document.body.appendChild(pv)}
+   pv.innerHTML=`<div class="noprint" style="position:sticky;top:0;background:#eee;padding:8px;display:flex;gap:8px"><button id="pv_p">🖨️ Print / PDF</button><button id="pv_c">Band karein</button></div><div style="max-width:800px;margin:0 auto;padding:18px;font:15px/1.5 sans-serif"><h2 style="text-align:center;margin:0">${esc(v('school_name'))}</h2><p style="text-align:center"><b>Fee History</b><br>${fmt(f)} se ${fmt(t)}</p><table style="width:100%;border-collapse:collapse" border="1" cellpadding="6"><tr><th>Date</th><th>Naam</th><th>Type</th><th>Amount</th><th>Note</th></tr>${rows.map(r=>`<tr><td>${fmt(r.d)}</td><td>${esc(r.names.join(' + '))}</td><td>${LBL[r.kind]||r.kind}</td><td>${money(r.amt)}</td><td>${r.auto?'Monthly (auto)':esc(r.note||'')}</td></tr>`).join('')}</table><p><b>Kul fee mili: ${money(T.payment)}</b></p></div>`;
+   pv.hidden=false;$('pv_p').onclick=()=>window.print();$('pv_c').onclick=()=>{pv.hidden=true}};
+ };
+ ['fh_p','fh_k','fh_c','fh_f','fh_t'].forEach(i=>$(i).onchange=draw);$('fh_q').oninput=draw;
+ $('fh_o').onclick=e=>{const tr=e.target.closest('tr[data-i]');if(tr){const r=SHOW[+tr.dataset.i];PTAB='fee';lastTab='feehist';profile('student',r.ids[0])}};
  draw();
 }
 
