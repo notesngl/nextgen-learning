@@ -324,7 +324,7 @@ addEventListener('keydown',e=>{const lb=$('lb');if(!lb||lb.hidden)return;if(e.ke
 const paintTheme=()=>{const d=document.documentElement.dataset.theme==='dark';$('thm').textContent=d?'☀️':'🌙';document.querySelector('meta[name=theme-color]').content=d?'#0E0A1F':'#F3F7FF'};
 $('thm').onclick=()=>{const t=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=t;try{localStorage.setItem('theme',t)}catch(e){}paintTheme()};
 paintTheme();
-$('lang').onclick=()=>{L=L==='hi'?'en':L==='en'?'hg':'hi';localStorage.setItem('lang',L);paint()};
+$('lang').onclick=()=>{L=L==='hi'?'en':L==='en'?'hg':'hi';localStorage.setItem('lang',L);paint();i18Apply()};
 async function load(){
  if(!sb)return;
  const [t,g,n,s]=await Promise.all([sb.from('teachers_public').select('*').order('created_at'),sb.from('gallery').select('*').order('created_at',{ascending:false}),sb.from('notices').select('*').order('date',{ascending:false}).limit(10),sb.from('site_settings').select('*')]);
@@ -1415,6 +1415,748 @@ if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWor
 paint();load();
 loadMe().then(ok=>{if(location.hash==='#panel'){ok?goFirst():showLogin()}});
 
+
+/* ---------- Poori website ki bhasha: Hindi / English / Hinglish ---------- */
+const I18N_RAW=String.raw`# ---- folders / tabs
+Management|प्रबंधन|Management
+Students|छात्र|Students
+Staff|स्टाफ|Staff
+Attendance|हाज़िरी|Attendance
+Exam|परीक्षा|Exam
+Website|वेबसाइट|Website
+Account|खाता|Account
+Students & Tracker|छात्र और ट्रैकर|Students & Tracker
+Missing Info|अधूरी जानकारी|Missing Info
+Birthdays|जन्मदिन|Birthdays
+Batches (time)|बैच (समय)|Batches (time)
+Classes|कक्षाएँ|Classes
+Search Student|छात्र खोजें|Search Student
+Fees & Reminder|फीस और रिमाइंडर|Fees & Reminder
+Monthly Fee Setup|मासिक फीस सेटअप|Monthly Fee Setup
+Fee Report|फीस रिपोर्ट|Fee Report
+Fee History|फीस हिस्ट्री|Fee History
+Salary / वेतन|वेतन|Salary
+Salary|वेतन|Salary
+Exam / परीक्षा|परीक्षा|Exam
+Results|परिणाम|Results
+Attendance / हाज़िरी|हाज़िरी|Attendance
+Teachers & Staff / कर्मचारी|शिक्षक और कर्मचारी|Teachers & Staff
+Notices / सूचना|सूचना|Notices
+Staff / Login|स्टाफ / लॉगिन|Staff / Login
+Staff attendance|स्टाफ हाज़िरी|Staff attendance
+Website edit|वेबसाइट बदलें|Website edit
+Add / जोड़ें|जोड़ें|Add
+Gallery / गैलरी|गैलरी|Gallery
+Gallery|गैलरी|Gallery
+Teachers|शिक्षक|Teachers
+Notices|सूचना|Notices
+Teachers & Staff|शिक्षक और कर्मचारी|Teachers & Staff
+Staff list|स्टाफ सूची|Staff list
+Staff login|स्टाफ लॉगिन|Staff login
+Staff Login|स्टाफ लॉगिन|Staff Login
+Change password|पासवर्ड बदलें|Change password
+Logout|लॉग आउट|Logout
+# ---- generic buttons / labels
+Save|सेव करें|Save
+Save details|विवरण सेव करें|Save details
+Save student|छात्र सेव करें|Save student
+Save website|वेबसाइट सेव करें|Save website
+Save exam|परीक्षा सेव करें|Save exam
+Save sab|सब सेव करें|Save all
+Save number|नंबर सेव करें|Save number
+Save setting|सेटिंग सेव करें|Save setting
+Cancel|रद्द करें|Cancel
+Delete|हटाएँ|Delete
+Edit|बदलें|Edit
+Edit details|विवरण बदलें|Edit details
+Open|खोलें|Open
+Profile|प्रोफ़ाइल|Profile
+Back|वापस|Back
+Login|लॉगिन|Login
+Search|खोजें|Search
+Share|शेयर करें|Share
+Copy link|लिंक कॉपी करें|Copy link
+Call|कॉल करें|Call
+WhatsApp|व्हाट्सऐप|WhatsApp
+Print|प्रिंट|Print
+Print / PDF|प्रिंट / PDF|Print / PDF
+Download|डाउनलोड|Download
+Hatayein|हटाएँ|Remove
+Naam badlein|नाम बदलें|Rename
+Loading...|लोड हो रहा है...|Loading...
+Please wait...|कृपया रुकें...|Please wait...
+Add entry|एंट्री जोड़ें|Add entry
+Add staff|स्टाफ जोड़ें|Add staff
+Add student|छात्र जोड़ें|Add student
+Add tracker entry|ट्रैकर एंट्री जोड़ें|Add tracker entry
+Make Owner|ओनर बनाएँ|Make Owner
+Class jodein|कक्षा जोड़ें|Add class
+Class jodein|कक्षा जोड़ें|Add class
+Exam lena hai|परीक्षा लेनी है|Take an exam
+Number jodein|नंबर जोड़ें|Add number
+Batch jodein|बैच जोड़ें|Add batch
+Update karein|अपडेट करें|Update
+Aage badhein|आगे बढ़ें|Next
+Bharein|भरें|Fill
+Jama karein|जमा करें|Submit
+Primary banao|प्राथमिक बनाएँ|Make primary
+Link band karein|लिंक बंद करें|Disable link
+Public link|पब्लिक लिंक|Public link
+Dobara dekhein|दोबारा देखें|View again
+Dekh rahe hain...|देख रहे हैं...|Checking...
+Bhej rahe hain...|भेज रहे हैं...|Sending...
+Save ho raha hai...|सेव हो रहा है...|Saving...
+Jama ho raha hai...|जमा हो रहा है...|Submitting...
+Exam khul raha hai...|परीक्षा खुल रही है...|Opening exam...
+Photo upload ho rahi hai...|फोटो अपलोड हो रही है...|Uploading photo...
+Upload ho raha hai, thoda ruko...|अपलोड हो रहा है, थोड़ा रुकें...|Uploading, please wait...
+AI MCQ bana raha hai (thoda time lagega)...|AI प्रश्न बना रहा है (थोड़ा समय लगेगा)...|AI is creating MCQs (takes a little time)...
+Copy ho gaya ✓|कॉपी हो गया ✓|Copied ✓
+Link ko dabakar copy karein|लिंक को दबाकर कॉपी करें|Press and hold the link to copy
+Saved ✓|सेव हो गया ✓|Saved ✓
+Kuch badla nahi|कुछ बदला नहीं|Nothing changed
+Khali hai|खाली है|Empty
+Koi nahi|कोई नहीं|None
+Koi nahi mila|कोई नहीं मिला|None found
+Koi record nahi|कोई रिकॉर्ड नहीं|No record
+Koi bachha nahi|कोई बच्चा नहीं|No students
+Koi batch nahi|कोई बैच नहीं|No batch
+Koi student nahi mila|कोई छात्र नहीं मिला|No student found
+Koi access nahi|कोई एक्सेस नहीं|No access
+Koi batch nahi|कोई बैच नहीं|No batch
+Abhi koi nahi|अभी कोई नहीं|None yet
+Abhi koi batch nahi|अभी कोई बैच नहीं|No batches yet
+Abhi koi entry nahi hai|अभी कोई एंट्री नहीं है|No entries yet
+Abhi koi exam nahi|अभी कोई परीक्षा नहीं|No exams yet
+Abhi koi purana record nahi|अभी कोई पुराना रिकॉर्ड नहीं|No old records yet
+Abhi kisi ne exam nahi diya|अभी किसी ने परीक्षा नहीं दी|Nobody has taken the exam yet
+Abhi kisi ne ye exam nahi diya|अभी किसी ने यह परीक्षा नहीं दी|Nobody has taken this exam yet
+Abhi koi exam nahi. Pehle Exam folder me exam banayein|अभी कोई परीक्षा नहीं। पहले परीक्षा फ़ोल्डर में परीक्षा बनाएँ|No exams yet. First create an exam in the Exam folder
+Abhi kisi bhai/behan se jura nahi hai|अभी किसी भाई/बहन से जुड़ा नहीं है|Not linked to any sibling yet
+Yes|हाँ|Yes
+Haan|हाँ|Yes
+Haan ✅|हाँ ✅|Yes ✅
+Nahi|नहीं|No
+Sabhi|सभी|All
+Sab|सब|All
+Kuch bhi|कुछ भी|Anything
+Custom|कस्टम|Custom
+Chalu|चालू|On
+Band|बंद|Off
+Aaj|आज|Today
+Kal|कल|Tomorrow
+Sirf aaj|सिर्फ आज|Today only
+7 din|7 दिन|7 days
+30 din|30 दिन|30 days
+90 din|90 दिन|90 days
+Hindi|हिंदी|Hindi
+English|अंग्रेज़ी|English
+Hinglish|हिंग्लिश|Hinglish
+Date|तारीख|Date
+Time|समय|Time
+Note|नोट|Note
+Type|प्रकार|Type
+Amount|राशि|Amount
+Amount (₹)|राशि (₹)|Amount (₹)
+Amount daalein|राशि लिखें|Enter amount
+Name|नाम|Name
+Name / नाम|नाम|Name
+Class|कक्षा|Class
+Class / कक्षा|कक्षा|Class
+Class / Roll|कक्षा / रोल|Class / Roll
+Roll|रोल|Roll
+Roll No|रोल नं.|Roll No
+Roll No.|रोल नं.|Roll No.
+Roll no|रोल नं.|Roll no
+Address|पता|Address
+Mobile|मोबाइल|Mobile
+Mobile (primary)|मोबाइल (मुख्य)|Mobile (primary)
+Phone|फोन|Phone
+Photo|फोटो|Photo
+Photo (upload karein)|फोटो (अपलोड करें)|Photo (upload)
+Date of birth|जन्म तारीख|Date of birth
+Aadhar|आधार|Aadhar
+Aadhar number|आधार नंबर|Aadhar number
+Parent ka naam|अभिभावक का नाम|Parent's name
+Parent's name / अभिभावक|अभिभावक का नाम|Parent's name
+Roll no (har bachhe ka alag)|रोल नं. (हर बच्चे का अलग)|Roll no (unique for each child)
+Naam|नाम|Name
+Naam daalein|नाम लिखें|Enter name
+Subject|विषय|Subject
+Subject (optional)|विषय (वैकल्पिक)|Subject (optional)
+Subject (teacher ke liye)|विषय (शिक्षक के लिए)|Subject (for teacher)
+Batch|बैच|Batch
+Batch (time)|बैच (समय)|Batch (time)
+Skills|कौशल|Skills
+Remarks|टिप्पणियाँ|Remarks
+Details|विवरण|Details
+Tracker|ट्रैकर|Tracker
+Fees|फीस|Fees
+Fee|फीस|Fee
+Mile|मिली|Received
+Hue|हुई|Charged
+Baki|बाकी|Due
+Kul|कुल|Total
+Present|उपस्थित|Present
+Absent|अनुपस्थित|Absent
+Leave|छुट्टी|Leave
+Left|छोड़ चुके|Left
+Pass out|पास आउट|Pass out
+Close|बंद करें|Close
+Band karein|बंद करें|Close
+
+# ---- students / profile
+All students|सभी छात्र|All students
+Search|खोजें|Search
+Students list|छात्र सूची|Students list
+Skills|कौशल|Skills
+Fee / Baki|फीस / बाकी|Fee / Due
+Fee set nahi|फीस सेट नहीं|Fee not set
+Baki nahi|कोई बकाया नहीं|No dues
+Baki nahi ✓|कोई बकाया नहीं ✓|No dues ✓
+Baki fees|बाकी फीस|Pending fees
+Padhai|पढ़ाई|Study
+Last update|आख़िरी अपडेट|Last update
+Roll no.|रोल नं.|Roll no.
+Naam / Roll no. / Phone / Parent ka naam|नाम / रोल नं. / फोन / अभिभावक का नाम|Name / Roll no. / Phone / Parent's name
+Student dhoondhein|छात्र खोजें|Find student
+Naam likhna shuru karein|नाम लिखना शुरू करें|Start typing a name
+Naam likhein|नाम लिखें|Enter name
+Poora naam|पूरा नाम|Full name
+Aapka naam|आपका नाम|Your name
+Apna naam likhein|अपना नाम लिखें|Enter your name
+Aapka phone number|आपका फोन नंबर|Your phone number
+Roll no. daalein|रोल नं. लिखें|Enter roll no.
+Bachhe ka Roll no.|बच्चे का रोल नं.|Child's roll no.
+Jaise: {}|जैसे: {}|e.g. {}
+Jaise: Class D ya 9|जैसे: Class D या 9|e.g. Class D or 9
+Jaise: Maths|जैसे: गणित|e.g. Maths
+Jaise: Subah ka batch|जैसे: सुबह का बैच|e.g. Morning batch
+Jaise: 12|जैसे: 12|e.g. 12
+Unit Test 1|यूनिट टेस्ट 1|Unit Test 1
+10 ank ka number|10 अंक का नंबर|10 digit number
+10 ank ka phone number daalein|10 अंक का फोन नंबर लिखें|Enter a 10 digit phone number
+Sahi 10 ank ka number daalein|सही 10 अंक का नंबर लिखें|Enter a valid 10 digit number
+Aadhar 12 ank ka hona chahiye|आधार 12 अंक का होना चाहिए|Aadhar must be 12 digits
+Aadhar & Note (sirf Owner/Admin)|आधार और नोट (सिर्फ ओनर/एडमिन)|Aadhar & Note (Owner/Admin only)
+Ye number kiska hai|यह नंबर किसका है|Whose number is this
+Kiska number|किसका नंबर|Whose number
+Number|नंबर|Number
+Phone numbers|फोन नंबर|Phone numbers
+Primary|प्राथमिक|Primary
+Phone nahi|फोन नहीं|No phone
+Primary number abhi nahi hai (Edit details me Mobile daalein)|मुख्य नंबर अभी नहीं है (विवरण बदलें में मोबाइल लिखें)|No primary number yet (add Mobile in Edit details)
+Fee reminder is number par bhi bhejein|फीस रिमाइंडर इस नंबर पर भी भेजें|Also send fee reminders to this number
+Reminder: Haan ✅|रिमाइंडर: हाँ ✅|Reminder: Yes ✅
+Reminder: Nahi|रिमाइंडर: नहीं|Reminder: No
+Is number ko Primary bana dein? Purana primary number list me chala jayega|इस नंबर को मुख्य बना दें? पुराना मुख्य नंबर सूची में चला जाएगा|Make this number primary? The old primary number will move to the list
+Ye number hata dein?|यह नंबर हटा दें?|Remove this number?
+Papa|पापा|Papa
+Mummy|मम्मी|Mummy
+Dada|दादा|Dada
+Dadi|दादी|Dadi
+Chacha|चाचा|Chacha
+Bhai/Behan|भाई/बहन|Brother/Sister
+Other|अन्य|Other
+Family|परिवार|Family
+Family / Bhai-behan|परिवार / भाई-बहन|Family / Siblings
+Family baki|परिवार की बाकी|Family due
+Family ka baki|परिवार की बाकी|Family due
+Family ka kul baki|परिवार की कुल बाकी|Family total due
+Family hisaab (sabka milakar)|परिवार का हिसाब (सबका मिलाकर)|Family account (combined)
+Family payments|परिवार के भुगतान|Family payments
+Family payment|परिवार का भुगतान|Family payment
+Family se jama karein|परिवार से जमा करें|Collect from family
+Family|परिवार|Family
+Same parent ke naam wale|एक ही अभिभावक के नाम वाले|Same parent name
+{} ko jodein|{} को जोड़ें|Link {}
+Bhai/behan dhoondhkar jodein|भाई/बहन खोजकर जोड़ें|Search and link a sibling
+Is bachhe ko family se hatayein|इस बच्चे को परिवार से हटाएँ|Remove this child from the family
+Is bachhe ko family se hata dein?|इस बच्चे को परिवार से हटा दें?|Remove this child from the family?
+Fee har bachhe ki alag judti hai, par reminder poore parivar ko ek hi message me jaata hai|फीस हर बच्चे की अलग जुड़ती है, पर रिमाइंडर पूरे परिवार को एक ही मैसेज में जाता है|Fee is added separately for each child, but the reminder goes to the whole family in one message
+Parents ek saath paisa dein to yahin likhein. Wo apne aap bhai-behan me bat jayega|माता-पिता एक साथ पैसे दें तो यहीं लिखें। वह अपने आप भाई-बहनों में बँट जाएगा|If parents pay together, enter it here. It will be split among siblings automatically
+Parents ne diye (₹)|माता-पिता ने दिए (₹)|Paid by parents (₹)
+Reminder ka WhatsApp number (poore parivar ke liye)|रिमाइंडर का व्हाट्सऐप नंबर (पूरे परिवार के लिए)|Reminder WhatsApp number (for whole family)
+Fee mili|फीस मिली|Fee received
+Fee received|फीस मिली|Fee received
+Extra charge|अतिरिक्त शुल्क|Extra charge
+Discount / waiver|छूट / माफ़ी|Discount / waiver
+Discount / mafi|छूट / माफ़ी|Discount / waiver
+Discount|छूट|Discount
+Charge|शुल्क|Charge
+Charge (extra + monthly)|शुल्क (अतिरिक्त + मासिक)|Charge (extra + monthly)
+Sab entries|सभी एंट्री|All entries
+Sirf fee mili|सिर्फ फीस मिली|Fee received only
+Kya dikhayein|क्या दिखाएँ|What to show
+Kitne dikhayein|कितने दिखाएँ|How many to show
+Sirf baki wale|सिर्फ बाकी वाले|Only pending
+Sirf jinka baki hai|सिर्फ जिनका बाकी है|Only those with dues
+Sabhi bachhe|सभी बच्चे|All students
+Sabhi class|सभी कक्षा|All classes
+Family payment|परिवार का भुगतान|Family payment
+Family payment (upar se hatayein)|परिवार का भुगतान (ऊपर से हटाएँ)|Family payment (remove from above)
+Hisaab (ledger)|हिसाब (खाता)|Account (ledger)
+Nayi entry|नई एंट्री|New entry
+Entry badlein|एंट्री बदलें|Edit entry
+Entry badlein (auto charge)|एंट्री बदलें (ऑटो चार्ज)|Edit entry (auto charge)
+Ye entry hata dein?|यह एंट्री हटा दें?|Delete this entry?
+Is mahina|इस महीने|This month
+Is mahina (1 tarikh se aaj tak)|इस महीने (1 तारीख से आज तक)|This month (1st to today)
+Pichla 1 hafta|पिछला 1 सप्ताह|Last 1 week
+Pichle 3 mahine|पिछले 3 महीने|Last 3 months
+Pichle 6 mahine|पिछले 6 महीने|Last 6 months
+Pichle 12 mahine|पिछले 12 महीने|Last 12 months
+Custom (date se date tak)|कस्टम (तारीख से तारीख तक)|Custom (date to date)
+Samay|समय|Period
+Report kitne samay ki|रिपोर्ट कितने समय की|Report period
+Se|से|From
+Tak|तक|To
+Kitne din ke andar|कितने दिन के अंदर|Within how many days
+Sabhi|सभी|All
+Class ke hisaab se|कक्षा के अनुसार|By class
+Bachhe (baki / jinhone fee di)|बच्चे (बाकी / जिन्होंने फीस दी)|Students (due / paid)
+Bachhe aur baki fees|बच्चे और बाकी फीस|Students and pending fees
+Bachhon ne diya|बच्चों ने दिया|Students who took
+Sabse zyada|सबसे ज़्यादा|Highest
+Sabse kam|सबसे कम|Lowest
+Average|औसत|Average
+Entries|एंट्री|Entries
+Total hue (charge)|कुल हुए (शुल्क)|Total charged
+Kul baki|कुल बाकी|Total due
+Kul baki (poora parivar)|कुल बाकी (पूरा परिवार)|Total due (whole family)
+Baki wale parivar/bachhe|बाकी वाले परिवार/बच्चे|Families/students with dues
+Baki wale|बाकी वाले|With dues
+Total baki fees|कुल बाकी फीस|Total pending fees
+Total baki salary|कुल बाकी वेतन|Total pending salary
+Kul fee mili|कुल फीस मिली|Total fee received
+Kul number|कुल नंबर|Total marks
+Kul|कुल|Total
+Fee jama|फीस जमा|Collect fee
+Fee jama karein|फीस जमा करें|Collect fee
+Manual Reminder|मैन्युअल रिमाइंडर|Manual Reminder
+Fee dekhein|फीस देखें|Check fee
+Fee Dekhein|फीस देखें|Check Fee
+Pichli fee|पिछली फीस|Last payments
+Is mahine hazri|इस महीने हाज़िरी|This month's attendance
+Is mahine hazri|इस महीने हाज़िरी|This month's attendance
+Teacher ka remark|शिक्षक की टिप्पणी|Teacher's remark
+Kal birthday hai|कल जन्मदिन है|Birthday tomorrow
+Happy Birthday|जन्मदिन मुबारक|Happy Birthday
+Wish bhejein|शुभकामना भेजें|Send wish
+Aaj ka Birthday|आज का जन्मदिन|Today's Birthday
+Aaj in bachhon ka janm-din hai|आज इन बच्चों का जन्मदिन है|It is these students' birthday today
+Ye sirf Owner aur Admin ko dikhta hai|यह सिर्फ ओनर और एडमिन को दिखता है|This is visible only to Owner and Admin
+Is samay me kisi ka birthday nahi hai|इस समय में किसी का जन्मदिन नहीं है|No birthdays in this period
+Padhai ka record|पढ़ाई का रिकॉर्ड|Study record
+Padhai ka record (Remarks)|पढ़ाई का रिकॉर्ड (टिप्पणियाँ)|Study record (Remarks)
+Padhai kaisi hai|पढ़ाई कैसी है|How is the study
+Kya achha hai|क्या अच्छा है|What is good
+Kya kami hai|क्या कमी है|What is lacking
+Aage kya karna hai|आगे क्या करना है|What to do next
+Delete student|छात्र हटाएँ|Delete student
+Mark as Left|छोड़ चुका (Left) चिह्नित करें|Mark as Left
+Mark as Pass out|पास आउट चिह्नित करें|Mark as Pass out
+Wapas Active karein|वापस सक्रिय करें|Reactivate
+ID Card|आईडी कार्ड|ID Card
+Share profile|प्रोफ़ाइल शेयर करें|Share profile
+Batch (time)|बैच (समय)|Batch (time)
+Koi batch nahi|कोई बैच नहीं|No batch
+Seekhne ki list|सीखने की सूची|Learning list
+Seekhne ki list: {}|सीखने की सूची: {}|Learning list: {}
+Baaki|बाकी|Pending
+Chal raha|चल रहा है|In progress
+Ho gaya|हो गया|Done
+{} me bhejein|{} में भेजें|Move to {}
+Bachha jab school ke Class 6 me jaye tabhi aage bhejein|बच्चा जब स्कूल की कक्षा 6 में जाए तभी आगे भेजें|Move forward only when the child joins Class 6 in school
+Admin se class badalwayein|एडमिन से कक्षा बदलवाएँ|Ask Admin to change the class
+Sab complete! {} me bhejne layak hai|सब पूरा! {} में भेजने लायक है|All complete! Ready to move to {}
+Missing info|अधूरी जानकारी|Missing info
+Ye student aur uska pura record hamesha ke liye hat jayega|यह छात्र और उसका पूरा रिकॉर्ड हमेशा के लिए हट जाएगा|This student and all records will be deleted forever
+Ye staff Owner ban jayega aur aap Admin ban jayenge. Pakka|यह स्टाफ ओनर बन जाएगा और आप एडमिन बन जाएँगे। पक्का|This staff member will become Owner and you will become Admin. Sure
+Is staff ka login hamesha ke liye hata dein|इस स्टाफ का लॉगिन हमेशा के लिए हटा दें|Remove this staff login permanently
+Kam se kam 8 akshar rakhein|कम से कम 8 अक्षर रखें|Use at least 8 characters
+Naya password (kam se kam 8 akshar)|नया पासवर्ड (कम से कम 8 अक्षर)|New password (at least 8 characters)
+Temporary password (8+ akshar)|अस्थायी पासवर्ड (8+ अक्षर)|Temporary password (8+ characters)
+Is staff ka naya password (8+ akshar)|इस स्टाफ का नया पासवर्ड (8+ अक्षर)|New password for this staff (8+ characters)
+Password badal gaya|पासवर्ड बदल गया|Password changed
+Password bhool gaye? Admin se naya password banwayein|पासवर्ड भूल गए? एडमिन से नया पासवर्ड बनवाएँ|Forgot password? Ask Admin for a new one
+Mujhe yaad rakhein (Remember me)|मुझे याद रखें (Remember me)|Remember me
+Aapka Gmail staff list mein nahi hai|आपका जीमेल स्टाफ सूची में नहीं है|Your Gmail is not in the staff list
+Supabase set nahi hai (config.js)|Supabase सेट नहीं है (config.js)|Supabase is not set (config.js)
+Naya staff add karein|नया स्टाफ जोड़ें|Add new staff
+Gmail|जीमेल|Gmail
+Password|पासवर्ड|Password
+Access|एक्सेस|Access
+Post|पद|Post
+Director|निदेशक|Director
+Coordinator|समन्वयक|Coordinator
+Office Staff|ऑफिस स्टाफ|Office Staff
+Full control (Admin)|पूरा नियंत्रण (एडमिन)|Full control (Admin)
+Teacher (students, attendance, notices)|शिक्षक (छात्र, हाज़िरी, सूचना)|Teacher (students, attendance, notices)
+Basic (sirf notices dekhna)|बेसिक (सिर्फ सूचना देखना)|Basic (notices only)
+Management: Student fees|प्रबंधन: छात्र फीस|Management: Student fees
+Management: Salary|प्रबंधन: वेतन|Management: Salary
+Sirf dekhna|सिर्फ देखना|View only
+Dekhna + edit|देखना + बदलना|View + edit
+Full|पूरा|Full
+Sab complete|सब पूरा|All complete
+
+# ---- attendance
+Student Hazri|छात्र हाज़िरी|Student Attendance
+Staff Hazri|स्टाफ हाज़िरी|Staff Attendance
+Batch (time)|बैच (समय)|Batch (time)
+Sab Present|सब उपस्थित|All Present
+Hazri save karein|हाज़िरी सेव करें|Save attendance
+Pichli attendance|पिछली हाज़िरी|Previous attendance
+Pichli attendance ({})|पिछली हाज़िरी ({})|Previous attendance ({})
+Pichli attendance ka record abhi nahi hai|पिछली हाज़िरी का रिकॉर्ड अभी नहीं है|No previous attendance record yet
+{} absent|{} अनुपस्थित|{} absent
+{} din se absent|{} दिन से अनुपस्थित|absent for {} days
+pichhle {} din se bhi absent|पिछले {} दिन से भी अनुपस्थित|also absent for the last {} days
+{} ke Absent ({})|{} के अनुपस्थित ({})|Absent on {} ({})
+sab aaye|सब आए|everyone came
+Kisi date par tap karke us din ki attendance dekhein|किसी तारीख पर टैप करके उस दिन की हाज़िरी देखें|Tap a date to view that day's attendance
+Is chunav me koi nahi hai|इस चुनाव में कोई नहीं है|Nobody in this selection
+Is chunav me koi entry nahi hai|इस चुनाव में कोई एंट्री नहीं है|No entries in this selection
+Bina batch wale|बिना बैच वाले|Without batch
+bina batch|बिना बैच|without batch
+# ---- batches / classes
+Batch ka naam|बैच का नाम|Batch name
+Shuru ka samay|शुरू का समय|Start time
+Khatam ka samay|खत्म का समय|End time
+Batch = time ke hisaab se group. Ek batch me alag-alag class ke bachhe ho sakte hain. Attendance batch ke hisaab se hoti hai|बैच = समय के हिसाब से समूह। एक बैच में अलग-अलग कक्षा के बच्चे हो सकते हैं। हाज़िरी बैच के हिसाब से होती है|Batch = a group by time. One batch can have students from different classes. Attendance is taken batch-wise
+Ye batch hata dein? Iske bachhe "bina batch" ho jayenge|यह बैच हटा दें? इसके बच्चे "बिना बैच" हो जाएँगे|Delete this batch? Its students will become "no batch"
+Class = bachha kya padhta hai. Naya class yahan jodein, phir bachhe ki profile me us class ko chunein|कक्षा = बच्चा क्या पढ़ता है। नई कक्षा यहाँ जोड़ें, फिर बच्चे की प्रोफ़ाइल में उस कक्षा को चुनें|Class = what the child studies. Add a new class here, then choose it in the student's profile
+Naya class ka naam|नई कक्षा का नाम|New class name
+Ye class pehle se hai|यह कक्षा पहले से है|This class already exists
+Naya naam|नया नाम|New name
+Jin bachhon ko is batch me rakhna hai unpar tick lagayein, phir Save dabayein. Untick karne par bachha is batch se hat jayega|जिन बच्चों को इस बैच में रखना है उन पर टिक लगाएँ, फिर सेव दबाएँ। टिक हटाने पर बच्चा इस बैच से हट जाएगा|Tick the students to keep in this batch, then press Save. Unticking removes the student from this batch
+Dikhe hue sabhi chunein|दिखे हुए सभी चुनें|Select all shown
+Dikhe hue sabhi hataein|दिखे हुए सभी हटाएँ|Unselect all shown
+{} bachhe is batch ke liye chune hain|{} बच्चे इस बैच के लिए चुने गए हैं|{} students selected for this batch
+{} jude, {} hate ✓|{} जुड़े, {} हटे ✓|{} added, {} removed ✓
+abhi: {}|अभी: {}|now: {}
+Koi bachha nahi|कोई बच्चा नहीं|No students
+Is class me {} bachhe (left/pass out ko milakar) hain. Pehle unhe doosri class me bhejein|इस कक्षा में {} बच्चे (Left/Pass out मिलाकर) हैं। पहले उन्हें दूसरी कक्षा में भेजें|This class has {} students (including left/pass out). Move them to another class first
+Is class me abhi koi student nahi hai|इस कक्षा में अभी कोई छात्र नहीं है|No students in this class yet
+{} active bachhe|{} सक्रिय बच्चे|{} active students
+{} bachhe|{} बच्चे|{} students
+{} bachhon ki jankari baaki hai|{} बच्चों की जानकारी बाकी है|{} students have missing info
+{} bachhon ka birthday|{} बच्चों का जन्मदिन|{} birthdays
+{}: {} students|{}: {} छात्र|{}: {} students
+{} students|{} छात्र|{} students
+Kul baki {}|कुल बाकी {}|Total due {}
+Baki {}|बाकी {}|Due {}
+{}/mahina|{}/महीना|{}/month
+Roll {}|रोल {}|Roll {}
+{} saal ka|{} साल का|{} years old
+{} saal|{} साल|{} yrs
+{} din baad|{} दिन बाद|in {} days
+Sab ki jankari poori hai 🎉|सबकी जानकारी पूरी है 🎉|Everyone's info is complete 🎉
+Kisi ki fees baki nahi hai 🎉|किसी की फीस बाकी नहीं है 🎉|No one has pending fees 🎉
+Kya khali hai|क्या खाली है|What is missing
+Parent ka naam|अभिभावक का नाम|Parent's name
+Fee set nahi|फीस सेट नहीं|Fee not set
+Maangein|मँगवाएँ|Ask
+Roll no. wise|रोल नं. के अनुसार|By roll no.
+# ---- monthly fee setup
+Har bachhe ki monthly fee likhein (alag-alag ho sakti hai). Fee har mahine ki|हर बच्चे की मासिक फीस लिखें (अलग-अलग हो सकती है)। फीस हर महीने की|Enter each child's monthly fee (can differ). Fee is added on the
+25 tarikh|25 तारीख|25th
+ko apne aap judegi|को अपने आप जुड़ेगी|automatically each month
+Monthly fee (₹)|मासिक फीस (₹)|Monthly fee (₹)
+Monthly fee (₹), is bachhe ki|मासिक फीस (₹), इस बच्चे की|Monthly fee (₹) of this child
+Is class ke sabhi bachhon ki fee (₹)|इस कक्षा के सभी बच्चों की फीस (₹)|Fee (₹) for all students of this class
+Bharne ke baad "Save sab" dabayein|भरने के बाद "सब सेव करें" दबाएँ|After filling, press "Save all"
+Pehle class chunein aur amount likhein|पहले कक्षा चुनें और राशि लिखें|First choose a class and enter the amount
+Monthly|मासिक|Monthly
+Monthly (auto)|मासिक (ऑटो)|Monthly (auto)
+Monthly fee|मासिक फीस|Monthly fee
+Mode|मोड|Mode
+Manual (khud entry karein)|मैन्युअल (खुद एंट्री करें)|Manual (enter yourself)
+Auto|ऑटो|Auto
+Shuru ka mahina|शुरू का महीना|Start month
+Mahine ki tarikh|महीने की तारीख|Day of month
+Auto reminder|ऑटो रिमाइंडर|Auto reminder
+AI Voice bhi|AI वॉइस भी|AI Voice too
+Automatic reminder (har mahine)|ऑटोमैटिक रिमाइंडर (हर महीने)|Automatic reminder (every month)
+Abhi sabko bhejein (auto)|अभी सबको भेजें (ऑटो)|Send to all now (auto)
+Auto bhejne ke liye WhatsApp API setup zaroori hai|ऑटो भेजने के लिए व्हाट्सऐप API सेटअप ज़रूरी है|WhatsApp API setup is required for auto sending
+Bheje gaye reminders|भेजे गए रिमाइंडर|Sent reminders
+Baaki fees wale sabhi parivaron ko abhi WhatsApp reminder bhej dein|बाकी फीस वाले सभी परिवारों को अभी व्हाट्सऐप रिमाइंडर भेज दें|Send WhatsApp reminders to all families with pending fees now
+Dikhayein|दिखाएँ|Show
+Dikhayein|दिखाएँ|Show
+Kuch bhi|कुछ भी|Anything
+Reminder|रिमाइंडर|Reminder
+Kya khali hai|क्या खाली है|What is missing
+# ---- exam (staff)
+Online Exam|ऑनलाइन परीक्षा|Online Exam
+Exam ka naam|परीक्षा का नाम|Exam name
+Exam No|परीक्षा नंबर|Exam No
+Exam chunein|परीक्षा चुनें|Choose exam
+Exam number|परीक्षा नंबर|Exam number
+Chalu karein|चालू करें|Start
+Band karein|बंद करें|Stop
+Results ({})|परिणाम ({})|Results ({})
+Jawab dikhana|उत्तर दिखाना|Show answers
+Paper|पेपर|Paper
+Exams|परीक्षाएँ|Exams
+Time (minute)|समय (मिनट)|Time (minutes)
+Har question ke number|हर प्रश्न के अंक|Marks per question
+Paper ki bhasha|पेपर की भाषा|Paper language
+Aage badhein|आगे बढ़ें|Next
+Questions|प्रश्न|Questions
+Kul MCQ (khali chhodein = jitne aapne bheje)|कुल MCQ (खाली छोड़ें = जितने आपने भेजे)|Total MCQs (leave blank = as many as you sent)
+AI se MCQ banayein|AI से MCQ बनाएँ|Create MCQs with AI
+Bina AI ke (khud MCQ likhein)|बिना AI के (खुद MCQ लिखें)|Without AI (write MCQs yourself)
+Mere likhe MCQ se paper banayein|मेरे लिखे MCQ से पेपर बनाएँ|Create paper from my MCQs
+Har MCQ ke beech ek khali line chhodein|हर MCQ के बीच एक खाली लाइन छोड़ें|Leave one blank line between MCQs
+Paper dekhein / Print|पेपर देखें / प्रिंट|View paper / Print
+Pehle questions likhein|पहले प्रश्न लिखें|Write the questions first
+Subject likhein|विषय लिखें|Enter subject
+Answer key|उत्तर कुंजी|Answer key
+Answer Key|उत्तर कुंजी|Answer Key
+MCQ taiyaar hain|MCQ तैयार हैं|MCQs are ready
+Ye exam aur uske saare results hata dein|यह परीक्षा और उसके सभी परिणाम हटा दें|Delete this exam and all its results
+Ye result hata dein? (Bachha dobara exam de sakega)|यह परिणाम हटा दें? (बच्चा दोबारा परीक्षा दे सकेगा)|Delete this result? (The child can retake the exam)
+Format sahi nahi mila. Upar ka udaharan dekhein (4 option aur Answer line zaroori)|फ़ॉर्मेट सही नहीं मिला। ऊपर का उदाहरण देखें (4 विकल्प और Answer लाइन ज़रूरी)|Format not recognised. See the example above (4 options and an Answer line are required)
+Exam jama karein|परीक्षा जमा करें|Submit exam
+Exam shuru karein →|परीक्षा शुरू करें →|Start exam →
+Fee dekhein →|फीस देखें →|Check fee →
+Exam number galat hai ya exam abhi chalu nahi hai|परीक्षा नंबर गलत है या परीक्षा अभी चालू नहीं है|Exam number is wrong or the exam is not open yet
+Exam number daalkar apna test dein|परीक्षा नंबर डालकर अपना टेस्ट दें|Enter the exam number to take your test
+Exam number daalein|परीक्षा नंबर लिखें|Enter exam number
+Sahi Exam number daalein|सही परीक्षा नंबर लिखें|Enter a valid exam number
+Apna naam likhein|अपना नाम लिखें|Enter your name
+Aapka naam|आपका नाम|Your name
+Roll no|रोल नं.|Roll no
+agar pata ho|अगर पता हो|if you know
+Aapka result save ho gaya hai|आपका परिणाम सेव हो गया है|Your result has been saved
+Jawab dekhein|उत्तर देखें|View answers
+Aapka jawab|आपका उत्तर|Your answer
+Sahi jawab|सही उत्तर|Correct answer
+Shabash! 🌟|शाबाश! 🌟|Well done! 🌟
+Achha prayas! 👍|अच्छा प्रयास! 👍|Good effort! 👍
+Aur mehnat karein 💪|और मेहनत करें 💪|Work harder 💪
+Is naam aur roll se exam pehle de diya ja chuka hai|इस नाम और रोल से परीक्षा पहले दी जा चुकी है|An exam was already taken with this name and roll
+Exam band ho chuka hai|परीक्षा बंद हो चुकी है|The exam is closed
+Jama nahi hua, internet check karke dobara dabayein|जमा नहीं हुआ, इंटरनेट देखकर दोबारा दबाएँ|Not submitted, check internet and try again
+Timer chalega. Time khatam hone par exam apne aap jama ho jayega|टाइमर चलेगा। समय खत्म होने पर परीक्षा अपने आप जमा हो जाएगी|A timer will run. The exam will submit automatically when time is up
+Exam ke beech page refresh na karein|परीक्षा के बीच पेज रिफ्रेश न करें|Do not refresh the page during the exam
+Har sawal ka ek hi sahi jawab hota hai|हर सवाल का एक ही सही उत्तर होता है|Each question has only one correct answer
+{} / {} jawab diye|{} / {} उत्तर दिए|{} / {} answered
+{} sawal chhoot gaye hain. Phir bhi jama karein?|{} सवाल छूट गए हैं। फिर भी जमा करें?|{} questions are unanswered. Submit anyway?
+Is chunav|इस चुनाव|This selection
+Bachhon ne diya|बच्चों ने दिया|Students who took it
+Rank|रैंक|Rank
+Result|परिणाम|Result
+# ---- parent fee page / public
+Fee Dekhein|फीस देखें|Check Fee
+Apne bachhe ki baki fee check karein|अपने बच्चे की बाकी फीस जाँचें|Check your child's pending fee
+Aapke bachhe ki fee|आपके बच्चे की फीस|Your child's fee
+Poore parivar ki fee|पूरे परिवार की फीस|Whole family's fee
+Bachhe ka Roll no|बच्चे का रोल नं.|Child's roll no
+jo coaching me save hai|जो कोचिंग में सेव है|saved in the coaching
+Agar aapke ek se zyada bachhe hain, to sabki fee ek saath dikhegi|अगर आपके एक से ज़्यादा बच्चे हैं, तो सबकी फीस एक साथ दिखेगी|If you have more than one child, all fees will be shown together
+Sirf wahi number chalega jo coaching me aapka save hai|सिर्फ वही नंबर चलेगा जो कोचिंग में आपका सेव है|Only the number saved with the coaching will work
+Fee jama karne ke liye coaching me sampark karein|फीस जमा करने के लिए कोचिंग में संपर्क करें|Contact the coaching to pay the fee
+Coaching se baat karein|कोचिंग से बात करें|Talk to the coaching
+Roll no. ya phone number match nahi hua. Wahi number daalein jo coaching me save hai|रोल नं. या फोन नंबर मेल नहीं खाया। वही नंबर लिखें जो कोचिंग में सेव है|Roll no. or phone number did not match. Enter the number saved with the coaching
+Bahut zyada galat koshish hui. 15 minute baad dobara try karein|बहुत ज़्यादा गलत कोशिशें हुईं। 15 मिनट बाद दोबारा कोशिश करें|Too many wrong attempts. Try again after 15 minutes
+Kuch gadbad hui, dobara try karein|कुछ गड़बड़ हुई, दोबारा कोशिश करें|Something went wrong, try again
+Kul baki: {}|कुल बाकी: {}|Total due: {}
+Koi fee baki nahi|कोई फीस बाकी नहीं|No fee pending
+Padhai: {}|पढ़ाई: {}|Study: {}
+Ye link sahi nahi hai ya band ho gaya hai|यह लिंक सही नहीं है या बंद हो गया है|This link is invalid or has been closed
+Kripya coaching se naya link maangein|कृपया कोचिंग से नया लिंक माँगें|Please ask the coaching for a new link
+Profile nahi mili|प्रोफ़ाइल नहीं मिली|Profile not found
+Jiske paas ye link hoga wo is bachhe ki profile dekh sakta hai (Aadhar, pata aur phone nahi dikhte)|जिसके पास यह लिंक होगा वह इस बच्चे की प्रोफ़ाइल देख सकता है (आधार, पता और फोन नहीं दिखते)|Anyone with this link can view this child's profile (Aadhar, address and phone are hidden)
+Ye link band kar dein? Purana link kaam nahi karega|यह लिंक बंद कर दें? पुराना लिंक काम नहीं करेगा|Disable this link? The old link will stop working
+Ye family payment sabhi bachhon se hata dein|यह परिवार का भुगतान सभी बच्चों से हटा दें|Remove this family payment from all children
+Ek ek karke|एक-एक करके|One by one
+Naya link|नया लिंक|New link
+
+# ---- misc staff ui
+Yahan se website ka text badlein. Save karte hi website par badal jata hai|यहाँ से वेबसाइट का टेक्स्ट बदलें। सेव करते ही वेबसाइट पर बदल जाता है|Edit the website text here. It changes on the website as soon as you save
+Website par dikhayein|वेबसाइट पर दिखाएँ|Show on website
+Caption (optional)|कैप्शन (वैकल्पिक)|Caption (optional)
+Photos (ek saath kai chun sakte hain)|फोटो (एक साथ कई चुन सकते हैं)|Photos (you can choose many at once)
+Pehle photo chunein|पहले फोटो चुनें|Choose a photo first
+Title|शीर्षक|Title
+Qualification|योग्यता|Qualification
+Joining date|जुड़ने की तारीख|Joining date
+Father's name|पिता का नाम|Father's name
+Deduction|कटौती|Deduction
+Remove|हटाएँ|Remove
+Tracker|ट्रैकर|Tracker
+Salary due / bonus|वेतन देय / बोनस|Salary due / bonus
+Salary paid / advance|वेतन दिया / अग्रिम|Salary paid / advance
+Baki salary|बाकी वेतन|Pending salary
+Monthly salary|मासिक वेतन|Monthly salary
+Salary slip (PNG)|वेतन पर्ची (PNG)|Salary slip (PNG)
+Fee slip (PNG)|फीस पर्ची (PNG)|Fee slip (PNG)
+Authorised signature|अधिकृत हस्ताक्षर|Authorised signature
+ID card|आईडी कार्ड|ID card
+PDF|PDF|PDF
+PNG|PNG|PNG
+PDF library load nahi hui, internet check karein|PDF लाइब्रेरी लोड नहीं हुई, इंटरनेट देखें|PDF library did not load, check internet
+Delete karein|हटाएँ|Delete
+Delete karein?|हटाएँ?|Delete?
+update12.sql Run karein|update12.sql चलाएँ|Run update12.sql
+update13.sql Run karein|update13.sql चलाएँ|Run update13.sql
+Ye batch hata dein|यह बैच हटा दें|Delete this batch
+Baki|बाकी|Due
+Chalu|चालू|Active
+Salary|वेतन|Salary
+Teacher|शिक्षक|Teacher
+Post|पद|Post
+Full|पूरा|Full
+Mark kiya|चिह्नित किया|Marked
+Ye|यह|This
+{} ko "Left" mark karein?|{} को "Left" चिह्नित करें?|Mark {} as "Left"?
+{} ko "Pass out" mark karein?|{} को "Pass out" चिह्नित करें?|Mark {} as "Pass out"?
+{} ko wapas Active kar dein? Fee phir se judna shuru ho jayega|{} को वापस सक्रिय कर दें? फीस फिर से जुड़ना शुरू हो जाएगी|Reactivate {}? Fee will start being added again
+{} ko aur uske pure record (fees, tracker) ko hamesha ke liye hata dein? Ye wapas nahi aayega|{} और उसके पूरे रिकॉर्ड (फीस, ट्रैकर) को हमेशा के लिए हटा दें? यह वापस नहीं आएगा|Delete {} and all records (fees, tracker) forever? This cannot be undone
+{} ko {} me bhej dein?|{} को {} में भेज दें?|Move {} to {}?
+Abhi sab skills complete nahi hain. |अभी सब कौशल पूरे नहीं हैं। |Not all skills are complete yet. 
+Mujhe yaad rakhein|मुझे याद रखें|Remember me
+Namaste!|नमस्ते!|Hello!
+Kal|कल|Tomorrow
+Aaj!|आज!|Today!
+Mark as Left|Left चिह्नित करें|Mark as Left
+Left|छोड़ चुके|Left
+{} staff ka baki hai. Auto mode mein har mahine ki aakhri tarikh ({}) ko apne aap judta hai.|{} स्टाफ का बाकी है। ऑटो मोड में हर महीने की आख़िरी तारीख ({}) को अपने आप जुड़ता है।|{} staff have pending. In Auto mode it is added on the last date ({}) of every month.
+Abhi tak ka baki ({} bachhe)|अभी तक की बाकी ({} बच्चे)|Total due so far ({} students)
+Auto (har mahine ki 25 tarikh ko apne aap)|ऑटो (हर महीने की 25 तारीख को अपने आप)|Auto (on the 25th of every month)
+Auto (mahine ki aakhri tarikh ko apne aap)|ऑटो (महीने की आख़िरी तारीख को अपने आप)|Auto (on the last day of the month)
+Auto mode mein shuru ke mahine se har mahine ki 25 tarikh ko ₹ judta hai. Purana mahina chunenge to wo bhi judega. Agla auto charge: {}. Kisi mahine ki fee alag karni ho to neeche Hisaab me us entry par Edit dabayein.|ऑटो मोड में शुरू के महीने से हर महीने की 25 तारीख को ₹ जुड़ता है। पुराना महीना चुनेंगे तो वह भी जुड़ेगा। अगला ऑटो चार्ज: {}। किसी महीने की फीस अलग करनी हो तो नीचे हिसाब में उस एंट्री पर बदलें दबाएँ।|In Auto mode, ₹ is added on the 25th of every month from the start month. If you choose an older month, it will be added too. Next auto charge: {}. To change a particular month's fee, tap Edit on that entry in the account below.
+Auto mode mein shuru ke mahine se har mahine ki aakhri tarikh ko ₹ judta hai. Purana mahina chunenge to wo bhi judega. Agla auto charge: {}. Kisi mahine ki fee alag karni ho to neeche Hisaab me us entry par Edit dabayein.|ऑटो मोड में शुरू के महीने से हर महीने की आख़िरी तारीख को ₹ जुड़ता है। पुराना महीना चुनेंगे तो वह भी जुड़ेगा। अगला ऑटो चार्ज: {}। किसी महीने की राशि अलग करनी हो तो नीचे हिसाब में उस एंट्री पर बदलें दबाएँ।|In Auto mode, ₹ is added on the last day of every month from the start month. If you choose an older month, it will be added too. Next auto charge: {}. To change a particular month, tap Edit on that entry in the account below.
+Bachha|बच्चा|Student
+Bachhe|बच्चे|Students
+Pichle {} mahine|पिछले {} महीने|Last {} months
+Pichla {} mahina|पिछला {} महीना|Last {} month
+1 - Bahut kamzor|1 - बहुत कमज़ोर|1 - Very weak
+2 - Kamzor|2 - कमज़ोर|2 - Weak
+3 - Theek|3 - ठीक|3 - Okay
+4 - Achha|4 - अच्छा|4 - Good
+5 - Bahut badhiya|5 - बहुत बढ़िया|5 - Excellent
+Varnmala likhna|वर्णमाला लिखना|Write the alphabet (Hindi)
+Varnmala padhna / pahchanna|वर्णमाला पढ़ना / पहचानना|Read / recognise the alphabet (Hindi)
+Small letters likhna|छोटे अक्षर (small letters) लिखना|Write small letters
+Small letters pahchanna|छोटे अक्षर (small letters) पहचानना|Recognise small letters
+Capital letters likhna|बड़े अक्षर (capital letters) लिखना|Write capital letters
+Capital letters pahchanna|बड़े अक्षर (capital letters) पहचानना|Recognise capital letters
+1 se 100 tak likhna|1 से 100 तक लिखना|Write 1 to 100
+1 se 100 tak ginna|1 से 100 तक गिनना|Count 1 to 100
+Hindi writing|हिंदी लेखन|Hindi writing
+Baal Pothi: shabd padhna|बाल पोथी: शब्द पढ़ना|Baal Pothi: read words
+Baal Pothi: vakya padhna|बाल पोथी: वाक्य पढ़ना|Baal Pothi: read sentences
+Baal Pothi khatam|बाल पोथी खत्म|Baal Pothi finished
+English writing|अंग्रेज़ी लेखन|English writing
+Good English book padhna (Baal Pothi ke baad)|Good English किताब पढ़ना (बाल पोथी के बाद)|Read the Good English book (after Baal Pothi)
+Good English book khatam|Good English किताब खत्म|Good English book finished
+Jod (+)|जोड़ (+)|Addition (+)
+Ghatav (−)|घटाव (−)|Subtraction (−)
+Guna (×)|गुणा (×)|Multiplication (×)
+Bhag (÷)|भाग (÷)|Division (÷)
+Story reading|कहानी पढ़ना|Story reading
+Story writing|कहानी लिखना|Story writing
+Daily 1 page writing homework|रोज़ 1 पेज लिखने का होमवर्क|Daily 1 page writing homework
+Translation|अनुवाद|Translation
+Class 6 ke liye aage ka syllabus|कक्षा 6 के लिए आगे का पाठ्यक्रम|Syllabus ahead for Class 6
+GK objective questions|GK वस्तुनिष्ठ प्रश्न|GK objective questions
+Maths|गणित|Maths
+Maths (daily class)|गणित (रोज़ की कक्षा)|Maths (daily class)
+GK|सामान्य ज्ञान|GK
+About coaching|कोचिंग के बारे में|About coaching
+Admission intro|एडमिशन परिचय|Admission intro
+Class timing|कक्षा का समय|Class timing
+Coaching name|कोचिंग का नाम|Coaching name
+Main heading|मुख्य शीर्षक|Main heading
+Sub text|उप-शीर्षक|Sub text
+Fees note|फीस नोट|Fees note
+Fee setting|फीस सेटिंग|Fee setting
+{} (Hindi)|{} (हिंदी)|{} (Hindi)
+{} (English)|{} (अंग्रेज़ी)|{} (English)
+{} (Hinglish)|{} (हिंग्लिश)|{} (Hinglish)
+Documents list, {} (har line ek document)|दस्तावेज़ों की सूची, {} (हर लाइन में एक दस्तावेज़)|Documents list, {} (one per line)
+Facilities, {} (har line ek facility; khali chhodein to section chhup jayega)|सुविधाएँ, {} (हर लाइन में एक सुविधा; खाली छोड़ें तो सेक्शन छिप जाएगा)|Facilities, {} (one per line; leave blank to hide the section)
+Facilities, {} (har line ek facility)|सुविधाएँ, {} (हर लाइन में एक सुविधा)|Facilities, {} (one per line)
+Fees table (har line: {})|फीस तालिका (हर लाइन: {})|Fees table (each line: {})
+Phone number|फोन नंबर|Phone number
+Email|ईमेल|Email
+Email (optional)|ईमेल (वैकल्पिक)|Email (optional)
+List|सूची|List
+Kaun|कौन|Who
+Pending|बाकी|Pending
+(auto)|(ऑटो)|(auto)
+Owner|ओनर|Owner
+owner (Owner)|ओनर|Owner
+Owner (Owner)|ओनर|Owner
+admin (Admin)|एडमिन|Admin
+Admin|एडमिन|Admin
+teacher (Teacher)|शिक्षक|Teacher
+Pichli attendance ({}):|पिछली हाज़िरी ({}):|Previous attendance ({}):
+{} se {} tak|{} से {} तक|{} to {}
+complete ({})|पूर्ण ({})|complete ({})
+{} MCQ|{} MCQ|{} MCQs
+{} min|{} मिनट|{} min
+name|नाम|Name
+phone|फोन|Phone
+post|पद|Post
+subject|विषय|Subject
+title|शीर्षक|Title
+date|तारीख|Date
+body|विवरण|Details
+caption|कैप्शन|Caption
+`;
+const I18=(()=>{
+ const ex=new Map(),core=new Map(),tp=[],cr=x=>x.replace(/^[^\p{L}\p{N}]+/u,'').replace(/[^\p{L}\p{N}]+$/u,'');
+ I18N_RAW.split('\n').forEach(l=>{l=l.trim();if(!l||l[0]==='#')return;const p=l.split('|').map(x=>x.trim()),a=p[0],h=p[1],e=p[2];if(!a||!h)return;const v=[h,e||a];
+  if(a.includes('{}')){tp.push([new RegExp('^'+a.replace(/[.*+?^$()|[\]\\]/g,'\\$&').replace(/\{\}/g,'(.+?)')+'$'),v]);return}
+  ex.set(a,v);const c=cr(a);if(c&&c===a&&!core.has(c))core.set(c,v)});
+ tp.sort((a,b)=>b[0].source.length-a[0].source.length);
+ return {ex,core,tp,cr};
+})();
+function i18Look(t,i){
+ let v=I18.ex.get(t);if(v)return v[i];
+ const pre=(t.match(/^[^\p{L}\p{N}]*/u)||[''])[0],suf=(t.match(/[^\p{L}\p{N}]*$/u)||[''])[0],c=t.slice(pre.length,t.length-suf.length),t2=t.slice(pre.length);
+ if(pre){v=I18.ex.get(t2);if(v)return pre+v[i]}
+ if(c){v=I18.core.get(c);if(v)return pre+v[i]+suf}
+ for(const [re,vv] of I18.tp){const m=t2.match(re);if(m){let k=0;return pre+vv[i].replace(/\{\}/g,()=>{const g=m[++k];const r=i18Look(g,i);return r==null?g:r})}}
+ if(t.includes(' · ')){const ps=t.split(' · '),o=ps.map(p=>i18Look(p,i));if(o.some(x=>x!=null))return ps.map((p,j)=>o[j]??p).join(' · ')}
+ const k=t.indexOf(': ');if(k>0&&t.length<150){const a=i18Look(t.slice(0,k),i),b=i18Look(t.slice(k+2),i);if(a!=null||b!=null)return (a??t.slice(0,k))+': '+(b??t.slice(k+2))}
+ return null;
+}
+function i18tr(txt){
+ txt=String(txt);const t=txt.trim();if(!t)return txt;
+ const lead=txt.match(/^\s*/)[0],trail=txt.match(/\s*$/)[0];
+ if(L==='hg'){if(!/[\u0900-\u097F]/.test(t))return txt;const r=i18Look(t,1);return r==null?txt:lead+r+trail}
+ const i=L==='hi'?0:1;let r=i18Look(t,i);let out=r==null?txt:lead+r+trail;
+ if(L==='hi')out=out.replace(/\bClass ([A-Z0-9])\b/g,'कक्षा $1');
+ return out;
+}
+const i18Skip=n=>{for(let p=n;p&&p.nodeType===1;p=p.parentNode){if(p.id==='pv'||p.id==='lang'||p.id==='thm'||/^(SCRIPT|STYLE|TEXTAREA|CODE)$/.test(p.nodeName)||(p.classList&&(p.classList.contains('xqh')||p.classList.contains('xo'))))return true}return false};
+function i18Node(n){
+ if(n.nodeType===3){
+  const p=n.parentNode;if(!p||i18Skip(p))return;
+  if(p.nodeName==='OPTION'&&!p.hasAttribute('value'))return;
+  if(n.__o!==undefined&&n.nodeValue!==n.__out)n.__o=undefined;
+  if(n.__o===undefined)n.__o=n.nodeValue;
+  const out=i18tr(n.__o);n.__out=out;if(n.nodeValue!==out)n.nodeValue=out;
+ }else if(n.nodeType===1){
+  if(i18Skip(n))return;
+  for(const a of ['placeholder','title','aria-label']){if(n.hasAttribute(a)){const k='__o_'+a;if(n[k]===undefined||n.getAttribute(a)!==n[k+'o'])n[k]=n.getAttribute(a);const out=i18tr(n[k]);n[k+'o']=out;if(n.getAttribute(a)!==out)n.setAttribute(a,out)}}
+  n.childNodes.forEach(i18Node);
+ }
+}
+let i18Busy=false,i18Pend=false;
+const i18Obs=new MutationObserver(()=>{if(i18Busy||i18Pend)return;i18Pend=true;requestAnimationFrame(()=>{i18Pend=false;i18Apply()})});
+function i18Apply(){i18Busy=true;try{i18Node(document.body)}finally{i18Obs.takeRecords();i18Busy=false}}
+i18Obs.observe(document.body,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:['placeholder','title']});
+{const _a=window.alert.bind(window),_c=window.confirm.bind(window),_p=window.prompt.bind(window),m2=m=>String(m).split('\n').map(x=>x.trim()?i18tr(x):x).join('\n');
+ window.alert=m=>_a(m2(m));window.confirm=m=>_c(m2(m));window.prompt=(m,d)=>_p(m2(m),d)}
+
+i18Apply();
 const hp=()=>{let m=location.hash.match(/^#p=([A-Za-z0-9]{16,64})$/);if(m)return showPub(m[1]);m=location.hash.match(/^#exam(?:=(\d{4,8}))?$/);if(m)return showExam(m[1]||'');if(location.hash==='#fee')showFee()};
 hp();addEventListener('hashchange',hp);
 </script>
