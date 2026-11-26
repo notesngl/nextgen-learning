@@ -130,6 +130,7 @@ footer{border-top:1px solid var(--line);padding:24px 0 30px;color:var(--mut);fon
 .acn{display:flex;flex-direction:column;gap:2px;min-width:0}.stk{color:var(--red);font-weight:700;font-size:13px}
 .seg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.sg{margin:0!important;display:block!important}.sg input{display:none}.sg span{display:block;text-align:center;padding:10px 4px;border-radius:12px;border:2px solid var(--line);background:var(--surface2);font:700 14px var(--f);cursor:pointer}
 .sg.P input:checked+span{background:#16A34A;border-color:#16A34A;color:#fff}.sg.A input:checked+span{background:#DC2626;border-color:#DC2626;color:#fff}.sg.L input:checked+span{background:#F59E0B;border-color:#F59E0B;color:#fff}
+.sbar[hidden]{display:none!important}
 .sbar{position:sticky;bottom:78px;z-index:6;background:var(--hdr2);backdrop-filter:blur(8px);border:1px solid var(--line);border-radius:14px;padding:10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:8px 0}
 .kc{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:14px;margin-bottom:14px;box-shadow:0 6px 18px rgba(0,0,0,.07)}.kh{display:flex;gap:12px;align-items:center}.kh .pha{width:68px;height:68px}.kd{margin-top:10px;border-top:1px dashed var(--line);padding-top:8px;font-size:14px;line-height:1.7}.kd b{font-weight:700}
 .bdy{position:relative;overflow:hidden;background:linear-gradient(135deg,#FF5FA2 0%,#FF9A3C 55%,#FFD93D 100%);color:#3b0a2a;padding:22px 0 14px;text-align:center}
@@ -138,8 +139,11 @@ footer{border-top:1px solid var(--line);padding:24px 0 30px;color:var(--mut);fon
 @keyframes bfl{0%,100%{transform:translateY(0) rotate(-6deg)}50%{transform:translateY(-12px) rotate(6deg)}}
 .bd2{flex:0 0 auto;min-width:200px;background:rgba(255,255,255,.95);color:#3b0a2a;border-radius:22px;padding:16px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;box-shadow:0 10px 26px rgba(120,0,60,.28);position:relative}
 .bd2 img,.bd2>.bdp{width:104px;height:104px;border-radius:50%;object-fit:cover;border:4px solid #FFB800;box-shadow:0 0 0 4px #FF5FA2}.bd2>.bdp{display:flex;align-items:center;justify-content:center;font-size:54px;background:#FFF3C4}
-.bd2 b{font:800 22px var(--f);margin-top:8px}.bd2 .br{display:inline-block;background:#FF5FA2;color:#fff;border-radius:999px;padding:1px 12px;font-size:13px;font-weight:700}.bd2 em{font-style:normal;font-weight:800;color:#D6246E;margin-top:4px}.bd2 .bw{margin-top:8px;background:#25D366;color:#06210f;border-radius:999px;padding:6px 14px;font-weight:700;font-size:14px;text-decoration:none}
+.bd2 b{font:800 22px var(--f);margin-top:8px}.bd2 .br{display:inline-block;background:#FF5FA2;color:#fff;border-radius:999px;padding:1px 12px;font-size:13px;font-weight:700}.bd2 em{font-style:normal;font-weight:800;color:#D6246E;margin-top:4px}.bd2 button.bw{border:0;cursor:pointer;font-family:inherit}
+.bd2 .bw{margin-top:8px;background:#25D366;color:#06210f;border-radius:999px;padding:6px 14px;font-weight:700;font-size:14px;text-decoration:none}
 .bdy.tmo{padding:10px 0 6px}.bdy.tmo .bh,.bdy.tmo #bdl{display:none}.btl{color:#fff;font-weight:700;font-size:13px;margin:6px 0 2px;text-shadow:0 1px 4px rgba(120,0,60,.4)}.bt{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.93);color:#3b0a2a;border-radius:999px;padding:3px 12px 3px 4px;font-weight:700;font-size:13px;margin:3px;cursor:pointer}.bt img,.bt i{width:26px;height:26px;border-radius:50%;object-fit:cover;font-style:normal;display:inline-flex;align-items:center;justify-content:center;background:#FFF3C4;font-size:15px}
+.hbn{background:linear-gradient(90deg,#DC2626,#F59E0B);color:#fff;text-align:center;padding:10px 12px;font-weight:700}.hbn .w>div{padding:2px 0}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin:10px 0}.cw{text-align:center;color:var(--mut);font-size:12px;font-weight:700}#panelView .cd{aspect-ratio:1;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:700 16px var(--f);padding:0;clip-path:none;cursor:pointer;position:relative}#panelView .cd.h{background:var(--red);border-color:var(--red);color:#fff}#panelView .cd.t{outline:2px solid var(--gold)}#panelView .cd.e{visibility:hidden}
 .card2{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;margin:0 0 14px}.stars{color:var(--gold);letter-spacing:2px}
 </style>
 </head>
@@ -150,6 +154,7 @@ footer{border-top:1px solid var(--line);padding:24px 0 30px;color:var(--mut);fon
 <div style="display:flex;gap:8px;align-items:center"><button id="thm" aria-label="Theme"></button><button id="lang">English</button></div>
 </div></header>
 <div id="site"><main id="top">
+<section id="hbn" class="hbn" hidden><div class="w"></div></section>
 <section id="bday" class="bdy" hidden><div class="bbl"><i>🎈</i><i>🎉</i><i>🎂</i><i>🎁</i><i>🎈</i></div><div class="w"><h2 class="bh">🎉 Happy Birthday! 🎂</h2><p class="bsub bh">Aaj in bachhon ka janm-din hai</p><div id="bdl"></div><div id="bdt"></div><p class="bnote">Ye sirf Owner aur Admin ko dikhta hai.</p></div></section>
 <div class="hero"><div class="w">
 <img class="herologo" src="logo.png" alt="NextGen Learning">
@@ -364,13 +369,14 @@ const TABS={
  classes:{label:'Classes',run:classesTab},
  missing:{label:'Missing Info',run:missingTab},
  birthdays:{label:'Birthdays',run:bdayTab},
+ holidays:{label:'Holidays / छुट्टी',run:holidaysTab},
  exam:{label:'Exam / परीक्षा',run:examTab},
  examres:{label:'Results',run:examresTab},
  salary:{label:'Salary / वेतन',run:()=>mgmtList('employee')},
  gallery:{label:'Gallery',run:()=>crud('gallery',[['url','Photos (ek saath kai chun sakte hain)','photos'],['caption','Caption (optional)']],['url','caption'],'created_at',true)}
 };
 
-const ICON={fees:'💰',salary:'💼',site:'✏️',staff:'👥',students:'🎓',sa:'✅',ta:'🧑‍🏫',teachers:'👩‍🏫',notices:'📢',gallery:'🖼️',reminder:'🔔',report:'📊',feehist:'📜',ssearch:'🔍',missing:'❓',birthdays:'🎂',feeset:'🧾',batches:'🕐',classes:'🏫',exam:'📋',examres:'🏆'};
+const ICON={fees:'💰',salary:'💼',site:'✏️',staff:'👥',students:'🎓',sa:'✅',ta:'🧑‍🏫',teachers:'👩‍🏫',notices:'📢',gallery:'🖼️',reminder:'🔔',report:'📊',feehist:'📜',ssearch:'🔍',missing:'❓',birthdays:'🎂',holidays:'🏖️',feeset:'🧾',batches:'🕐',classes:'🏫',exam:'📋',examres:'🏆'};
 let BAR='home';
 const setBar=a=>{BAR=a;renderBar();$('waf').classList.toggle('nop',a==='panel')};
 function showSite(){document.body.classList.remove('pubmode');$('exView').hidden=true;$('feView').hidden=true;window.onbeforeunload=null;$('pubView').hidden=true;$('site').hidden=false;$('admView').hidden=true;$('panelView').hidden=true;$('sheet').hidden=true;setBar('home');window.scrollTo(0,0)}
@@ -384,15 +390,15 @@ async function renderBday(){
  const {data}=await sb.from('students').select('id,name,class,roll,dob,photo_url,phone').eq('status','active').not('dob','is',null);
  const list=(data||[]).filter(s=>String(s.dob).slice(5)===md),tom=(data||[]).filter(s=>String(s.dob).slice(5)===mdT);
  if((!list.length&&!tom.length)||!ME||!(ME.access==='owner'||ME.access==='admin')){el.hidden=true;return}
- const wl=s=>{const d=String(s.phone||'').replace(/\D/g,'');return d.length>=10?`<a class="bw" target="_blank" rel="noopener" href="https://wa.me/${d.length===10?'91'+d:d}?text=${encodeURIComponent('Happy Birthday '+s.name+'! 🎂🎉 '+v('school_name')+' ki taraf se dher saari shubhkamnayein.')}">💬 Wish bhejein</a>`:''};
+ const wl=s=>{BD[s.id]=s;return `<button class="bw" data-wish="${s.id}">🖼️ Wish bhejein</button>`};
  el.classList.toggle('tmo',!list.length);
  $('bdl').innerHTML=list.map(s=>`<div class="bd2" data-bd="${s.id}">${s.photo_url?`<img src="${esc(s.photo_url)}" alt="">`:'<div class="bdp">🎂</div>'}<b>${esc(s.name)}</b><div>${s.roll?`<span class="br">Roll ${esc(s.roll)}</span> `:''}<small>${esc(cn(s.class))}</small></div><small>🎈 ${y-+String(s.dob).slice(0,4)} saal ka</small><em>🎉 Happy Birthday! 🎉</em>${wl(s)}</div>`).join('');
  $('bdt').innerHTML=tom.length?`<div class="btl">🎈 Kal birthday hai:</div>`+tom.map(s=>`<span class="bt" data-bd="${s.id}">${s.photo_url?`<img src="${esc(s.photo_url)}" alt="">`:'<i>🎈</i>'}${esc(s.name)}${s.roll?' · Roll '+esc(s.roll):''}</span>`).join(''):'';
- const go=e=>{if(e.target.closest('a'))return;const c=e.target.closest('[data-bd]');if(c){showPanel();lastTab='students';profile('student',c.dataset.bd)}};
+ const go=e=>{const w=e.target.closest('[data-wish]');if(w){wishPic(BD[w.dataset.wish]);return}if(e.target.closest('a'))return;const c=e.target.closest('[data-bd]');if(c){showPanel();lastTab='students';profile('student',c.dataset.bd)}};
  $('bdl').onclick=go;$('bdt').onclick=go;
  el.hidden=false;
 }
-let BATCHES=[],CLS=[],AT={b:'',c:'ALL'};
+let BATCHES=[],CLS=[],AT={b:'',c:'ALL'},HOVR='',HM=null;
 const bn=id=>{const b=BATCHES.find(x=>x.id===id);return b?b.name:''};
 const tm=x=>{if(!x)return '';const [h,m]=String(x).split(':'),H=+h;return ((H%12)||12)+':'+m+' '+(H<12?'AM':'PM')};
 const bl=b=>b.name+(b.start_time?` (${tm(b.start_time)}${b.end_time?' – '+tm(b.end_time):''})`:'');
@@ -427,7 +433,7 @@ function openTab(k){lastTab=k;PTAB='det';
 }
 const goFirst=()=>openTab(Object.keys(TABS).filter(allowed)[0]);
 const foldersHTML=(groups)=>groups.map(g=>`<details class="fold" open><summary>${g[0]}</summary><div class="shg">${g[1]}</div></details>`).join('');
-const GROUPS=[['📁 Management',['ssearch','fees','feeset','report','feehist','salary']],['📁 Students',['students','birthdays','missing','batches','classes']],['📁 Staff',['teachers','staff']],['📁 Attendance',['sa','ta']],['📁 Exam',['exam','examres']],['📁 Website',['site','notices','gallery']]];
+const GROUPS=[['📁 Management',['ssearch','fees','feeset','report','feehist','salary']],['📁 Students',['students','birthdays','missing','batches','classes']],['📁 Staff',['teachers','staff']],['📁 Attendance',['sa','ta','holidays']],['📁 Exam',['exam','examres']],['📁 Website',['site','notices','gallery']]];
 const FOLD=[['Attendance','nav_att','✅'],['Management','nav_mgt','💼'],['Exam','nav_exm','📋']];
 function folderKeys(n){const ks=Object.keys(TABS).filter(allowed),g=GROUPS.find(g=>g[0].includes(n));return g?g[1].filter(k=>ks.includes(k)):[]}
 function renderBar(){
@@ -608,6 +614,7 @@ async function attendance(list,att,idCol,byClass){
   let q=sb.from(list).select('*');if(byClass){AT.b=$('bt').value;AT.c=$('cl').value;q=q.eq('status','active');if(AT.b==='NONE')q=q.is('batch_id',null);else if(AT.b!=='ALL')q=q.eq('batch_id',AT.b);if(AT.c!=='ALL')q=q.eq('class',AT.c);q=q.order('roll',{nullsFirst:false}).order('name')}else q=q.order('name');
   const [{data:people},{data:rec}]=await Promise.all([q,sb.from(att).select('*').eq('date',dt)]);
   const ids=(people||[]).map(p=>p.id),cur={};(rec||[]).forEach(r=>cur[r[idCol]]=r.status);
+  const {data:hd}=await sb.from('holidays').select('*').eq('day',dt).maybeSingle();const hol=!!hd&&HOVR!==dt;
   const CTm={};if(byClass&&ids.length){const {data:cts}=await sb.from('student_contacts').select('student_id,label,phone').in('student_id',ids);(cts||[]).forEach(c=>{(CTm[c.student_id]=CTm[c.student_id]||[]).push(c)})}
   const from=new Date(new Date(dt+'T00:00:00').getTime()-45*864e5).toLocaleDateString('sv');
   let H=[];
@@ -615,18 +622,24 @@ async function attendance(list,att,idCol,byClass){
   const days=[...new Set(H.map(r=>r.date))].sort().reverse(),mp={},byD={};
   H.forEach(r=>{(mp[r[idCol]]=mp[r[idCol]]||{})[r.date]=r.status;const o=byD[r.date]=byD[r.date]||{P:0,A:0,L:0};o[r.status]=(o[r.status]||0)+1});
   const streak={};ids.forEach(id=>{let n=0;for(const d of days){if((mp[id]||{})[d]==='A')n++;else break}streak[id]=n});
+  const {data:hs}=await sb.from('holidays').select('*').gte('day',from).lt('day',dt);
   const last=days[0],ab=(people||[]).filter(p=>last&&(mp[p.id]||{})[last]==='A');
   const cb=p=>{const d=String(p.phone||'').replace(/\D/g,''),n=d.length===10?'91'+d:d;return (d.length>=10?`<a class="btn" href="tel:+${n}">📞 Call</a> <a class="btn wabtn" target="_blank" rel="noopener" href="https://wa.me/${n}?text=${encodeURIComponent('Namaste! '+p.name+' '+v('school_name')+' me nahi aaya/aayi. Sab theek hai na?')}">💬</a>`:'<small class="mut">Phone nahi</small>')+(CTm[p.id]||[]).map(c=>{const d=String(c.phone).replace(/\D/g,'');return d.length>=10?` <a class="btn" href="tel:+${d.length===10?'91'+d:d}">📞 ${esc(c.label||'Other')}</a>`:''}).join('')};
   const todayAb=(people||[]).filter(p=>cur[p.id]==='A');
-  $('ab').innerHTML=(todayAb.length?`<div class="card2"><b>🔴 ${fmt(dt)} ke Absent (${todayAb.length})</b><table>${todayAb.map(p=>`<tr><td>${esc(p.name)}${streak[p.id]?`<br><small class="mut">pichhle ${streak[p.id]} din se bhi absent</small>`:''}</td><td>${cb(p)}</td></tr>`).join('')}</table></div>`:'')
+  const hbanner=hol?`<div class="card2" style="border-color:var(--red)"><b>🏖️ ${fmt(dt)} ko coaching band hai</b>${hd.reason?' · Karan: '+esc(hd.reason):''}<div class="pact" style="margin-top:8px">${isAdm()?'<button class="g" id="hd_o">Is din ko open karein</button>':''}<button class="g" id="hd_i">Phir bhi hazri lein</button></div></div>`:(isAdm()?'<p><button class="g" id="hd_n">🏖️ Is din coaching band karein</button></p>':'');
+  $('ab').innerHTML=hbanner+(hol?'':(todayAb.length?`<div class="card2"><b>🔴 ${fmt(dt)} ke Absent (${todayAb.length})</b><table>${todayAb.map(p=>`<tr><td>${esc(p.name)}${streak[p.id]?`<br><small class="mut">pichhle ${streak[p.id]} din se bhi absent</small>`:''}</td><td>${cb(p)}</td></tr>`).join('')}</table></div>`:''))
   +(last?`<div class="card2"><b>Pichli attendance (${fmt(last)}):</b> ${ab.length?`<span style="color:var(--red)">${ab.length} absent</span><table>${ab.map(p=>`<tr><td>${esc(p.name)}<br><small style="color:var(--red)">🔴 ${streak[p.id]} din se absent</small></td><td>${cb(p)}</td></tr>`).join('')}</table>`:'<span class="ok">sab aaye ✅</span>'}</div>`:'<p class="mut">Pichli attendance ka record abhi nahi hai.</p>');
-  $('lst').innerHTML=(people||[]).map(p=>`<div class="ac"><div class="ach"><div class="aca">${p.photo_url?`<img src="${esc(p.photo_url)}" alt="">`:`<span>${esc((p.name||'?').trim().charAt(0).toUpperCase())}</span>`}</div><div class="acn"><b>${byClass&&p.roll?esc(p.roll)+'. ':''}${esc(p.name)}</b><small class="mut">${byClass?esc(cn(p.class))+(bn(p.batch_id)?' · 🕐 '+esc(bn(p.batch_id)):''):esc(p.post||'')}</small>${streak[p.id]?`<small class="stk">🔴 ${streak[p.id]} din se absent</small>`:''}</div></div><div class="seg">${[['P','✅','Present'],['A','❌','Absent'],['L','🟡','Leave']].map(([s,i,l])=>`<label class="sg ${s}"><input type="radio" name="r_${p.id}" value="${s}" ${(cur[p.id]||'P')===s?'checked':''}><span>${i} ${l}</span></label>`).join('')}</div></div>`).join('')||'<p class="mut">Is chunav me koi nahi hai.</p>';
+  $('lst').innerHTML=hol?'':(people||[]).map(p=>`<div class="ac"><div class="ach"><div class="aca">${p.photo_url?`<img src="${esc(p.photo_url)}" alt="">`:`<span>${esc((p.name||'?').trim().charAt(0).toUpperCase())}</span>`}</div><div class="acn"><b>${byClass&&p.roll?esc(p.roll)+'. ':''}${esc(p.name)}</b><small class="mut">${byClass?esc(cn(p.class))+(bn(p.batch_id)?' · 🕐 '+esc(bn(p.batch_id)):''):esc(p.post||'')}</small>${streak[p.id]?`<small class="stk">🔴 ${streak[p.id]} din se absent</small>`:''}</div></div><div class="seg">${[['P','✅','Present'],['A','❌','Absent'],['L','🟡','Leave']].map(([s,i,l])=>`<label class="sg ${s}"><input type="radio" name="r_${p.id}" value="${s}" ${(cur[p.id]||'P')===s?'checked':''}><span>${i} ${l}</span></label>`).join('')}</div></div>`).join('')||'<p class="mut">Is chunav me koi nahi hai.</p>';
   const cnt=()=>{const c={P:0,A:0,L:0};(people||[]).forEach(p=>{const r=document.querySelector(`input[name="r_${p.id}"]:checked`);if(r)c[r.value]++});$('cP').textContent=c.P;$('cA').textContent=c.A;$('cL').textContent=c.L;$('cT').textContent=(people||[]).length};
   $('lst').onchange=cnt;cnt();
   $('allp').onclick=()=>{(people||[]).forEach(p=>{const r=document.querySelector(`input[name="r_${p.id}"][value="P"]`);if(r)r.checked=true});cnt()};
-  $('hist').innerHTML=days.length?`<table><tr><th>Date</th><th>Present</th><th>Absent</th><th>Leave</th></tr>${days.slice(0,15).map(d=>`<tr data-d="${d}" style="cursor:pointer"><td>${fmt(d)}</td><td>${byD[d].P}</td><td>${byD[d].A}</td><td>${byD[d].L}</td></tr>`).join('')}</table><small class="mut">Kisi date par tap karke us din ki attendance dekhein.</small>`:'<p class="mut">Abhi koi purana record nahi.</p>';
+  const hr=[...days.map(d=>({d})),...(hs||[]).map(h=>({d:h.day,h}))].sort((x,y)=>String(y.d).localeCompare(String(x.d))).slice(0,20);
+  $('hist').innerHTML=hr.length?`<table><tr><th>Date</th><th>Present</th><th>Absent</th><th>Leave</th></tr>${hr.map(x=>x.h?`<tr><td>${fmt(x.d)}</td><td colspan="3">🏖️ Coaching band${x.h.reason?' · '+esc(x.h.reason):''}</td></tr>`:`<tr data-d="${x.d}" style="cursor:pointer"><td>${fmt(x.d)}</td><td>${byD[x.d].P}</td><td>${byD[x.d].A}</td><td>${byD[x.d].L}</td></tr>`).join('')}</table><small class="mut">Kisi date par tap karke us din ki attendance dekhein.</small>`:'<p class="mut">Abhi koi purana record nahi.</p>';
   $('hist').onclick=e=>{const tr=e.target.closest('tr[data-d]');if(tr){$('dt').value=tr.dataset.d;load()}};
-  $('sbar').hidden=!(people||[]).length;$('sv').onclick=async()=>{
+  $('sbar').hidden=hol||!(people||[]).length;
+  if($('hd_o'))$('hd_o').onclick=async()=>{const {error}=await sb.from('holidays').delete().eq('day',dt);if(error)alert(error.message);else{loadHolidayBanner();load()}};
+  if($('hd_i'))$('hd_i').onclick=()=>{HOVR=dt;load()};
+  if($('hd_n'))$('hd_n').onclick=async()=>{const r=prompt('Karan likhein (khali chhod sakte hain)');if(r===null)return;const {error}=await sb.from('holidays').upsert({day:dt,reason:r.trim()||null});if(error)alert(error.message);else{loadHolidayBanner();load()}};$('sv').onclick=async()=>{
    const rows=(people||[]).map(p=>({[idCol]:p.id,date:$('dt').value,status:document.querySelector(`input[name="r_${p.id}"]:checked`).value}));
    const {error}=await sb.from(att).upsert(rows,{onConflict:idCol+',date'});$('e').textContent=error?error.message:'Saved ✓';if(!error)load();};
  };
@@ -846,16 +859,99 @@ async function examresTab(){
  $('er_e').onchange=draw;draw();
 }
 
+/* ---------- Holidays (coaching band) ---------- */
+async function loadHolidayBanner(){
+ if(!sb||!$('hbn'))return;
+ const t=today(),n=new Date(t+'T00:00:00');n.setDate(n.getDate()+1);const tm=n.toLocaleDateString('sv');
+ try{const {data}=await sb.from('holidays').select('*').in('day',[t,tm]);
+  const L=(data||[]).sort((a,b)=>String(a.day).localeCompare(String(b.day))).map(h=>`<div>${h.day===t?'🏖️ Aaj coaching band hai':'📅 Kal coaching band rahegi'}${h.reason?' · Karan: '+esc(h.reason):''}</div>`);
+  $('hbn').hidden=!L.length;$('hbn').querySelector('.w').innerHTML=L.join('')}catch(e){}
+}
+async function holidaysTab(){
+ const m=$('pmain');m.innerHTML='<p class="mut">Loading...</p>';
+ if(!HM){HM=new Date();HM.setDate(1)}
+ const {data,error}=await sb.from('holidays').select('*').order('day');
+ if(error){m.innerHTML='<p class="msg">'+esc(error.message)+'</p><p class="mut">update17.sql Run karein.</p>';return}
+ const H={};(data||[]).forEach(h=>{H[h.day]=h});
+ const ymd=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+ const MN=['January','February','March','April','May','June','July','August','September','October','November','December'],WD=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+ const y=HM.getFullYear(),mo=HM.getMonth(),first=new Date(y,mo,1).getDay(),dim=new Date(y,mo+1,0).getDate(),td=today();
+ let cells=WD.map(w=>`<div class="cw">${w}</div>`).join('')+'<div class="cd e"></div>'.repeat(first);
+ for(let d=1;d<=dim;d++){const k=y+'-'+String(mo+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');cells+=`<button class="cd ${H[k]?'h':''} ${k===td?'t':''}" data-d="${k}">${d}${H[k]?'<br><small>🏖️</small>':''}</button>`}
+ const up=(data||[]).filter(h=>h.day>=td);
+ m.innerHTML=`<p class="mut"><small>Din tap karke coaching band ya open karein. Laal din = coaching band</small></p><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><button class="g" id="hm_p">◀</button><b style="font-size:20px"><span>${MN[mo]}</span> <span>${y}</span></b><button class="g" id="hm_n">▶</button></div><div class="cal">${cells}</div>
+<details class="card2"><summary><b>Kai din ek saath band karein</b></summary><div class="f"><label>Se<input id="hr_f" type="date" value="${td}"></label><label>Tak<input id="hr_t" type="date" value="${td}"></label><label>Karan (optional)<input id="hr_r" placeholder="Jaise: Diwali, kaam"></label></div><button id="hr_s">Coaching band karein</button> <span id="hr_m" class="msg"></span></details>
+<h3>Aane wali chhuttiyan</h3>${up.length?`<table>${up.map(h=>`<tr><td>${fmt(h.day)}<br><small class="mut">${esc(h.reason||'')}</small></td><td><button class="g" data-sh="${h.day}">📤 Sandesh bhejein</button> <button class="r" data-rm="${h.day}">✕</button></td></tr>`).join('')}</table>`:'<p class="mut">Abhi koi chhutti nahi</p>'}`;
+ const redo=()=>{loadHolidayBanner();holidaysTab()};
+ $('hm_p').onclick=()=>{HM=new Date(y,mo-1,1);holidaysTab()};$('hm_n').onclick=()=>{HM=new Date(y,mo+1,1);holidaysTab()};
+ m.onclick=async e=>{const t=e.target.closest('button');if(!t)return;
+  if(t.dataset.d){const k=t.dataset.d;
+   if(H[k]){if(confirm('Is din ko dobara open karein?')){const {error}=await sb.from('holidays').delete().eq('day',k);if(error)alert(error.message);else redo()}}
+   else{const r=prompt('Karan likhein (khali chhod sakte hain)');if(r===null)return;const {error}=await sb.from('holidays').upsert({day:k,reason:r.trim()||null});if(error)alert(error.message);else redo()}}
+  if(t.dataset.rm){const {error}=await sb.from('holidays').delete().eq('day',t.dataset.rm);if(error)alert(error.message);else redo()}
+  if(t.dataset.sh){const h=H[t.dataset.sh],txt=`${v('school_name')}: ${h.day.split('-').reverse().join('-')} ko coaching band rahegi.${h.reason?' Karan: '+h.reason+'.':''} Dhanyawad.`;if(navigator.share)navigator.share({text:txt}).catch(()=>{});else window.open('https://wa.me/?text='+encodeURIComponent(txt),'_blank')}
+ };
+ $('hr_s').onclick=async()=>{const f=$('hr_f').value,t=$('hr_t').value;if(!f||!t||t<f){$('hr_m').textContent='Sahi date chunein';return}
+  const rows=[];for(let d=new Date(f+'T00:00:00');ymd(d)<=t&&rows.length<366;d.setDate(d.getDate()+1))rows.push({day:ymd(d),reason:$('hr_r').value.trim()||null});
+  const {error}=await sb.from('holidays').upsert(rows);if(error)$('hr_m').textContent=error.message;else redo()};
+}
+
+/* ---------- Birthday wish picture ---------- */
+const BD={};
+async function birthdayBlob(st){
+ await (document.fonts&&document.fonts.ready);
+ const W=1080,c=document.createElement('canvas');c.width=W;c.height=W;const x=c.getContext('2d');
+ const FF=(w,z)=>`${w} ${z}px Rajdhani,'Noto Sans Devanagari',sans-serif`;
+ const ph=st.photo_url?await new Promise(r=>{const i=new Image();i.crossOrigin='anonymous';i.onload=()=>r(i);i.onerror=()=>r(null);i.src=st.photo_url}):null;
+ const draw=usePh=>{
+  x.clearRect(0,0,W,W);
+  const g=x.createLinearGradient(0,0,W,W);g.addColorStop(0,'#FF5FA2');g.addColorStop(.55,'#FF9A3C');g.addColorStop(1,'#FFD93D');x.fillStyle=g;x.fillRect(0,0,W,W);
+  const cols=['#FFFFFF','#FFE066','#7DF9FF','#B388FF','#FF8FB8'];let sd=7;const rnd=()=>{sd=(sd*9301+49297)%233280;return sd/233280};
+  for(let i=0;i<70;i++){x.fillStyle=cols[i%5];x.globalAlpha=.55;const px=rnd()*W,py=rnd()*W,r=6+rnd()*12;x.beginPath();if(i%3===0)x.rect(px,py,r*1.6,r*.8);else x.arc(px,py,r,0,7);x.fill()}
+  x.globalAlpha=1;x.font='90px serif';x.textAlign='center';
+  [['🎈',110,170],['🎈',970,200],['🎁',990,820],['🎈',90,860],['🎉',540,70],['🎂',150,520],['🎂',930,520]].forEach(([e,px,py])=>x.fillText(e,px,py));
+  x.fillStyle='#fff';x.shadowColor='rgba(120,0,60,.45)';x.shadowBlur=18;x.font=FF(800,138);x.fillText('Happy Birthday!',W/2,215);
+  x.shadowBlur=0;x.font=FF(600,46);x.fillText('जन्मदिन की हार्दिक शुभकामनाएँ',W/2,285);
+  const cx=W/2,cy=555,R=215;
+  x.beginPath();x.arc(cx,cy,R+26,0,7);x.fillStyle='#FF5FA2';x.fill();x.beginPath();x.arc(cx,cy,R+12,0,7);x.fillStyle='#FFB800';x.fill();
+  x.save();x.beginPath();x.arc(cx,cy,R,0,7);x.clip();
+  if(usePh&&ph){const sc=Math.max(2*R/ph.width,2*R/ph.height),w=ph.width*sc,h=ph.height*sc;x.drawImage(ph,cx-w/2,cy-h/2,w,h)}
+  else{x.fillStyle='#FFF3C4';x.fillRect(cx-R,cy-R,2*R,2*R);x.font='260px serif';x.fillText('🎂',cx,cy+90)}
+  x.restore();
+  x.fillStyle='#fff';x.shadowColor='rgba(120,0,60,.45)';x.shadowBlur=14;
+  let fz=110;x.font=FF(800,fz);while(x.measureText(st.name||'').width>900&&fz>50){fz-=4;x.font=FF(800,fz)}
+  x.fillText(st.name||'',W/2,850);
+  x.shadowBlur=0;x.font=FF(600,46);x.fillStyle='#3b0a2a';x.fillText([cn(st.class),st.roll?'Roll '+st.roll:''].filter(Boolean).join('  ·  '),W/2,912);
+  x.fillStyle='#fff';x.font=FF(700,46);x.fillText(v('school_name')+' ki taraf se dher saari shubhkamnayein 🎂',W/2,990);
+  x.textAlign='left';
+ };
+ draw(true);
+ let blob;
+ try{blob=await new Promise((r,j)=>c.toBlob(b=>b?r(b):j(new Error('x')),'image/png'))}catch(e){draw(false);blob=await new Promise(r=>c.toBlob(r,'image/png'))}
+ return blob;
+}
+async function wishPic(st){
+ if(!st)return;
+ const blob=await birthdayBlob(st),fn='Birthday-'+String(st.name||'').replace(/\s+/g,'-')+'.png',file=new File([blob],fn,{type:'image/png'});
+ const txt='Happy Birthday '+st.name+'! 🎂🎉 '+v('school_name');
+ if(navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file],text:txt});return}catch(e){if(e&&e.name==='AbortError')return}}
+ const url=URL.createObjectURL(blob),d=String(st.phone||'').replace(/\D/g,''),w=d.length>=10?'https://wa.me/'+(d.length===10?'91'+d:d)+'?text='+encodeURIComponent(txt):'';
+ let pv=$('pv');if(!pv){pv=document.createElement('div');pv.id='pv';document.body.appendChild(pv)}
+ pv.innerHTML=`<div class="noprint" style="position:sticky;top:0;background:#eee;padding:8px;display:flex;gap:8px;flex-wrap:wrap"><a class="btn" download="${fn}" href="${url}">⬇️ Photo save karein</a>${w?`<a class="btn wabtn" target="_blank" rel="noopener" href="${w}">💬 WhatsApp kholein</a>`:''}<button id="pv_c">Band karein</button></div><p class="noprint" style="margin:8px;font:14px sans-serif">Photo save karke WhatsApp me bhejein.</p><img class="idc" style="max-width:96%" src="${url}" alt="Birthday card">`;
+ pv.hidden=false;$('pv_c').onclick=()=>{pv.hidden=true};
+}
+
 /* ---------- Birthdays (upcoming) ---------- */
 async function bdayTab(){
  const m=$('pmain');m.innerHTML='<p class="mut">Loading...</p>';
  const {data}=await sb.from('students').select('id,name,class,roll,dob,photo_url,phone').eq('status','active').not('dob','is',null);
+ (data||[]).forEach(x=>{BD[x.id]=x});
  const t=new Date(today()+'T00:00:00'),y=t.getFullYear();
  const L=(data||[]).map(s=>{const [yy,mm,dd]=String(s.dob).split('-').map(Number);let n=new Date(y,mm-1,dd);if(n<t)n=new Date(y+1,mm-1,dd);return {s,n,days:Math.round((n-t)/864e5),age:n.getFullYear()-yy}}).sort((a,b)=>a.days-b.days);
  m.innerHTML=`<label>Kitne din ke andar<select id="bd_r"><option value="0">Sirf aaj</option><option value="7">7 din</option><option value="30" selected>30 din</option><option value="90">90 din</option><option value="366">Sabhi</option></select></label><p class="mut" id="bd_n"></p><div class="wrap" id="bd_l"></div>`;
  const draw=()=>{const r=+$('bd_r').value,F=L.filter(x=>x.days<=r);$('bd_n').textContent=F.length+' bachhon ka birthday';
-  $('bd_l').innerHTML=F.length?`<table>${F.map(({s,n,days,age})=>{const d=String(s.phone||'').replace(/\D/g,'');return `<tr data-p="${s.id}" style="cursor:pointer"><td>${s.photo_url?`<img class="av" src="${esc(s.photo_url)}" alt="">`:''}${s.roll?esc(s.roll)+'. ':''}${esc(s.name)}<br><small class="mut">${esc(cn(s.class))} · ${age} saal</small></td><td><b>${n.toLocaleDateString('en-IN',{day:'2-digit',month:'short'})}</b><br><small class="${days===0?'ok':'mut'}">${days===0?'🎉 Aaj!':days===1?'Kal':days+' din baad'}</small></td><td>${d.length>=10?`<a class="btn wabtn" target="_blank" rel="noopener" href="https://wa.me/${d.length===10?'91'+d:d}?text=${encodeURIComponent('Happy Birthday '+s.name+'! 🎂🎉 '+v('school_name')+' ki taraf se dher saari shubhkamnayein.')}">💬</a>`:''}</td></tr>`}).join('')}</table>`:'<p class="mut">Is samay me kisi ka birthday nahi hai.</p>'};
- $('bd_r').onchange=draw;$('bd_l').onclick=e=>{if(e.target.closest('a'))return;const r=e.target.closest('[data-p]');if(r)profile('student',r.dataset.p)};draw();
+  $('bd_l').innerHTML=F.length?`<table>${F.map(({s,n,days,age})=>{const d=String(s.phone||'').replace(/\D/g,'');return `<tr data-p="${s.id}" style="cursor:pointer"><td>${s.photo_url?`<img class="av" src="${esc(s.photo_url)}" alt="">`:''}${s.roll?esc(s.roll)+'. ':''}${esc(s.name)}<br><small class="mut">${esc(cn(s.class))} · ${age} saal</small></td><td><b>${n.toLocaleDateString('en-IN',{day:'2-digit',month:'short'})}</b><br><small class="${days===0?'ok':'mut'}">${days===0?'🎉 Aaj!':days===1?'Kal':days+' din baad'}</small></td><td><button class="btn wabtn" data-wish="${s.id}">🖼️</button></td></td></tr>`}).join('')}</table>`:'<p class="mut">Is samay me kisi ka birthday nahi hai.</p>'};
+ $('bd_r').onchange=draw;$('bd_l').onclick=e=>{const w=e.target.closest('[data-wish]');if(w){wishPic(BD[w.dataset.wish]);return}if(e.target.closest('a'))return;const r=e.target.closest('[data-p]');if(r)profile('student',r.dataset.p)};draw();
 }
 
 /* ---------- Classes ---------- */
@@ -2108,6 +2204,50 @@ title|शीर्षक|Title
 date|तारीख|Date
 body|विवरण|Details
 caption|कैप्शन|Caption
+Aaj coaching band hai|आज कोचिंग बंद है|Coaching is closed today
+Kal coaching band rahegi|कल कोचिंग बंद रहेगी|Coaching will be closed tomorrow
+{} ko coaching band hai|{} को कोचिंग बंद है|Coaching is closed on {}
+Karan: {}|कारण: {}|Reason: {}
+Karan|कारण|Reason
+Karan (optional)|कारण (वैकल्पिक)|Reason (optional)
+Jaise: Diwali, kaam|जैसे: दिवाली, काम|e.g. Diwali, personal work
+Holidays / छुट्टी|छुट्टी|Holidays
+Holidays|छुट्टियाँ|Holidays
+Coaching band|कोचिंग बंद|Coaching closed
+Is din coaching band karein|इस दिन कोचिंग बंद करें|Close coaching on this day
+Is din ko open karein|इस दिन को खोलें|Reopen this day
+Phir bhi hazri lein|फिर भी हाज़िरी लें|Take attendance anyway
+Holiday|छुट्टी|Holiday
+Band|बंद|Closed
+Coaching band karein|कोचिंग बंद करें|Close coaching
+Din tap karke coaching band ya open karein. Laal din = coaching band|दिन पर टैप करके कोचिंग बंद या खोलें। लाल दिन = कोचिंग बंद|Tap a day to close or reopen coaching. Red day = coaching closed
+Kai din ek saath band karein|कई दिन एक साथ बंद करें|Close several days at once
+Aane wali chhuttiyan|आने वाली छुट्टियाँ|Upcoming holidays
+Abhi koi chhutti nahi|अभी कोई छुट्टी नहीं|No holidays yet
+Is din coaching band karein?|इस दिन कोचिंग बंद करें?|Close coaching on this day?
+Is din ko dobara open karein?|इस दिन को दोबारा खोलें?|Reopen this day?
+Karan likhein (khali chhod sakte hain)|कारण लिखें (खाली छोड़ सकते हैं)|Enter a reason (can be left blank)
+Sandesh bhejein|संदेश भेजें|Send notice
+Coaching band|कोचिंग बंद|Coaching closed
+January|जनवरी|January
+February|फ़रवरी|February
+March|मार्च|March
+April|अप्रैल|April
+May|मई|May
+June|जून|June
+July|जुलाई|July
+August|अगस्त|August
+September|सितंबर|September
+October|अक्टूबर|October
+November|नवंबर|November
+December|दिसंबर|December
+Sun|रवि|Sun
+Mon|सोम|Mon
+Tue|मंगल|Tue
+Wed|बुध|Wed
+Thu|गुरु|Thu
+Fri|शुक्र|Fri
+Sat|शनि|Sat
 `;
 const I18=(()=>{
  const ex=new Map(),core=new Map(),tp=[],cr=x=>x.replace(/^[^\p{L}\p{N}]+/u,'').replace(/[^\p{L}\p{N}]+$/u,'');
@@ -2157,6 +2297,7 @@ i18Obs.observe(document.body,{childList:true,subtree:true,characterData:true,att
  window.alert=m=>_a(m2(m));window.confirm=m=>_c(m2(m));window.prompt=(m,d)=>_p(m2(m),d)}
 
 i18Apply();
+loadHolidayBanner();
 const hp=()=>{let m=location.hash.match(/^#p=([A-Za-z0-9]{16,64})$/);if(m)return showPub(m[1]);m=location.hash.match(/^#exam(?:=(\d{4,8}))?$/);if(m)return showExam(m[1]||'');if(location.hash==='#fee')showFee()};
 hp();addEventListener('hashchange',hp);
 </script>
