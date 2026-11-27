@@ -941,6 +941,48 @@ async function wishPic(st){
  pv.hidden=false;$('pv_c').onclick=()=>{pv.hidden=true};
 }
 
+/* ---------- Fee reminder picture ---------- */
+async function feeBlob(mem,total){
+ await (document.fonts&&document.fonts.ready);
+ const FF=(w,z)=>`${w} ${z}px Rajdhani,'Noto Sans Devanagari',sans-serif`,ld=src=>new Promise(r=>{if(!src)return r(null);const i=new Image();i.crossOrigin='anonymous';i.onload=()=>r(i);i.onerror=()=>r(null);i.src=src});
+ const [logo,...phs]=await Promise.all([ld('logo.png'),...mem.map(m=>ld(m.photo_url))]);
+ const W=1080,RH=210,H=300+mem.length*RH+340,c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d'),dt=today().split('-').reverse().join('-');
+ const rr=(a,b,w,h,r)=>{x.beginPath();x.moveTo(a+r,b);x.arcTo(a+w,b,a+w,b+h,r);x.arcTo(a+w,b+h,a,b+h,r);x.arcTo(a,b+h,a,b,r);x.arcTo(a,b,a+w,b,r);x.closePath()};
+ const draw=use=>{
+  x.clearRect(0,0,W,H);x.fillStyle='#F3F7FF';x.fillRect(0,0,W,H);
+  const g=x.createLinearGradient(0,0,W,0);g.addColorStop(0,'#4F46E5');g.addColorStop(1,'#7C3AED');x.fillStyle=g;x.fillRect(0,0,W,260);
+  if(logo)x.drawImage(logo,50,40,130,130);
+  x.fillStyle='#fff';x.textAlign='left';x.font=FF(800,58);x.fillText(v('school_name'),210,98);x.font=FF(500,30);x.fillText(String(v('address')).slice(0,60),210,146);
+  x.font=FF(800,70);x.fillText('Fee Reminder',50,236);x.textAlign='right';x.font=FF(600,34);x.fillText(dt,W-50,236);x.textAlign='left';
+  mem.forEach((m,i)=>{
+   const y=290+i*RH,ch=RH-24,cy=y+ch/2;rr(40,y,W-80,ch,36);x.fillStyle='#fff';x.fill();x.strokeStyle='#D3DFF5';x.lineWidth=3;x.stroke();
+   x.save();x.beginPath();x.arc(150,cy,70,0,7);x.clip();
+   if(use&&phs[i]){const im=phs[i],k=Math.max(140/im.width,140/im.height),w=im.width*k,h=im.height*k;x.drawImage(im,150-w/2,cy-h/2,w,h)}
+   else{x.fillStyle='#E8F0FF';x.fillRect(80,cy-70,140,140);x.fillStyle='#4F46E5';x.font=FF(800,76);x.textAlign='center';x.fillText((m.name||'?').trim().charAt(0).toUpperCase(),150,cy+26);x.textAlign='left'}
+   x.restore();x.lineWidth=6;x.strokeStyle='#7C3AED';x.beginPath();x.arc(150,cy,70,0,7);x.stroke();
+   let z=50;x.font=FF(800,z);while(x.measureText(m.name||'').width>500&&z>28){z-=2;x.font=FF(800,z)}
+   x.fillStyle='#0B1B3F';x.fillText(m.name||'',250,y+78);x.font=FF(600,36);x.fillStyle='#566690';x.fillText(cn(m.class)+(m.roll?'  ·  Roll '+m.roll:''),250,y+130);
+   x.textAlign='right';x.font=FF(600,30);x.fillStyle='#566690';x.fillText('Baki',W-70,y+62);x.font=FF(800,58);x.fillStyle='#DC2626';x.fillText('₹ '+Math.round(m.due),W-70,y+128);x.textAlign='left';
+  });
+  const ty=290+mem.length*RH+6;rr(40,ty,W-80,140,36);const g2=x.createLinearGradient(0,0,W,0);g2.addColorStop(0,'#DC2626');g2.addColorStop(1,'#F59E0B');x.fillStyle=g2;x.fill();
+  x.fillStyle='#fff';x.font=FF(700,44);x.fillText(mem.length>1?'Kul baki (poora parivar)':'Kul baki',80,ty+88);x.textAlign='right';x.font=FF(800,70);x.fillText('₹ '+Math.round(total),W-80,ty+92);x.textAlign='left';
+  x.fillStyle='#0B1B3F';x.font=FF(600,40);x.fillText('Kripya jald se jald fees jama karein. Dhanyawad 🙏',50,ty+235);
+  x.fillStyle='#566690';x.font=FF(500,34);x.fillText('📞 '+v('phone'),50,ty+292);
+ };
+ draw(true);let blob;
+ try{blob=await new Promise((r,j)=>c.toBlob(b=>b?r(b):j(new Error('x')),'image/png'))}catch(e){draw(false);blob=await new Promise(r=>c.toBlob(r,'image/png'))}
+ return blob;
+}
+async function feePic(g,due,txt,phone){
+ const mem=g.m.filter(x=>(due[x.id]||0)>0).map(x=>({...x,due:due[x.id]}));if(!mem.length)return;
+ const blob=await feeBlob(mem,g.due),fn='Fee-Reminder-'+String(mem[0].name||'').replace(/\s+/g,'-')+'.png',file=new File([blob],fn,{type:'image/png'});
+ if(navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file],text:txt});return}catch(e){if(e&&e.name==='AbortError')return}}
+ const url=URL.createObjectURL(blob),d=String(phone||'').replace(/\D/g,''),w=d.length>=10?'https://wa.me/'+(d.length===10?'91'+d:d)+'?text='+encodeURIComponent(txt):'';
+ let pv=$('pv');if(!pv){pv=document.createElement('div');pv.id='pv';document.body.appendChild(pv)}
+ pv.innerHTML=`<div class="noprint" style="position:sticky;top:0;background:#eee;padding:8px;display:flex;gap:8px;flex-wrap:wrap"><a class="btn" download="${fn}" href="${url}">⬇️ Photo save karein</a>${w?`<a class="btn wabtn" target="_blank" rel="noopener" href="${w}">💬 WhatsApp kholein</a>`:''}<button id="pv_c">Band karein</button></div><p class="noprint" style="margin:8px;font:14px sans-serif">Photo save karke WhatsApp me bhejein.</p><img class="idc" style="max-width:96%" src="${url}" alt="Fee reminder">`;
+ pv.hidden=false;$('pv_c').onclick=()=>{pv.hidden=true};
+}
+
 /* ---------- Birthdays (upcoming) ---------- */
 async function bdayTab(){
  const m=$('pmain');m.innerHTML='<p class="mut">Loading...</p>';
@@ -1148,7 +1190,7 @@ const prevHTML=r=>r.rows.filter(o=>o.d!==0||o.t>0||o.left!==0).map(o=>`${esc(o.x
 async function feesTab(){
  const m=$('pmain');m.innerHTML='<p class="mut">Loading...</p>';
  await sb.rpc('run_accrual');
- const [st,bl,lg,cf,fm,ct]=await Promise.all([sb.from('students').select('id,name,phone,class,family_id,roll,status').order('roll',{nullsFirst:false}).order('name'),sb.rpc('balances',{t:'student'}),sb.from('reminder_log').select('*').order('created_at',{ascending:false}).limit(30),isAdm()?sb.from('reminder_cfg').select('*').eq('id',1).maybeSingle():Promise.resolve({data:null}),sb.from('families').select('id,phone'),sb.from('student_contacts').select('student_id,label,phone')]);
+ const [st,bl,lg,cf,fm,ct]=await Promise.all([sb.from('students').select('id,name,phone,class,family_id,roll,status,photo_url').order('roll',{nullsFirst:false}).order('name'),sb.rpc('balances',{t:'student'}),sb.from('reminder_log').select('*').order('created_at',{ascending:false}).limit(30),isAdm()?sb.from('reminder_cfg').select('*').eq('id',1).maybeSingle():Promise.resolve({data:null}),sb.from('families').select('id,phone'),sb.from('student_contacts').select('student_id,label,phone')]);
  const due={},nm={};(bl.data||[]).forEach(b=>{due[b.pid]=+b.charged-+b.paid-+b.discounted});
  (st.data||[]).forEach(s=>{nm[s.id]=s.name});
  const CT={};(ct.data||[]).forEach(c=>{(CT[c.student_id]=CT[c.student_id]||[]).push(c)});
@@ -1167,7 +1209,7 @@ async function feesTab(){
   const L=all.filter(g=>(sh==='all'||g.due>0)&&(cl==='ALL'||g.m.some(x=>x.class===cl))&&(!q||g.m.some(x=>String(x.name).toLowerCase().includes(q)))).sort((a,b)=>b.due-a.due);
   const tot=L.reduce((a,g)=>a+g.due,0),nb=L.filter(g=>g.due>0).length;
   $('fsum').innerHTML=`<div class="rg"><div class="rc"><small>Kul baki</small><b style="color:var(--red)">${money(tot)}</b></div><div class="rc"><small>Baki wale parivar/bachhe</small><b>${nb}</b></div></div>`;
-  $('fl2').innerHTML=L.length?`<table><tr><th>Bachhe aur baki fees</th><th>Reminder</th></tr>${L.map(g=>{const sh2=g.m.filter(x=>sh==='all'||(due[x.id]||0)>0);return `<tr><td>${sh2.map(x=>`<a data-p="${x.id}" style="cursor:pointer;color:var(--gold);font-weight:700">${esc(x.name)}</a> <small class="mut">${esc(cn(x.class))}</small>${x.status!=='active'?` <span class="pill">${x.status==='left'?'Left':'Pass out'}</span>`:''} · ${money(Math.max(due[x.id]||0,0))}`).join('<br>')}${g.m.length>1?`<br><b>👨‍👩‍👧 Kul: ${money(g.due)}</b>`:''}${lvl('student')==='edit'?`<br><button class="g" data-pay="${g.k}">💵 Fee jama</button>`:''}</td><td>${g.due>0?(wa(g)?`<a class="btn wabtn" target="_blank" rel="noopener" href="${wa(g)}">📩 Manual Reminder</a>`:'<small class="mut">Phone nahi</small>')+extras(g).map(c=>`<br><a class="btn wabtn" target="_blank" rel="noopener" href="${wa(g,c.phone)}">📩 ${esc(c.label||'Other')}</a>`).join(''):'<small class="ok">Baki nahi</small>'}</td></tr>`}).join('')}</table>`:'<p class="ok">Kisi ki fees baki nahi hai 🎉</p>';
+  $('fl2').innerHTML=L.length?`<table><tr><th>Bachhe aur baki fees</th><th>Reminder</th></tr>${L.map(g=>{const sh2=g.m.filter(x=>sh==='all'||(due[x.id]||0)>0);return `<tr><td>${sh2.map(x=>`<a data-p="${x.id}" style="cursor:pointer;color:var(--gold);font-weight:700">${esc(x.name)}</a> <small class="mut">${esc(cn(x.class))}</small>${x.status!=='active'?` <span class="pill">${x.status==='left'?'Left':'Pass out'}</span>`:''} · ${money(Math.max(due[x.id]||0,0))}`).join('<br>')}${g.m.length>1?`<br><b>👨‍👩‍👧 Kul: ${money(g.due)}</b>`:''}${lvl('student')==='edit'?`<br><button class="g" data-pay="${g.k}">💵 Fee jama</button>`:''}</td><td>${g.due>0?`<button class="g wabtn" data-rem="${g.k}">📩 Reminder (Pic)</button>`+(wa(g)?` <a class="btn" target="_blank" rel="noopener" href="${wa(g)}">💬 Text</a>`:'<br><small class="mut">Phone nahi</small>')+extras(g).map(c=>`<br><a class="btn wabtn" target="_blank" rel="noopener" href="${wa(g,c.phone)}">📩 ${esc(c.label||'Other')}</a>`).join(''):'<small class="ok">Baki nahi</small>'}</td></tr>`}).join('')}</table>`:'<p class="ok">Kisi ki fees baki nahi hai 🎉</p>';
  };
  $('fc').onchange=$('fs').onchange=draw;$('fq').oninput=draw;
  const payForm=key=>{
@@ -1182,7 +1224,13 @@ async function feesTab(){
    if(r.error)$('fy_m').textContent=r.error.message;else feesTab();
   };
  };
- $('fl2').onclick=e=>{const id=e.target.dataset.p,py=e.target.dataset.pay;if(id)profile('student',id);if(py)payForm(py)};
+ $('fl2').onclick=async e=>{
+  const id=e.target.dataset.p,py=e.target.dataset.pay,rb=e.target.closest('[data-rem]');
+  if(id)profile('student',id);if(py)payForm(py);
+  if(rb){const g=all.find(x=>x.k===rb.dataset.rem),old=rb.textContent;rb.disabled=true;rb.textContent='⏳ Pic ban rahi hai...';
+   try{await feePic(g,due,msg(g),g.phone)}catch(er){alert('Pic nahi ban payi: '+er.message)}
+   rb.disabled=false;rb.textContent=old}
+ };
  draw();
  if(isAdm()){
   $('rc_e').value=String(c.enabled);$('rc_v').value=String(c.voice);
@@ -2248,6 +2296,13 @@ Wed|बुध|Wed
 Thu|गुरु|Thu
 Fri|शुक्र|Fri
 Sat|शनि|Sat
+Reminder (Pic)|रिमाइंडर (फोटो)|Reminder (Pic)
+Text|टेक्स्ट|Text
+Pic ban rahi hai...|फोटो बन रही है...|Creating pic...
+Pic nahi ban payi: {}|फोटो नहीं बन पाई: {}|Could not create the pic: {}
+Photo save karein|फोटो सेव करें|Save photo
+WhatsApp kholein|व्हाट्सऐप खोलें|Open WhatsApp
+Photo save karke WhatsApp me bhejein|फोटो सेव करके व्हाट्सऐप में भेजें|Save the photo and send it on WhatsApp
 `;
 const I18=(()=>{
  const ex=new Map(),core=new Map(),tp=[],cr=x=>x.replace(/^[^\p{L}\p{N}]+/u,'').replace(/[^\p{L}\p{N}]+$/u,'');
